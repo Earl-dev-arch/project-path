@@ -12,7 +12,17 @@
 <header class="topbar">
   <a class="brand" href="#home"><span class="brand-mark">YP</span><span><strong>Your Path</strong><small>Discover what fits you.</small></span></a>
   <nav><a href="#home" data-page="home">Home</a><a href="#explore" data-page="explore">Explore Careers</a><a href="#roadmap" data-page="roadmap">Roadmaps</a><a href="#resources" data-page="resources">Resources</a><a href="#about" data-page="about">About</a></nav>
-  <div class="top-actions"><button class="btn ghost" id="loginBtn">Log in</button><button class="btn primary" id="signupBtn">Sign up</button><button class="hamb" id="hamb">☰</button></div>
+ <div class="top-actions">
+  <button class="btn ghost" id="loginBtn">Log in</button>
+  <button class="btn primary" id="signupBtn">Sign up</button>
+
+  <div id="userMenu" class="user-menu" style="display:none;">
+    <span id="userGreeting"></span>
+    <button class="btn ghost" id="topLogout">Log out</button>
+  </div>
+
+  <button class="hamb" id="hamb">☰</button>
+</div>
 </header>
 <div class="mobile-nav" id="mobileNav"><a href="#home" data-page="home">Home</a><a href="#explore" data-page="explore">Explore Careers</a><a href="#roadmap" data-page="roadmap">Roadmaps</a><a href="#resources" data-page="resources">Resources</a><a href="#about" data-page="about">About</a></div>
 

@@ -940,9 +940,39 @@ setInterval(()=>{if(state.user?.role==='admin')adminPrune();else adminSyncStuden
 const previousGoTabForAdmin=goTab;
 goTab=function(name){previousGoTabForAdmin(name);if(name==='admin')renderAdminLocalAI();};
 const previousUpdateUIForAdmin=updateUI;
-updateUI=function(){previousUpdateUIForAdmin();adminSyncStudent();if(state.user?.role==='admin')renderAdminLocalAI();};
-const previousLogoutHandler=document.getElementById('logout')?.onclick;
-if(document.getElementById('logout'))document.getElementById('logout').onclick=()=>{adminRemoveCurrent();state.user=null;saveState();showPage('home');toast('Logged out.')};
+
+updateUI=function(){
+
+  previousUpdateUIForAdmin();
+
+  // Show auth buttons only when logged out
+  const loggedIn=!!state.user;
+
+  const loginBtn=document.getElementById("loginBtn");
+  const signupBtn=document.getElementById("signupBtn");
+
+  const userMenu=document.getElementById("userMenu");
+  const userGreeting=document.getElementById("userGreeting");
+
+  if(loginBtn) loginBtn.style.display=loggedIn?"none":"";
+  if(signupBtn) signupBtn.style.display=loggedIn?"none":"";
+
+  // Show logged-in user menu
+  if(userMenu) userMenu.style.display=loggedIn?"flex":"none";
+
+  if(userGreeting){
+    userGreeting.textContent=loggedIn
+      ? `👤 ${state.user.name || "Student"}`
+      : "";
+  }
+
+  adminSyncStudent();
+
+  if(state.user?.role==="admin"){
+    renderAdminLocalAI();
+  }
+
+};
 
 // Refresh the local admin view after the local AI changes its result.
 const originalLocalAnswer=window.localAnswer;
