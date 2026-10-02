@@ -965,6 +965,7 @@ updateUI=function(){
       ? `👤 ${state.user.name || "Student"}`
       : "";
   }
+  
 
   adminSyncStudent();
 
@@ -973,6 +974,13 @@ updateUI=function(){
   }
 
 };
+document.getElementById("topLogout")?.addEventListener("click",()=>{
+  state.user=null;
+  saveState();
+  updateUI();
+  showPage("home");
+  toast("Logged out.");
+});
 
 // Refresh the local admin view after the local AI changes its result.
 const originalLocalAnswer=window.localAnswer;
