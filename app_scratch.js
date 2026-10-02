@@ -407,7 +407,15 @@ const pathways=[
 {name:"Software Engineering",icon:"</>",tag:"Logical + builder",reason:"A direction to investigate if you enjoy constructing systems, debugging and learning technical tools.",skills:"Programming, algorithms, teamwork, systems thinking",edu:"CS/software/engineering or strong portfolio route",work:"Focused building + team collaboration",challenge:"Continuous learning and debugging",alt:"Cybersecurity, cloud, QA, developer tools"},
 {name:"Cybersecurity",icon:"⌁",tag:"Systems + investigation",reason:"Explore this if protecting systems, investigating failures and understanding networks sounds engaging.",skills:"Networking, Linux, security concepts, scripting",edu:"CS/IT/cybersecurity + labs/certifications",work:"Independent investigation + team response",challenge:"Constant learning and careful documentation",alt:"Network engineering, digital forensics, cloud security"},
 {name:"Engineering & Computational Science",icon:"△",tag:"Math + making",reason:"A direction for students drawn to physics, systems, models and building practical solutions.",skills:"Math, modelling, programming, technical communication",edu:"Math/science + engineering or computational degree",work:"Technical team + project work",challenge:"Can be mathematically demanding",alt:"Robotics, simulation, systems engineering"},
-{name:"Business & Entrepreneurship",icon:"↗",tag:"Initiative + people",reason:"Worth testing if you enjoy building ideas, decision-making, communication and measurable outcomes.",skills:"Communication, finance, market research, leadership",edu:"Business/economics or mixed routes",work:"Collaboration + uncertainty",challenge:"Outcomes and income can be less predictable",alt:"Marketing, operations, product, finance"}
+{name:"Business & Entrepreneurship",icon:"↗",tag:"Initiative + people",reason:"Worth testing if you enjoy building ideas, decision-making, communication and measurable outcomes.",skills:"Communication, finance, market research, leadership",edu:"Business/economics or mixed routes",work:"Collaboration + uncertainty",challenge:"Outcomes and income can be less predictable",alt:"Marketing, operations, product, finance"},
+{name:"Architecture & Spatial Design",icon:"⌂",tag:"Creative + technical",reason:"Worth exploring if you enjoy designing physical environments, spatial logic and the mix of art and engineering.",skills:"Design, CAD, spatial thinking, communication",edu:"Bachelor of Architecture or related design degrees",work:"Collaborative studio + site visits",challenge:"Long project timelines and balancing regulations with creativity",alt:"Urban Planning, Interior Design, Landscape Architecture"},
+{name:"Biotechnology & Life Sciences",icon:"⌬",tag:"Science + discovery",reason:"A direction to investigate if you are curious about the intersection of biology, technology and solving global health or food challenges.",skills:"Lab methods, research, data analysis, chemistry",edu:"Biology, Biochemistry or Biotech degrees",work:"Laboratory + research teams",challenge:"Requires high precision and long-term research cycles",alt:"Genetics, Pharmacology, Environmental Science"},
+{name:"Digital Marketing & Strategy",icon:"📈",tag:"Creative + analytical",reason:"Explore this if you like understanding audience behavior, creating content and using data to drive growth.",skills:"Communication, data analytics, branding, psychology",edu:"Business, Communication or specialized marketing routes",work:"Fast-paced + collaborative",challenge:"Rapidly changing trends and platforms",alt:"Public Relations, Advertising, Content Strategy"},
+{name:"Artificial Intelligence & ML",icon:"🤖",tag:"Math + innovation",reason:"A high-growth direction for those who enjoy advanced logic, mathematics and teaching machines to solve problems.",skills:"Mathematics, Python, algorithms, data ethics",edu:"CS, Math or AI-specialized degrees",work:"Deep focus + technical collaboration",challenge:"Complex mathematics and fast-evolving technology",alt:"Software Engineering, Robotics, Data Science"},
+{name:"International Relations & Global Policy",icon:"🌐",tag:"People + values",reason:"Worth testing if you are curious about global systems, culture, advocacy and how countries interact.",skills:"Research, languages, writing, cross-cultural communication",edu:"Political Science, IR or History degrees",work:"Research + negotiation + advocacy",challenge:"Complex global issues with no single correct answer",alt:"Law, Sociology, Diplomacy"},
+{name:"Robotics & Mechatronics",icon:"⚙",tag:"Technical + builder",reason:"Fits a curiosity for how hardware and software work together to move and interact with the world.",skills:"Electronics, mechanics, programming, math",edu:"Robotics, Mechanical or Electrical Engineering",work:"Hands-on building + testing",challenge:"Troubleshooting complex physical and digital systems",alt:"Electrical Engineering, Manufacturing, Automation"},
+{name:"Game Design & Development",icon:"🎮",tag:"Creative + logical",reason:"A direction for those who love creating interactive experiences, storytelling and the technical mechanics of play.",skills:"Programming, design, storytelling, player psychology",edu:"CS, Game Design or Digital Media degrees",work:"Iterative + highly collaborative",challenge:"Long production cycles and intense debugging",alt:"Software Engineering, Animation, UX Design"},
+{name:"Finance & Quantitative Economics",icon:"💰",tag:"Analytical + strategic",reason:"Worth exploring if you enjoy patterns in markets, decision-making under uncertainty and using math to manage value.",skills:"Statistics, financial modeling, economics, risk assessment",edu:"Economics, Finance or Mathematics degrees",work:"Data-driven + fast-paced",challenge:"High responsibility and market volatility",alt:"Accounting, Actuarial Science, Data Analytics"}
 ];
 
 function renderPublic(){$("#publicPaths").innerHTML=pathways.map(p=>`<article class="path-card"><span class="tag">${p.tag}</span><h3>${p.icon} ${p.name}</h3><p class="reason">${p.reason}</p><p><b>Skills:</b> ${p.skills}</p><p><b>Related:</b> ${p.alt}</p><button class="small-btn" onclick="requireLogin()">Personalize this</button></article>`).join("")}
@@ -755,233 +763,126 @@ function localSignalFromAnswer(q,val){
     if(analytical>=2&&creative>=2&&a.signals.Analytical>1.6&&a.signals.Creative>1.6){a.contradictions.push({signal:'Multiple strong directions',evidence:'Recent answers show both technical/problem-solving and creative signals.',followUp:'Test both through small projects rather than forcing an early choice.'})}
   }
 }
-function localNormalize(){const a=localAIState(), vals=a.signals, max=Math.max(...Object.values(vals));return Object.fromEntries(LOCAL_AI.dimensions.map(d=>[d,Math.max(28,Math.round(vals[d]/max*100))]));}
-function localCategoryNeed(cat){const a=localAIState(); const count=a.catEvidence[cat]||0; return Math.max(0,2-count)*3 + (a.history.length<10?2:0);}
-function localQuestionScore(q){
-  const a=localAIState(); if(a.asked.includes(q.id))return -1e9;
-  let score=q.weight*.08 + localCategoryNeed(q.category)*2;
-  // Favor dimensions that have not yet been sampled and question types that add different evidence.
-  const usedTypes=a.history.map(h=>QUESTION_BANK.find(x=>x.id===h.id)?.type).filter(Boolean); if(!usedTypes.includes(q.type))score+=2;
-  const text=q.prompt.toLowerCase();
-  const low=Object.entries(a.signals).sort((x,y)=>x[1]-y[1]).slice(0,2).map(x=>x[0]);
-  for(const dim of low) if(LOCAL_AI.keywords[dim].some(w=>text.includes(w)))score+=2.5;
-  // If pressure signals appear, ask values/pressure questions to clarify rather than infer.
-  if(Object.values(a.pressure).some(v=>v>=2)&&['pressure','values','motivation'].includes(q.category))score+=4;
-  // Occasionally probe an underrepresented category even when it is not currently strong.
-  score+=Math.random()*1.2;
-  return score;
-}
-function localChooseFirst(){
-  const candidates=QUESTION_BANK.filter(q=>q.category!=='pressure');
-  return candidates[Math.floor(Math.random()*candidates.length)];
-}
-function localChooseNext(){
-  const a=localAIState();
-  const pool=QUESTION_BANK.filter(q=>!a.asked.includes(q.id));
-  return pool.sort((x,y)=>localQuestionScore(y)-localQuestionScore(x))[0]||pool[0];
-}
-function localStartSession(){
-  state.localAI={asked:[],history:[],signals:Object.fromEntries(LOCAL_AI.dimensions.map(x=>[x,1])),catEvidence:{},pressure:{},contradictions:[],started:Date.now(),complete:false};
-  state.localAIResult=null;state.answers={};state.qIndex=0;
-  const q=localChooseFirst();state.localAI.asked=[q.id];state.session={ids:[q.id],started:Date.now()};saveLocalAI();
-  renderLocalQuestion();updateUI();
-}
-function localCurrentQuestion(){const a=localAIState();const id=a.asked[a.asked.length-1];return QUESTION_BANK.find(q=>q.id===id)||null}
-function localCapture(){
-  const q=localCurrentQuestion();if(!q)return null; let val='';
-  if(q.type==='open')val=$('#answerOpen')?.value||'';
-  else if(q.type==='rank')val=$$('#answerRank select').map(x=>x.value);
-  else if(q.type==='multi')val=$$('#question input[type=checkbox]:checked').map(x=>x.value);
-  else val=$$('#question input[name=answer]:checked')[0]?.value||'';
-  if(!localValidAnswer(val)){toast('Choose or write an answer before continuing.');return null;}
-  state.answers[q.id]=val;localSignalFromAnswer(q,val);return val;
-}
-function renderLocalQuestion(){
-  const q=localCurrentQuestion();if(!q)return;const n=localAIState().history.length+1;
-  $('#qCount').textContent=`${n} / ${LOCAL_AI.maxQuestions}`;
-  $('#selectionInfo').innerHTML=`<b>LOCAL ADAPTIVE AI</b><br><br>This engine is choosing the next question from the 1,000-question bank using your previous answers, coverage gaps and response patterns.<br><br><span class="muted">No cloud AI and no career match score.</span>`;
-  const val=state.answers[q.id];let body='';
-  if(q.type==='scale')body=`<div class="scale">${q.scaleLabels.map((x,i)=>`<label><input type="radio" name="answer" value="${i+1}" ${String(val)===String(i+1)?'checked':''}>${i+1}<small>${escapeHtml(x)}</small></label>`).join('')}</div>`;
-  else if(q.type==='open')body=`<textarea class="open" id="answerOpen" placeholder="Write honestly. A few sentences are enough.">${escapeHtml(val||'')}</textarea>`;
-  else if(q.type==='rank')body=`<div class="rank" id="answerRank">${q.options.map(o=>`<div><span>${escapeHtml(o)}</span><select><option value="">Rank</option>${[1,2,3,4,5].map(n=>`<option ${Array.isArray(val)&&val.includes(String(n))&&val[q.options.indexOf(o)]===String(n)?'selected':''}>${n}</option>`).join('')}</select></div>`).join('')}</div>`;
-  else body=`<div class="options">${(q.options||[]).map(o=>`<label class="option"><input type="${q.type==='multi'?'checkbox':'radio'}" name="answer" value="${escapeHtml(o)}"><span>${escapeHtml(o)}</span></label>`).join('')}</div>`;
-  $('#question').innerHTML=`<div class="question-card ai-question-card" id="localQuestionCard"><div class="question-type">LOCAL AI · ${escapeHtml(q.categoryLabel)}</div><h3>${escapeHtml(q.prompt)}</h3>${body}<p class="muted">There is no socially correct answer. The next question may change based on this answer.</p><div class="ai-why">✦ Adaptive reason: the engine is balancing evidence across your interests, working style, values and problem-solving patterns.</div><div class="question-nav"><button class="btn soft" id="localBack" disabled>← Adaptive</button><button class="btn primary" id="localNext">${n===20?'Finish & analyze':'Next →'}</button></div></div>`;
-  $$('#question input').forEach(x=>x.addEventListener('change',()=>{$$('.option').forEach(o=>{const inp=o.querySelector('input');if(inp)o.classList.toggle('selected',inp.checked)})}));
-  $('#localNext').onclick=localNext;
-}
-function localNext(){
-  if(!localCapture())return; const a=localAIState();
-  if(a.history.length>=LOCAL_AI.maxQuestions){a.complete=true;state.localAIResult=localBuildResult();saveLocalAI();renderLocalResult();renderLocalPathways();renderLocalRoadmap();renderLocalInterest();updateUI();toast('20 adaptive answers analyzed locally.');goTab('analysis');return;}
-  const next=localChooseNext();if(!next){toast('No unused questions remain.');return;}a.asked.push(next.id);state.session.ids=a.asked.slice();state.qIndex=a.asked.length-1;saveLocalAI();renderLocalQuestion();updateUI();
-}
-function localBuildResult(){
-  const a=localAIState(), interestMap=localNormalize();
-  const sorted=Object.entries(interestMap).sort((x,y)=>y[1]-x[1]);
-  const strengths=sorted.slice(0,3).map(([d])=>`${d} shows a repeated signal across the adaptive answers.`);
-  const develop=sorted.slice(-2).map(([d])=>`${d} has less evidence so far; try a small experiment before drawing conclusions.`);
-  const pressureSignals=Object.entries(a.pressure).filter(([,v])=>v>=2).map(([cat,v])=>({area:cat==='pressure'?'External expectations / pressure':cat,level:v>=4?'Worth clarifying':'Possible signal',evidence:`Several responses contained language related to external expectations or status/financial considerations. This is a reflection prompt, not a conclusion about motivation.`}));
-  const pathways=LOCAL_AI.pathwayProfiles.map(p=>{let score=0;for(const [d,w] of Object.entries(p.dims))score+=(interestMap[d]||0)*w;for(const c of p.cats)score+=((a.catEvidence[c]||0)*3);return {...p,_score:score}}).sort((x,y)=>y._score-x._score).slice(0,30).map(({_score,...p})=>p);
-  const top=sorted.slice(0,2).map(x=>x[0].toLowerCase()).join(' and ');
-  return {summary:`Your answers show the clearest current signals around ${top}. These are directions to test, not a prediction or a final career decision.`,interestMap,strengthSignals:strengths,developmentAreas:develop,workingStyleHypothesis:'The evidence suggests a mix of focused problem-solving and exploration. Test this through real projects because a short questionnaire cannot establish a fixed personality type.',pressureSignals,contradictions:a.contradictions.slice(0,3),uncertainty:['This is one 20-question sample from a 1,000-question bank.','Some dimensions have stronger evidence than others.','Pathways should be tested with projects, conversations, coursework and current education information.'],pathways,roadmap:{next30Days:['Pick one pathway experiment from the suggestions and spend 2–4 hours testing it.','Write down what you enjoyed, what frustrated you, and what you would voluntarily learn next.','Talk to one student, teacher or professional about the real work involved.'],next6Months:['Build 2–3 small projects across different pathways.','Strengthen the school subjects and foundational skills that recur across your experiments.','Compare your evidence and update your pathway set instead of treating the first result as final.'],next1to2Years:['Choose coursework, extracurriculars and projects that preserve multiple plausible options.','Research current degree requirements, scholarships and admissions directly from official sources when relevant.','Retake the questionnaire after gaining new experience and compare how your evidence changed.']}};
-}
-function renderLocalResult(){
- const a=state.localAIResult;if(!a)return;const list=x=>Array.isArray(x)?x.map(v=>`<li>${escapeHtml(v)}</li>`).join(''):'';
- const pressure=(a.pressureSignals||[]).map(x=>`<div class="signal"><b>${escapeHtml(x.area)}</b><span>${escapeHtml(x.level)}</span><p>${escapeHtml(x.evidence)}</p></div>`).join('')||'<p class="muted">No repeated pressure-related signal was detected.</p>';
- const contradictions=(a.contradictions||[]).map(x=>`<div class="signal"><b>${escapeHtml(x.signal)}</b><p>${escapeHtml(x.evidence)}</p><small>${escapeHtml(x.followUp)}</small></div>`).join('')||'<p class="muted">No major contradiction signal was detected.</p>';
- $('#analysisIntro').textContent='Local AI analysis generated from your 20 adaptive answers.';
- $('#analysis').innerHTML=`<div class="ai-banner"><span class="ai-orb">✦</span><div><b>Local AI analysis</b><p>${escapeHtml(a.summary)}</p></div></div><div class="analysis-grid"><div class="analysis-box"><h3>Interest signals</h3><div class="interest-ai-bars">${Object.entries(a.interestMap).map(([k,v])=>`<div><span>${escapeHtml(k)}</span><i><em style="width:${v}%"></em></i><b>${v}</b></div>`).join('')}</div></div><div class="analysis-box"><h3>Strength signals</h3><ul>${list(a.strengthSignals)}</ul><h3>Development areas</h3><ul>${list(a.developmentAreas)}</ul></div><div class="analysis-box"><h3>Working style</h3><p>${escapeHtml(a.workingStyleHypothesis)}</p></div><div class="analysis-box"><h3>Pressure reflection</h3>${pressure}<p class="muted">Response-pattern indicator only.</p></div><div class="analysis-box full"><h3>Contradictions / mixed signals</h3>${contradictions}</div><div class="analysis-box full"><h3>Uncertainty</h3><ul>${list(a.uncertainty)}</ul></div><div class="analysis-box full"><button class="btn primary" onclick="goTab('pathways')">Explore pathways →</button></div></div>`;
-}
-function renderLocalPathways(){
- const ps=state.localAIResult?.pathways||[];if(!ps.length)return;$('#pathGrid').innerHTML=ps.map((p,i)=>`<article class="path-card ai-path"><span class="tag">LOCAL AI PATHWAY ${i+1}</span><h3>${p.icon} ${escapeHtml(p.name)}</h3><p class="reason">A direction to test based on the evidence in your adaptive answers.</p><p><b>Skills:</b> ${escapeHtml(p.skills.join(', '))}</p><p><b>Subjects:</b> ${escapeHtml(p.subjects.join(', '))}</p><p><b>Trade-offs:</b> ${escapeHtml(p.tradeoffs.join(' · '))}</p><p><b>Alternatives:</b> ${escapeHtml(p.alt.join(', '))}</p><div class="path-actions"><button class="small-btn save" onclick="toggleLocalSave('${escapeHtml(p.name).replace(/'/g,"\\'")}')">♡ ${state.saved.includes(p.name)?'Saved':'Save'}</button><button class="small-btn" onclick="toast('${escapeHtml(p.test).replace(/'/g,"\\'")}')">Test this path</button></div></article>`).join('');
-}
-function toggleLocalSave(name){state.saved=state.saved.includes(name)?state.saved.filter(x=>x!==name):[...state.saved,name];saveState();renderLocalPathways();renderSaved();updateUI();}
-function renderLocalRoadmap(){const r=state.localAIResult?.roadmap;if(!r)return;const box=(t,a)=>`<div class="roadmap-card ai-roadmap"><span class="eyebrow">LOCAL AI</span><h3>${t}</h3><ul>${a.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div>`;$('#roadmapGrade').textContent=`Action plan adapted to ${state.user?.grade||'your current stage'}.`;$('#roadmap').innerHTML=box('Next 30 days',r.next30Days)+box('Next 6 months',r.next6Months)+box('Next 1–2 years',r.next1to2Years);}
-function renderLocalInterest(){const m=state.localAIResult?.interestMap;if(!m)return;const order=LOCAL_AI.dimensions;const vals=order.map(x=>m[x]);const cx=50,cy=50,r=45;const coords=vals.map((v,i)=>{const angle=(-90+i*72)*Math.PI/180,rr=r*(v/100);return `${(cx+Math.cos(angle)*rr).toFixed(1)}% ${(cy+Math.sin(angle)*rr).toFixed(1)}%`;});$('#radarFill').style.clipPath=`polygon(${coords.join(',')})`;$('#radarFill').classList.add('ready');$('#interestStatus').textContent='Local AI · updated from 20 adaptive answers';$('#interestBars').innerHTML=order.map(x=>`<div class="interest-bar"><span>${x}</span><div class="interest-track"><i style="width:${m[x]}%"></i></div><b>${m[x]}</b></div>`).join('');}
-function renderLocalOverview(){const ps=state.localAIResult?.pathways||[];if(ps.length)$('#topPaths').innerHTML=ps.slice(0,4).map(p=>`<div class="path-mini"><span class="path-icon">${p.icon}</span><span><b>${escapeHtml(p.name)}</b><small>Local AI pathway</small></span></div>`).join('');}
-function renderLocalJourney(){const a=localAIState(),n=a.history.length,complete=!!state.localAIResult;$('#journeyQTitle').textContent=complete?'20 questions complete':`${n} / 20 answered`;$('#journeyQText').textContent=complete?'Adaptive interview complete.':'The local AI chooses each next question from the 1,000-question bank.';$('#journeyATitle').textContent=complete?'Analysis ready':'AI is learning';$('#journeyAText').textContent=complete?'Signals, uncertainty and pathways are ready.':'Each answer updates the next-question selection.';['journeyQuestionnaire','journeyAnalysis','journeyPathways','journeyRoadmap','journeyAction'].forEach(id=>document.getElementById(id)?.classList.remove('current','complete','done'));if(complete){['journeyQuestionnaire','journeyAnalysis','journeyPathways','journeyRoadmap'].forEach(id=>document.getElementById(id)?.classList.add('complete'));document.getElementById('journeyAction')?.classList.add('current')}else document.getElementById('journeyQuestionnaire')?.classList.add('current');}
+/* ================================================================
+   AUTH CONSENT GATE
+   A student must read and accept the Privacy Policy and the
+   Terms & Conditions before the profile form is reachable.
+   ================================================================ */
+(function initConsentGate(){
+  const consentPolicies=document.getElementById('consentPolicies');
+  const consentAge=document.getElementById('consentAge');
+  const consentAccept=document.getElementById('consentAccept');
+  const consentCancel=document.getElementById('consentCancel');
+  const consentStep=document.getElementById('consentStep');
+  const signupStep=document.getElementById('signupStep');
+  const signupForm=document.getElementById('signupForm');
+  const authDialog=document.querySelector('#authModal .modal');
+  if(!consentPolicies||!consentAccept||!signupForm)return;
 
-// Replace the prototype's questionnaire/dashboard orchestration with the local AI.
-const baseGoTab=goTab;
-goTab=function(name){if(!state.user)return;$$('.side').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));$$('.tab').forEach(x=>x.classList.toggle('active',x.id==='tab-'+name));if(name==='questionnaire')renderLocalQuestion();if(name==='analysis'){if(state.localAIResult)renderLocalResult();else renderAnalysis();}if(name==='pathways'){if(state.localAIResult)renderLocalPathways();else renderPathways();}if(name==='roadmaps'){if(state.localAIResult)renderLocalRoadmap();else renderRoadmap();}if(name==='saved')renderSaved();if(name==='compare')renderCompare();if(name==='profile')loadProfile();if(name==='overview'){if(state.localAIResult)renderLocalOverview();renderOverview();}renderLocalJourney();};
-
-$('#signupForm').onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());state.user={...d,role:'student',createdAt:Date.now()};state.saved=[];localStartSession();closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');toast('Account created — your local AI guide is ready.');};
-$('#loginForm').onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());if(d.email==='admin@yourpath.demo'&&d.password==='admin123'){state.user={name:'Admin',email:d.email,role:'admin',grade:'College'};}else state.user={name:d.email.split('@')[0],email:d.email,role:'student',grade:state.user?.grade||'Grade 10'};saveState();closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');if(!state.localAIResult&&!localAIState().history.length)localStartSession();toast('Logged in — local AI is ready.');};
-window.newQuestionSession=()=>{localStartSession();toast('New adaptive 20-question session started.');};
-
-const baseUpdateUI=updateUI;
-updateUI=function(){baseUpdateUI();if(state.localAIResult){renderLocalOverview();renderLocalInterest();}renderLocalJourney();};
-
-if(state.user&&state.localAIResult){renderLocalResult();renderLocalPathways();renderLocalRoadmap();renderLocalInterest();}
-else if(state.user&&localAIState().history.length&&!state.localAIResult){renderLocalQuestion();}
-
-/* ================= LOCAL AI ADMIN ANALYTICS =================
-   No hard-coded platform numbers. The from-scratch AI observes only
-   student sessions that are currently alive in this browser/origin.
-*/
-const ADMIN_LOCAL_STORE='yp_local_active_users_v1';
-const ADMIN_HEARTBEAT_MS=15000;
-const ADMIN_EXPIRY_MS=45000;
-let ADMIN_TAB_SESSION=sessionStorage.getItem('yp_admin_tab_session_v1');
-if(!ADMIN_TAB_SESSION){ADMIN_TAB_SESSION='tab_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9);sessionStorage.setItem('yp_admin_tab_session_v1',ADMIN_TAB_SESSION)}
-
-function adminReadActive(){
-  try{return JSON.parse(localStorage.getItem(ADMIN_LOCAL_STORE)||'{}')}catch{return {}}
-}
-function adminWriteActive(data){localStorage.setItem(ADMIN_LOCAL_STORE,JSON.stringify(data))}
-function adminPrune(){
-  const data=adminReadActive(), now=Date.now();
-  for(const [sid,u] of Object.entries(data)){if(!u||now-(u.lastSeen||0)>ADMIN_EXPIRY_MS)delete data[sid]}
-  adminWriteActive(data); return data;
-}
-function adminToday(ts){const d=new Date(ts||0),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()}
-function adminSyncStudent(){
-  const data=adminPrune();
-  if(!state.user || state.user.role==='admin'){
-    if(data[ADMIN_TAB_SESSION]){delete data[ADMIN_TAB_SESSION];adminWriteActive(data)}
-    return data;
+  function syncConsentButton(){
+    const agreed=Boolean(consentPolicies.checked&&consentAge&&consentAge.checked);
+    consentAccept.disabled=!agreed;
+    consentAccept.setAttribute('aria-disabled',String(!agreed));
   }
-  data[ADMIN_TAB_SESSION]={
-    sessionId:ADMIN_TAB_SESSION,
-    email:state.user.email||'',
-    name:state.user.name||'Student',
-    grade:state.user.grade||'Not specified',
-    createdAt:Number(state.user.createdAt)||Date.now(),
-    lastSeen:Date.now(),
-    completed:!!state.localAIResult,
-    answered:localAIState().history?.length||0,
-    interestMap:state.localAIResult?.interestMap||null,
-    pathwayCount:state.localAIResult?.pathways?.length||0
+
+  function resetConsentGate(){
+    consentPolicies.checked=false;
+    if(consentAge)consentAge.checked=false;
+    syncConsentButton();
+    consentStep&&consentStep.classList.remove('hidden');
+    signupStep&&signupStep.classList.add('hidden');
+  }
+
+  consentPolicies.addEventListener('change',syncConsentButton);
+  consentAge&&consentAge.addEventListener('change',syncConsentButton);
+
+  consentAccept.addEventListener('click',()=>{
+    if(consentAccept.disabled)return;
+    consentStep&&consentStep.classList.add('hidden');
+    signupStep&&signupStep.classList.remove('hidden');
+    authDialog&&authDialog.scrollTo({top:0,behavior:'smooth'});
+    const firstField=signupForm.querySelector('input[name="name"]');
+    firstField&&firstField.focus();
+  });
+
+  consentCancel&&consentCancel.addEventListener('click',()=>closeModal('authModal'));
+
+  // Every time the Sign up tab opens, send the student back to the policy step.
+  const originalSwitchAuth=window.switchAuth;
+  window.switchAuth=function(type){
+    if(typeof originalSwitchAuth==='function')originalSwitchAuth(type);
+    if(type==='signup')resetConsentGate();
   };
-  adminWriteActive(data); return data;
-}
-function adminUniqueActive(){
-  const data=adminSyncStudent(), grouped={};
-  for(const u of Object.values(data)){
-    if(!u||Date.now()-(u.lastSeen||0)>ADMIN_EXPIRY_MS||!u.email)continue;
-    const key=u.email.toLowerCase();
-    if(!grouped[key]||u.lastSeen>grouped[key].lastSeen)grouped[key]=u;
+
+  // Account creation is impossible without the consent step being completed.
+  const originalSubmit=signupForm.onsubmit;
+  signupForm.onsubmit=function(event){
+    if(!(consentPolicies.checked&&(!consentAge||consentAge.checked))){
+      event.preventDefault();
+      window.switchAuth('signup');
+      toast('Please read and accept the Privacy Policy and Terms & Conditions first.');
+      return false;
+    }
+    if(typeof originalSubmit==='function')return originalSubmit.call(this,event);
+    return false;
+  };
+
+  syncConsentButton();
+})();
+
+/* Footer legal links */
+(function initLegalLinks(){
+  const termsFoot=document.getElementById('termsFoot');
+  termsFoot&&(termsFoot.onclick=()=>openModal('termsModal'));
+})();
+
+/* ================================================================
+   MOTION: reveal-on-scroll + softer modal handling
+   ================================================================ */
+(function initScrollReveal(){
+  const targets=document.querySelectorAll('.reveal');
+  if(!targets.length)return;
+  if(!('IntersectionObserver' in window)){
+    targets.forEach(el=>el.classList.add('in-view'));
+    return;
   }
-  return Object.values(grouped);
-}
-function adminAIAnalyze(users){
-  if(!users.length)return {insight:'No student is currently signed in. The dashboard will update automatically when a student session becomes active.',dims:[]};
-  const dims=['Analytical','Creative','People','Learning','Curiosity'];
-  const sums=Object.fromEntries(dims.map(d=>[d,0])); let evidence=0;
-  for(const u of users){for(const d of dims){const v=Number(u.interestMap?.[d]);if(Number.isFinite(v)){sums[d]+=v;evidence++}}}
-  const averages=dims.map(d=>[d,Math.round(sums[d]/Math.max(1,users.filter(u=>Number.isFinite(Number(u.interestMap?.[d]))).length))]).sort((a,b)=>b[1]-a[1]);
-  const active=users.length, complete=users.filter(u=>u.completed).length, progress=active-complete;
-  const top=averages[0]?.[0]||'Learning';
-  let insight=`The local AI is observing ${active} active student ${active===1?'session':'profiles'}. The strongest observed interest signal is ${top}.`;
-  if(complete)insight+=` ${complete} ${complete===1?'student has':'students have'} completed the adaptive interview.`;
-  if(progress)insight+=` ${progress} ${progress===1?'student is':'students are'} still exploring.`;
-  if(!evidence)insight='Active students are signed in, but the AI does not yet have completed interest-map evidence. Complete the 20-question interview to generate richer admin insights.';
-  return {insight,dims:averages};
-}
-function renderAdminLocalAI(){
-  if(!state.user||state.user.role!=='admin')return;
-  const users=adminUniqueActive(), completed=users.filter(u=>u.completed), progress=users.filter(u=>!u.completed), today=users.filter(u=>adminToday(u.createdAt));
-  const analysis=adminAIAnalyze(users);
-  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=String(v)};
-  set('adminTotalUsers',users.length);set('adminCompleted',completed.length);set('adminProgress',progress.length);set('adminToday',today.length);
-  set('adminScopeText','Local AI mode: counts only unique student profiles with a live heartbeat in this browser. When a session disappears, it is removed from these numbers.');
-  set('adminAIInsight',analysis.insight);
-  const bars=document.getElementById('adminInterestBars');
-  if(bars){bars.innerHTML=analysis.dims.length?analysis.dims.map(([d,v])=>`<span>${escapeHtml(d)}<i style="width:${Math.max(0,Math.min(100,v))}%"></i></span>`).join(''):'<p class="muted">No interest evidence yet.</p>'}
-  const list=document.getElementById('adminActiveList');
-  if(list){
-    list.innerHTML=users.length?users.map(u=>`<div class="admin-active-user"><b>${escapeHtml(u.name)}</b><small>${escapeHtml(u.grade)} · ${u.completed?'20/20 complete':`${u.answered}/20 answered`}</small><small>${u.pathwayCount?`${u.pathwayCount} AI pathways generated`:'AI pathways not generated yet'}</small></div>`).join(''):'<p class="muted admin-live-empty">No active student sessions right now.</p>';
-  }
-}
-function adminRemoveCurrent(){const data=adminReadActive();delete data[ADMIN_TAB_SESSION];adminWriteActive(data)}
-window.addEventListener('beforeunload',adminRemoveCurrent);
-window.addEventListener('storage',e=>{if(e.key===ADMIN_LOCAL_STORE&&state.user?.role==='admin')renderAdminLocalAI()});
-setInterval(()=>{if(state.user?.role==='admin')adminPrune();else adminSyncStudent();if(state.user?.role==='admin')renderAdminLocalAI()},ADMIN_HEARTBEAT_MS);
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{rootMargin:'0px 0px -6% 0px',threshold:0.06});
+  targets.forEach(el=>observer.observe(el));
 
-const previousGoTabForAdmin=goTab;
-goTab=function(name){previousGoTabForAdmin(name);if(name==='admin')renderAdminLocalAI();};
-const previousUpdateUIForAdmin=updateUI;
+  // Anything already visible on first paint should not wait for a scroll.
+  requestAnimationFrame(()=>{
+    targets.forEach(el=>{
+      const box=el.getBoundingClientRect();
+      if(box.top<window.innerHeight*0.94&&box.bottom>0)el.classList.add('in-view');
+    });
+  });
+})();
 
-updateUI=function(){
-
-  previousUpdateUIForAdmin();
-
-  // Show auth buttons only when logged out
-  const loggedIn=!!state.user;
-
-  const loginBtn=document.getElementById("loginBtn");
-  const signupBtn=document.getElementById("signupBtn");
-
-  const userMenu=document.getElementById("userMenu");
-  const userGreeting=document.getElementById("userGreeting");
-
-  if(loginBtn) loginBtn.style.display=loggedIn?"none":"";
-  if(signupBtn) signupBtn.style.display=loggedIn?"none":"";
-
-  // Show logged-in user menu
-  if(userMenu) userMenu.style.display=loggedIn?"flex":"none";
-
-  if(userGreeting){
-    userGreeting.textContent=loggedIn
-      ? `👤 ${state.user.name || "Student"}`
-      : "";
-  }
-  
-
-  adminSyncStudent();
-
-  if(state.user?.role==="admin"){
-    renderAdminLocalAI();
-  }
-
-};
-document.getElementById("topLogout")?.addEventListener("click",()=>{
-  state.user=null;
-  saveState();
-  updateUI();
-  showPage("home");
-  toast("Logged out.");
+/* Click the dimmed backdrop to dismiss a dialog */
+document.querySelectorAll('.modal-backdrop').forEach(backdrop=>{
+  backdrop.addEventListener('click',event=>{
+    if(event.target===backdrop)backdrop.classList.add('hidden');
+  });
 });
 
-// Refresh the local admin view after the local AI changes its result.
-const originalLocalAnswer=window.localAnswer;
-window.addEventListener('local-ai-updated',()=>{adminSyncStudent();if(state.user?.role==='admin')renderAdminLocalAI()});
+/* Keep the newest reveal targets animating after each tab change */
+(function revealAfterTabChange(){
+  const originalGoTab=window.goTab;
+  if(typeof originalGoTab!=='function')return;
+  window.goTab=function(name){
+    originalGoTab(name);
+    requestAnimationFrame(()=>{
+      document.querySelectorAll('.reveal:not(.in-view)').forEach(el=>{
+        const box=el.getBoundingClientRect();
+        if(box.top<window.innerHeight*0.94&&box.bottom>0)el.classList.add('in-view');
+      });
+    });
+  };
+})();
