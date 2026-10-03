@@ -41,6 +41,54 @@
     </div>
     <div class="hero-art reveal delay-1"><div class="scene"><div class="stars">✦ · ✧ · ✦ ·</div><div class="moon"></div><div class="hill h1"></div><div class="hill h2"></div><div class="traveler"><i></i><b></b><em></em></div></div><div class="float-card c1"><b>20</b><small>questions per session</small></div><div class="float-card c2"><b>1,000</b><small>deep question bank</small></div></div>
   </div>
+
+  <div class="active-session-banner shell hidden" id="activeSessionBanner">
+    <div class="active-session-content">
+      <div>
+        <span class="eyebrow">ACTIVE STUDENT WORKSPACE</span>
+        <h3 id="activeSessionGreeting">Welcome back!</h3>
+        <p>You are currently logged in. Your 20-question session, AI analysis, pathways, and roadmaps are ready.</p>
+      </div>
+      <div class="active-session-actions">
+        <button class="btn primary" onclick="showPage('dashboard');goTab('overview')">Go to Main Dashboard ▦</button>
+        <button class="btn soft" onclick="showPage('dashboard');goTab('questionnaire')">Continue Questionnaire ◉</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="starting-menu shell reveal delay-2" id="startingMenu">
+    <div class="starting-menu-head">
+      <span class="eyebrow">GET STARTED · STUDENT PORTAL</span>
+      <h2>Choose how you want to start</h2>
+      <p>Sign in to continue your saved journey, register a new student account, or explore the career library as a guest.</p>
+    </div>
+    <div class="starting-menu-grid">
+      <div class="starting-card">
+        <div class="starting-badge">EXISTING STUDENTS</div>
+        <div class="starting-icon">🔐</div>
+        <h3>Log In to Your Space</h3>
+        <p>Continue your 20-question session, review AI patterns, and access your saved pathways, roadmaps, and previous analyses.</p>
+        <button class="btn ghost btn-full" onclick="openModal('authModal');switchAuth('login')" style="border:1.5px solid #dcd8ee">Log In to Account →</button>
+      </div>
+
+      <div class="starting-card highlight-card">
+        <div class="starting-badge highlight-badge">NEW STUDENTS</div>
+        <div class="starting-icon">🚀</div>
+        <h3>Create Student Account</h3>
+        <p>Set up your student profile with a password, unlock the 1,000-question exploration bank, and start fresh.</p>
+        <button class="btn primary btn-full" onclick="openModal('authModal');switchAuth('signup')">Sign Up Free →</button>
+      </div>
+
+      <div class="starting-card">
+        <div class="starting-badge">GUEST PREVIEW</div>
+        <div class="starting-icon">🧭</div>
+        <h3>Explore Career Library</h3>
+        <p>Browse all 16 career clusters, university guides, scholarships, entrance tests, and alternative education routes.</p>
+        <button class="btn soft btn-full" data-page="explore">Explore Library →</button>
+      </div>
+    </div>
+  </div>
+
   <section class="section shell" id="how"><div class="heading reveal"><span class="eyebrow">HOW IT WORKS</span><h2>A journey, not a personality label.</h2><p>Each session draws 20 questions from a weighted bank of 1,000. The selection is designed to cover different dimensions instead of asking the same kind of question twenty times.</p></div>
     <div class="steps"><article class="reveal"><span>01</span><h3>Deep questions</h3><p>Scenarios, ranking, scales, multiple choice and reflection prompts.</p></article><article class="reveal delay-1"><span>02</span><h3>Pattern analysis</h3><p>Looks for repeated signals, contradictions and uncertainty.</p></article><article class="reveal delay-2"><span>03</span><h3>Several pathways</h3><p>Shows plausible directions with reasoning, skills and trade-offs.</p></article><article class="reveal delay-3"><span>04</span><h3>Action roadmap</h3><p>Turns a pathway into practical next steps based on grade.</p></article></div>
   </section>
@@ -50,11 +98,22 @@
 <section class="page" id="dashboard">
 <div class="dashboard shell">
 <aside class="sidebar"><div class="side-logo"><span class="brand-mark">YP</span><b>Your Path<small>Student space</small></b></div>
-  <button class="side active" data-tab="overview">▦ <span>Dashboard
-</span></button><button class="side" data-tab="questionnaire">◉ <span>Questionnaire</span></button><button class="side" data-tab="analysis">✦ <span>Analysis</span></button><button class="side" data-tab="pathways">◎ <span>Pathways</span></button><button class="side" data-tab="roadmaps">↗ <span>Roadmaps</span></button><button class="side" data-tab="saved">♡ <span>Saved</span></button><button class="side" data-tab="compare">⇄ <span>Compare</span></button><button class="side" data-tab="feedback">☻ <span>Feedback</span></button><button class="side" data-tab="profile">⚙ <span>Profile</span></button><button class="side admin" data-tab="admin">▤ <span>Admin</span></button><button class="side" id="logout">↪ <span>Log out</span></button>
+  <button class="side active" data-tab="overview">▦ <span>Dashboard</span></button>
+  <button class="side" data-tab="questionnaire">◉ <span>Questionnaire</span></button>
+  <button class="side" data-tab="analysis">✦ <span>Analysis</span></button>
+  <button class="side" data-tab="pathways">◎ <span>Pathways</span></button>
+  <button class="side" data-tab="compare">⇄ <span>Compare</span></button>
+  <button class="side" data-tab="education">🎓 <span>Universities & Ed</span></button>
+  <button class="side" data-tab="roadmaps">↗ <span>Roadmaps</span></button>
+  <button class="side" data-tab="saved">♡ <span>Saved Careers</span></button>
+  <button class="side" data-tab="history">🕒 <span>Previous Analyses</span></button>
+  <button class="side" data-tab="feedback">☻ <span>Feedback</span></button>
+  <button class="side" data-tab="profile">⚙ <span>Profile</span></button>
+  <button class="side admin" data-tab="admin">▤ <span>Admin</span></button>
+  <button class="side" id="logout">↪ <span>Log out</span></button>
 </aside>
 <section class="dash-main">
-<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · LOCAL AI · FROM SCRATCH</span><h1 id="welcome">Welcome back! 👋</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote">“The best way to predict your future is to create it.”<small>Often attributed to Abraham Lincoln</small></div></div>
+<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · HONEST DECISION SUPPORT</span><h1 id="welcome">Welcome back! 👋</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote">“The best way to predict your future is to create it.”<small>Often attributed to Abraham Lincoln</small></div></div>
 <div class="journey-board" id="journeyBoard">
   <div class="journey-title"><span>HOW IT WORKS</span><b>STUDENT JOURNEY</b></div>
   <div class="journey-steps">
@@ -72,23 +131,52 @@
   </div>
 </div>
 <div class="tab active" id="tab-overview">
-  <div class="stats"><div><b id="completion">0%</b><small>Questionnaire</small></div><div><b>8</b><small>Pathways to explore</small></div><div><b id="savedCount">0</b><small>Saved pathways</small></div><div><b>12</b><small>Action ideas</small></div></div>
+  <div class="stats"><div><b id="completion">0%</b><small>Questionnaire</small></div><div><b>16</b><small>Pathways to explore</small></div><div><b id="savedCount">0</b><small>Saved pathways</small></div><div><b id="historyCount">0</b><small>Completed analyses</small></div></div>
   <div class="dash-grid"><div class="card"><div class="card-title"><h3>Your pathway set</h3><button class="link" data-tab="pathways">View all →</button></div><div id="topPaths"></div></div><div class="card"><div class="interest-head"><h3>Your interest map</h3><span id="interestStatus" class="interest-status">Complete the questionnaire</span></div><div class="radar" id="interestRadar"><div class="radar-grid"></div><div class="radar-fill" id="radarFill"></div><span>Analytical</span><span>Creative</span><span>People</span><span>Learning</span><span>Curiosity</span></div><div class="interest-bars" id="interestBars"></div></div><div class="card"><h3>External pressure check</h3><p class="muted">This is a reflection indicator, not a claim about what you think.</p><div class="pressure"><p><span>Parental expectations</span><b>Medium</b></p><p><span>Peer influence</span><b>Low</b></p><p><span>Status / salary</span><b>Low</b></p></div></div></div>
-  <div class="quick"><button data-tab="questionnaire">◉ <b>Retake questionnaire<small>20 new weighted questions</small></b></button><button data-tab="compare">⇄ <b>Compare pathways<small>See differences</small></b></button><button data-tab="pathways">◎ <b>Explore careers<small>More options</small></b></button><button data-tab="roadmaps">↗ <b>Build roadmap<small>Next actions</small></b></button></div>
+  <div class="quick">
+    <button onclick="retakeQuestionnaire()">◉ <b>Retake questionnaire<small>Archive current & draw 20 new</small></b></button>
+    <button data-tab="compare">⇄ <b>Compare pathways<small>Side-by-side analysis</small></b></button>
+    <button data-tab="education">🎓 <b>Universities & Ed<small>Degrees, tests & scholarships</small></b></button>
+    <button data-tab="history">🕒 <b>Previous analyses<small>Track interest evolution</small></b></button>
+  </div>
 </div>
 
-<div class="tab" id="tab-questionnaire"><div class="tab-head"><div><span class="eyebrow">1,000-QUESTION BANK</span><h2>Deep Interest Questionnaire</h2><p>20 questions are selected without replacement using category weights. Every session can be different.</p></div><div class="pill" id="qCount">1 / 20</div></div>
-  <div class="question-shell"><div id="question"></div><aside class="selection-info"><b>Why this question?</b><p id="selectionInfo">Weighted selection keeps the session balanced.</p><div class="mini-stat"><span>Bank size</span><b id="bankSize">1,000</b></div><div class="mini-stat"><span>Questions this session</span><b>20</b></div><div class="mini-stat"><span>Question types</span><b>5+</b></div><small>Selection probability is about question appearance, not your personality.</small></aside></div>
+<div class="tab" id="tab-questionnaire"><div class="tab-head"><div><span class="eyebrow">1,000-QUESTION BANK · ADAPTIVE EXPLORATION</span><h2>Deep Interest Questionnaire</h2><p>20 questions are selected without replacement using category weights. Every session can be different.</p></div><div class="pill" id="qCount">1 / 20</div></div>
+  <div class="q-progress-bar-wrap"><div class="q-progress-bar" id="qProgressBar" style="width:5%"></div></div>
+  <div class="question-shell"><div id="question"></div><aside class="selection-info"><b>Why this question?</b><p id="selectionInfo">Weighted selection keeps the session balanced.</p><div class="mini-stat"><span>Bank size</span><b id="bankSize">1,000</b></div><div class="mini-stat"><span>Questions this session</span><b>20</b></div><div class="mini-stat"><span>Question types</span><b>Scenarios, Scales, Multi & Rank</b></div><small>Selection probability is about question appearance, not your personality.</small></aside></div>
 </div>
 
 <div class="tab" id="tab-analysis"><div class="tab-head"><div><span class="eyebrow">ANALYSIS</span><h2>Patterns, not a verdict.</h2><p id="analysisIntro"></p></div></div><div id="analysis"></div></div>
 <div class="tab" id="tab-pathways"><div class="tab-head"><div><span class="eyebrow">PATHWAYS</span><h2>Several directions worth testing.</h2><p>Matches are explained in words, not fake percentages.</p></div></div><div class="path-grid" id="pathGrid"></div></div>
+
+<div class="tab" id="tab-compare">
+  <div class="tab-head"><div><span class="eyebrow">PATHWAY COMPARISON</span><h2>Compare without declaring a winner.</h2><p>Examine multiple pathways side-by-side across skills, education routes, daily reality, and challenges. No fake percentage scores.</p></div></div>
+  <div id="compare"></div>
+</div>
+
+<div class="tab" id="tab-education">
+  <div class="tab-head"><div><span class="eyebrow">UNIVERSITIES & EDUCATION ROUTES</span><h2>Education is contextual, not one-size-fits-all.</h2><p>Explore degrees, admission criteria, entrance tests, scholarships, application timelines, and alternative learning paths.</p></div></div>
+  <div id="educationContainer"></div>
+</div>
+
 <div class="tab" id="tab-roadmaps"><div class="tab-head"><div><span class="eyebrow">ROADMAP</span><h2>School → skills → education → career.</h2><p id="roadmapGrade"></p></div></div><div id="roadmap"></div></div>
-<div class="tab" id="tab-saved"><div class="tab-head"><div><span class="eyebrow">SAVED</span><h2>Your saved pathways.</h2></div></div><div id="saved"></div></div>
-<div class="tab" id="tab-compare"><div class="tab-head"><div><span class="eyebrow">COMPARE</span><h2>Compare without declaring a winner.</h2></div></div><div class="table-wrap" id="compare"></div></div>
+
+<div class="tab" id="tab-saved">
+  <div class="tab-head"><div><span class="eyebrow">SAVED CAREERS</span><h2>Your saved pathways & research notes.</h2><p>Track the directions you are actively exploring and test each with small experiments.</p></div></div>
+  <div id="saved"></div>
+</div>
+
+<div class="tab" id="tab-history">
+  <div class="tab-head"><div><span class="eyebrow">PREVIOUS ANALYSES & SESSION LOG</span><h2>Revisit past results & track your growth.</h2><p>Interests evolve as you experience new subjects and projects. Review your previous questionnaire sessions here.</p></div></div>
+  <div id="historyContainer"></div>
+</div>
+
 <div class="tab" id="tab-feedback"><div class="tab-head"><div><span class="eyebrow">FEEDBACK</span><h2>Help improve Your Path.</h2></div></div><form class="form-card" id="feedback"><label>Was this useful?<select name="useful"><option>Yes</option><option>Somewhat</option><option>Not really</option></select></label><label>Did you discover something new?<select name="new"><option>Yes</option><option>A little</option><option>No</option></select></label><label>Which pathway interested you most?<input name="favorite"></label><label>What was missing?<textarea name="missing" rows="3"></textarea></label><label>Would you use it again?<select name="again"><option>Yes</option><option>Maybe</option><option>No</option></select></label><label>Open feedback<textarea name="feedback" rows="5"></textarea></label><button class="btn primary">Submit feedback</button></form></div>
-<div class="tab" id="tab-profile"><div class="tab-head"><div><span class="eyebrow">PROFILE</span><h2>Your student profile.</h2></div></div><form class="form-card" id="profile"><div class="form-grid"><label>Full name<input name="name"></label><label>Email<input name="email" type="email"></label><label>Phone<input name="phone"></label><label>Country + code<select name="country"><option>Philippines (+63)</option><option>United States (+1)</option><option>United Kingdom (+44)</option><option>India (+91)</option><option>Other</option></select></label><label>Grade/Class<select name="grade"><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option><option>College</option></select></label><label>Age<input name="age" type="number"></label><label class="wide">School/location (optional)<input name="school"></label></div><button class="btn primary">Save profile</button></form></div>
+
+<div class="tab" id="tab-profile"><div class="tab-head"><div><span class="eyebrow">PROFILE</span><h2>Your student profile & goals.</h2><p>Update your details, academic grade, target country, budget preferences, and primary aspirations.</p></div></div><form class="form-card" id="profile"><div class="form-grid"><label>Full name<input name="name" required></label><label>Email<input name="email" type="email" required></label><label>Phone<input name="phone"></label><label>Country + code<select name="country"><option>Philippines (+63)</option><option>United States (+1)</option><option>United Kingdom (+44)</option><option>India (+91)</option><option>Canada (+1)</option><option>Australia (+61)</option><option>Other</option></select></label><label>Grade/Class<select name="grade"><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option><option>College</option></select></label><label>Age<input name="age" type="number"></label><label class="wide">School / Location<input name="school"></label><label>Target Study Country<select name="targetCountry"><option value="Domestic / Home Country">Domestic / Home Country</option><option value="United States">United States</option><option value="United Kingdom">United Kingdom</option><option value="Canada">Canada</option><option value="Australia / New Zealand">Australia / New Zealand</option><option value="Europe (Germany, Netherlands, etc.)">Europe (Germany, Netherlands, etc.)</option><option value="Asia (Singapore, Japan, etc.)">Asia (Singapore, Japan, etc.)</option></select></label><label>Budget & Financial Aid Priority<select name="budget"><option value="Full scholarship needed">Full scholarship / Financial aid needed</option><option value="Partial scholarship preferred">Partial scholarship preferred</option><option value="Public state university budget">Public state university tuition budget</option><option value="Flexible / Self-funded">Flexible / Self-funded</option></select></label><label class="wide">Primary personal goal or dream projects<textarea name="goals" rows="3" placeholder="e.g. Build apps that help people, study marine biology, start a social enterprise, learn robotics..."></textarea></label></div><button class="btn primary">Save & update profile</button></form></div>
+
 <div class="tab" id="tab-admin"><div class="tab-head"><div><span class="eyebrow">LOCAL AI ADMIN</span><h2>Live platform overview.</h2><p id="adminScopeText">The from-scratch AI only counts student sessions that are currently active. No fake users or hard-coded totals.</p></div></div><div class="admin-stats"><div><b id="adminTotalUsers">0</b><small>Students active now</small></div><div><b id="adminCompleted">0</b><small>Completed now</small></div><div><b id="adminProgress">0</b><small>In progress now</small></div><div><b id="adminToday">0</b><small>Active signups today</small></div></div><div class="admin-grid"><div class="card"><h3>Local AI activity</h3><p id="adminAIInsight" class="muted">Waiting for active student sessions.</p><div id="adminInterestBars" class="bars"></div></div><div class="card"><h3>AI admin explanation</h3><ul id="adminAINotes" class="security"><li>No fabricated platform numbers are used.</li><li>Inactive sessions automatically disappear after their heartbeat expires.</li><li>Only the local browser's active sessions are visible in this from-scratch version.</li><li>For a real multi-user deployment, these same metrics should come from an authorized server database.</li></ul></div></div><div class="card admin-live-card"><div class="admin-live-head"><h3>Active student sessions</h3><span id="adminLiveBadge" class="ai-status ready"><span class="ai-dot"></span>Local AI live</span></div><div id="adminActiveList" class="admin-active-list"><p class="muted">No active student sessions.</p></div></div></div>
+</section></div></section>
 </section></div></section>
 <section class="page" id="blog">
   <div class="shell public">
@@ -185,6 +273,19 @@
 <section class="page" id="about"><div class="shell public about"><div><span class="eyebrow">ABOUT YOUR PATH</span><h1>For students, by purpose.</h1><p>Your Path is decision support, not a replacement for teachers, counselors, parents or professional advice.</p><div class="credits"><b>Founder / Concept</b><span>Madhu</span><b>Website Development</b><span>[Builder]</span><b>Career Guidance</b><span>[Name]</span></div></div><div class="privacy-card"><h3>Privacy by design</h3><p>Real deployment should use a secure backend, encrypted storage, access controls, consent flows, retention rules and deletion controls.</p><button class="btn soft" id="privacyBtn">Privacy notice</button></div></div></section>
 </main>
 <footer><div class="shell foot"><span>© 2026 Your Path — Built by Madhu ✦</span><span><button class="footer-link" id="privacyFoot">Privacy</button> · <button class="footer-link" id="termsFoot">Terms</button> · <button class="footer-link" id="cookieSettings">Cookie settings</button></span></div></footer>
+<div class="auth-loader-backdrop hidden" id="authLoader" aria-live="polite">
+  <div class="auth-loader-card">
+    <div class="auth-loader-spinner">
+      <div class="auth-loader-ring"></div>
+      <span class="brand-mark loader-brand-mark">YP</span>
+    </div>
+    <h3 id="loaderTitle">Preparing your student space...</h3>
+    <p id="loaderSub">Setting up your personalized career exploration environment</p>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loaderBar"></div>
+    </div>
+  </div>
+</div>
 <div class="modal-backdrop hidden" id="authModal">
   <div class="modal auth-modal auth-modal-lg" role="dialog" aria-modal="true" aria-label="Your Path account">
     <button class="close" data-close="authModal" aria-label="Close">×</button>
@@ -241,8 +342,9 @@
           <div class="signup-grid">
             <label>Full name<input name="name" required placeholder="Your name"></label>
             <label>Email<input name="email" type="email" required placeholder="you@example.com"></label>
+            <label>Password<input name="password" type="password" required minlength="6" placeholder="Choose a password (min 6 chars)"></label>
             <label>Phone<input name="phone" placeholder="Optional"></label>
-            <label>Country + code<select name="country"><option>Philippines (+63)</option><option>United States (+1)</option><option>United Kingdom (+44)</option><option>India (+91)</option><option>Other</option></select></label>
+            <label>Country + code<select name="country"><option>Philippines (+63)</option><option>United States (+1)</option><option>United Kingdom (+44)</option><option>India (+91)</option><option>Canada (+1)</option><option>Australia (+61)</option><option>Other</option></select></label>
             <label>Grade/Class<select name="grade"><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option><option>College</option></select></label>
             <label>Age<input name="age" type="number" min="10" max="30" required placeholder="e.g. 16"></label>
           </div>

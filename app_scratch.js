@@ -1,271 +1,271 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const STORE={user:"yp_user_v3",answers:"yp_answers_v3",saved:"yp_saved_v3",cookie:"yp_cookie_v3",session:"yp_question_session_v3"};
-const state={user:JSON.parse(localStorage.getItem(STORE.user)||"null"),answers:JSON.parse(localStorage.getItem(STORE.answers)||"{}"),saved:JSON.parse(localStorage.getItem(STORE.saved)||"[]"),session:JSON.parse(localStorage.getItem(STORE.session)||"null"),qIndex:0};
+const STORE={user:"yp_user_v3",answers:"yp_answers_v3",saved:"yp_saved_v3",cookie:"yp_cookie_v3",session:"yp_question_session_v3",accounts:"yp_accounts_v3",history:"yp_history_v3",savedNotes:"yp_saved_notes_v3"};
+const state={user:JSON.parse(localStorage.getItem(STORE.user)||"null"),answers:JSON.parse(localStorage.getItem(STORE.answers)||"{}"),saved:JSON.parse(localStorage.getItem(STORE.saved)||"[]"),session:JSON.parse(localStorage.getItem(STORE.session)||"null"),accounts:JSON.parse(localStorage.getItem(STORE.accounts)||"{}"),history:JSON.parse(localStorage.getItem(STORE.history)||"[]"),savedNotes:JSON.parse(localStorage.getItem(STORE.savedNotes)||"{}"),qIndex:0,compareSelected:[],eduPathway:null};
 
 const categoryConfig=[
- {id:"interests",label:"Genuine interests",weight:14,types:["scenario","single","multi"]},
- {id:"subjects",label:"Subjects & curiosity",weight:10,types:["multi","single","open"]},
- {id:"problem",label:"Problem solving",weight:12,types:["scenario","scale","single"]},
- {id:"creativity",label:"Creativity",weight:9,types:["scenario","single","open"]},
- {id:"communication",label:"Communication & people",weight:10,types:["scenario","single","rank"]},
- {id:"workstyle",label:"Working style",weight:11,types:["single","scale","scenario"]},
- {id:"motivation",label:"Motivation",weight:9,types:["single","scenario","open"]},
- {id:"learning",label:"Learning environment",weight:8,types:["single","scale","rank"]},
- {id:"pressure",label:"External pressure",weight:9,types:["scenario","single","open"]},
- {id:"values",label:"Values & long-term direction",weight:8,types:["single","scenario","open"]}
+ {id:"interests",label:"Genuine interests",weight:14},
+ {id:"subjects",label:"Subjects & curiosity",weight:10},
+ {id:"problem",label:"Problem solving",weight:12},
+ {id:"creativity",label:"Creativity & design",weight:9},
+ {id:"communication",label:"Communication & people",weight:10},
+ {id:"workstyle",label:"Working style",weight:11},
+ {id:"motivation",label:"Motivation & purpose",weight:9},
+ {id:"learning",label:"Learning environment",weight:8},
+ {id:"pressure",label:"External pressure reflection",weight:9},
+ {id:"values",label:"Values & long-term goals",weight:8}
 ];
 
 const contexts=[
-"when you have a free weekend","during a school project","when nobody is grading you","when you are choosing an extracurricular activity","when you discover a new topic online"
+ {id:"freetime",prefix:"In your free time,",suffix:"during an open weekend"},
+ {id:"project",prefix:"When working on a school or group project,",suffix:"during collaborative teamwork"},
+ {id:"online",prefix:"When browsing and self-learning online,",suffix:"when exploring new topics independently"},
+ {id:"challenge",prefix:"When facing a new, unfamiliar challenge,",suffix:"when tackling an unsolved problem"},
+ {id:"future",prefix:"When planning your future goals,",suffix:"when envisioning your ideal career path"}
 ];
 
-const seedByCategory={
-interests:[
-"What activity would you naturally keep doing after the first hour because you are genuinely absorbed?",
-"If you had to spend a month exploring one unfamiliar area, which kind of exploration would hold your attention?",
-"Which type of question makes you want to search for the answer instead of moving on?",
-"When a hobby becomes difficult, what usually makes you continue?",
-"What kind of result makes you feel that an activity was worth your time?",
-"Which type of project would you open voluntarily without being assigned it?",
-"What topic could you imagine discussing for a long time without needing external praise?",
-"When you see someone demonstrating a skill, what makes you want to try it yourself?",
-"Which activity gives you the strongest feeling of curiosity rather than obligation?",
-"What kind of challenge would you choose if several options were equally available?",
-"Which part of a new field do you usually want to understand first?",
-"What kind of problem makes you lose track of time?",
-"Which type of content do you most often return to after discovering it once?",
-"When you have a completely open afternoon, what kind of activity is most tempting?",
-"What kind of project would you be willing to restart after failing the first attempt?",
-"Which kind of discovery feels most satisfying to you?",
-"What makes you think, 'I want to learn how to do that'?",
-"Which activity would you keep exploring even if your friends were uninterested?",
-"Which kind of curiosity has stayed with you for more than a few months?",
-"What would you choose to investigate if there were no reward, grade, status or audience?"
-],
-subjects:[
-"Which school subject would you choose to study more deeply if you could remove grades from the decision?",
-"Which subject has concepts you enjoy connecting with real-world examples?",
-"When a lesson is difficult, which kind of subject makes you most willing to persist?",
-"Which combination of subjects feels most interesting when you imagine studying them together?",
-"What kind of school assignment do you tend to improve beyond the minimum?",
-"Which subject would you like to understand well enough to teach someone else?",
-"Which subject would you choose for an independent mini-project?",
-"Which type of class makes you ask follow-up questions most often?",
-"Which subject would you miss most if it disappeared from your schedule?",
-"Which subject feels most useful for solving real problems you care about?",
-"Which subject do you enjoy even when the teacher is not especially entertaining?",
-"Which subject-related skill would you like to become noticeably stronger at?",
-"Which subject creates the most interesting questions for you outside class?",
-"Which subject would you combine with technology, design or business?",
-"Which school topic have you explored voluntarily outside the curriculum?",
-"Which subject would you investigate through a documentary, book or experiment?",
-"Which subject has changed the way you look at everyday situations?",
-"Which subject feels difficult but still rewarding?",
-"Which subject would you choose if you could design your own elective?",
-"Which subject area could you imagine studying for several years without needing a quick payoff?"
-],
-problem:[
-"When a problem has no obvious answer, what is your first instinct?",
-"When a solution fails, what do you naturally do next?",
-"Which part of solving a complicated problem feels most satisfying?",
-"When several explanations are possible, how do you decide what to investigate first?",
-"What kind of puzzle or challenge keeps your attention longest?",
-"How do you react when a problem requires several attempts before it works?",
-"When instructions are incomplete, what do you tend to do?",
-"Which approach sounds most natural when a system is behaving unexpectedly?",
-"How do you handle a task that looks too large to finish at first?",
-"What makes you trust that a solution is actually working?",
-"When you notice a mistake, what do you want to know before fixing it?",
-"Which kind of evidence helps you change your mind about a solution?",
-"When two good solutions exist, what usually matters most to you?",
-"How do you approach a problem where people disagree about the cause?",
-"What part of debugging or troubleshooting do you find most interesting?",
-"How comfortable are you breaking a large problem into smaller tests?",
-"What kind of problem would you willingly solve just for the challenge?",
-"When a solution works by accident, what are you most likely to do?",
-"How do you respond when a familiar method stops working?",
-"What kind of problem would you like to become unusually good at solving?"
-],
-creativity:[
-"When you are asked to make something original, where do your ideas usually come from?",
-"What kind of creative constraint makes you more interested rather than less interested?",
-"When you see a design you like, what do you notice first?",
-"Which kind of creative project would you keep refining after it was technically finished?",
-"How do you react when someone critiques something you created?",
-"What kind of medium would you choose to communicate an idea?",
-"When a blank page feels intimidating, what helps you start?",
-"Which part of creating something feels best: imagining, making, testing or polishing?",
-"What kind of unusual combination of ideas sounds fun to explore?",
-"When you redesign something, what do you focus on first?",
-"Which creative task would you try without worrying whether you are already good at it?",
-"How important is personal style when you make something?",
-"What kind of feedback makes you want to improve a creative project?",
-"Which kind of visual, written or interactive work grabs your attention?",
-"When a creative project has no single correct answer, how do you feel?",
-"What would you create if you had to teach an idea without using a normal lecture?",
-"How often do you find yourself changing an existing idea to make it your own?",
-"Which type of creativity feels most natural: visual, technical, verbal, social or practical?",
-"What kind of project would you proudly show someone even if it were unfinished?",
-"What creative skill would you most like to develop over the next two years?"
-],
-communication:[
-"When working with other people, which contribution feels most natural?",
-"How do you usually explain something complicated to someone who is new to it?",
-"What kind of conversation makes you want to learn more about another person?",
-"When a group disagrees, what role do you tend to take?",
-"How comfortable are you asking for clarification when you do not understand?",
-"What makes communication feel satisfying to you?",
-"When someone is struggling with a task, what do you naturally do?",
-"Which kind of group project would you choose voluntarily?",
-"How do you react when you need to present an idea to unfamiliar people?",
-"What kind of feedback are you most comfortable giving?",
-"When someone has a different viewpoint, what makes you curious rather than frustrated?",
-"Which communication skill would most improve your future work?",
-"How do you balance listening with getting your own idea across?",
-"What kind of person do you find easiest to collaborate with?",
-"Which role sounds most natural in a team: explainer, organizer, researcher, builder or mediator?",
-"When a team succeeds, which part of the process gives you the most satisfaction?",
-"How do you prefer to resolve misunderstandings?",
-"What kind of audience would you enjoy communicating with?",
-"How much do you enjoy helping someone understand something they previously found confusing?",
-"What kind of leadership communication would you like to become better at?"
-],
-workstyle:[
-"When you have control over how a task gets done, which structure suits you?",
-"How much uninterrupted time do you prefer before checking in with other people?",
-"When priorities change suddenly, what helps you stay productive?",
-"Which environment would make it easiest for you to do your best work?",
-"How do you prefer to divide a large project?",
-"What balance between routine and variety feels comfortable?",
-"When you have several tasks, how do you decide what to do first?",
-"How much autonomy do you want in choosing methods?",
-"Which sounds better: a clearly defined task or a problem you must define yourself?",
-"How do you feel about working on a project that changes direction repeatedly?",
-"What kind of workspace helps you concentrate?",
-"When deadlines are far away, what keeps you moving?",
-"How do you prefer to receive instructions?",
-"How comfortable are you switching between deep focus and social collaboration?",
-"What kind of responsibility would you rather have?",
-"How do you respond to repetitive work when it serves a larger goal?",
-"What makes a workday feel satisfying to you?",
-"Which schedule would let you use your strengths best?",
-"How much structure do you need before starting an unfamiliar task?",
-"What work pattern would you like to avoid in a future career?"
-],
-motivation:[
-"Which outcome would make you feel that your effort was meaningful?",
-"What kind of progress motivates you to keep going?",
-"Which reward matters least to you when deciding whether to pursue an activity?",
-"What makes you willing to practice a difficult skill for months?",
-"When a task is boring but useful, what helps you finish it?",
-"Which kind of recognition feels genuinely satisfying rather than merely impressive?",
-"What would make you choose a harder path over an easier one?",
-"How important is visible progress to your motivation?",
-"What makes you proud of your work?",
-"Which kind of goal would you willingly set for yourself?",
-"When nobody notices your effort, what keeps you working?",
-"Which matters more when choosing a project: impact, mastery, freedom, creativity or stability?",
-"What makes you lose motivation quickly?",
-"How do you react when progress is slower than expected?",
-"What kind of challenge gives you a sense of purpose?",
-"Which future outcome would you work toward even if it took years?",
-"How much does competition motivate you?",
-"What kind of independence matters most to you?",
-"What makes a successful result feel personally meaningful?",
-"If money and status were equal across careers, what would you optimize for?"
-],
-learning:[
-"When learning a new skill, what do you want to do first?",
-"How do you know when you genuinely understand something?",
-"Which learning format keeps you engaged longest?",
-"What do you do when an explanation does not make sense?",
-"How much trial and error do you like when learning?",
-"When you find a gap in your knowledge, what do you do?",
-"How do you prefer to practice a new skill?",
-"What kind of teacher or mentor helps you learn best?",
-"How much theory do you want before applying an idea?",
-"Which type of project teaches you the most?",
-"How do you prefer to prepare for a difficult assessment?",
-"When you learn from the internet, what makes a source feel trustworthy?",
-"How comfortable are you teaching yourself from multiple sources?",
-"What helps you remember something for a long time?",
-"How do you respond to feedback while learning?",
-"Which is more satisfying: understanding a concept or mastering a procedure?",
-"How much freedom do you want to choose what to learn next?",
-"What do you do when you become interested in a topic outside school?",
-"How do you prefer to measure your progress?",
-"What learning habit would you most like to strengthen?"
-],
-pressure:[
-"When people around you strongly prefer a particular career for you, what happens to your own preference?",
-"If a prestigious career did not impress anyone, how interested would you remain?",
-"When friends choose a popular field, how much does that affect your curiosity?",
-"How often do salary discussions change how you think about a career?",
-"If your family expected one path, what would you want to investigate before agreeing?",
-"How confident are you that your current career preference comes from your own experiences?",
-"What information might be missing from your current view of careers?",
-"When someone says a career is 'the future,' what do you do with that claim?",
-"How much does social media influence what careers seem attractive?",
-"If a career were respected but its daily tasks bored you, what would you do?",
-"When adults give career advice, what kind of evidence would you want from them?",
-"How often do you compare your future with classmates' plans?",
-"What would make you reconsider a career you chose mainly for status?",
-"If a career paid less but matched your interests much better, what would you investigate?",
-"How much do you feel you need a career choice that others can easily explain?",
-"What would you choose to explore if nobody could see the result?",
-"How comfortable are you saying 'I don't know yet' about your career?",
-"Which pressure is hardest to notice: family, peers, trends, money or lack of information?",
-"How often do you choose something because it seems safe rather than interesting?",
-"What would help you separate your own preference from other people's expectations?"
-],
-values:[
-"What kind of contribution would you like your future work to make?",
-"Which trade-off would you think about most when choosing an education path?",
-"What does a good life look like beyond a job title?",
-"How important is flexibility when imagining your adult life?",
-"What kind of problem in society would you like your work to help address?",
-"Which matters most: stability, autonomy, impact, mastery, creativity or community?",
-"What kind of environment would you want to spend most of your working life in?",
-"How important is geographic freedom to your future plans?",
-"What would make you change your mind about a long-term goal?",
-"Which future skill do you think will remain useful across many careers?",
-"What kind of person do you hope your education helps you become?",
-"How much uncertainty are you comfortable accepting for a meaningful opportunity?",
-"What does financial security mean to you?",
-"How important is time outside work when thinking about a career?",
-"Which kind of responsibility would you be proud to carry?",
-"What would make an education pathway feel worth the effort?",
-"How important is the ability to keep learning throughout adulthood?",
-"What kind of legacy, if any, would you want your work to leave?",
-"Which constraint would most affect your education choices: location, cost, time, family needs or academic requirements?",
-"What do you want your future career to leave room for?"
-]};
-
-const answerSets={
-single:["I would choose it naturally","I would probably try it","I might choose it if it had a clear purpose","I would avoid it unless required","I am genuinely unsure"],
-multi:["Building or making","Researching or analyzing","Creating or designing","Explaining or teaching","Helping or organizing","Experimenting","Writing or communicating","Leading or coordinating"],
-scale:null,scenario:["Explore the problem first","Start making a small experiment","Ask someone and compare perspectives","Research examples and evidence","Break it into steps and test each one"],open:null,rank:["Most natural","Second most natural","Middle","Less natural","Least natural"]
-};
+function getCategoryStems(){
+ return {
+  interests:[
+   {format:c=>`${c.prefix} which type of activity keeps you so engaged that you lose track of time?`,type:"scenario",options:["Building, coding, or assembling technical systems from scratch","Sketching, editing video, or crafting visual art and stories","Analyzing data, scientific evidence, or solving logic puzzles","Organizing events, helping friends, or discussing big social ideas","Experimenting with physical tools, hardware, or nature"]},
+   {format:c=>`${c.prefix} what kind of video or article do you naturally click on first?`,type:"single",options:["Deep dives into how software, machines, or algorithms work","Creative tutorials on design, animation, storytelling, or music","Explanations of human psychology, philosophy, or social behavior","Scientific breakthroughs in astronomy, medicine, or environment","Business case studies, entrepreneurship, and economics"]},
+   {format:c=>`I find myself genuinely curious about how complicated systems and mechanisms operate behind the scenes (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which of these activity areas spark your highest genuine curiosity (${c.suffix})?`,type:"multi",options:["Writing software, apps, or game logic","Graphic design, UX/UI, and digital media","Scientific experiments & environmental research","Community organizing, mentoring & counseling","Financial analysis, investing & market trends","Robotics, mechanics & physical engineering","Creative writing, journalism & podcasting","Healthcare, biology & clinical medicine"]},
+   {format:c=>`Rank what gives you the greatest sense of accomplishment (${c.suffix}), from 1 (Highest) to 5 (Lowest):`,type:"rank",options:["Building a functional tool or system that runs smoothly","Creating a beautiful visual design or expressive story","Solving a complex puzzle or uncovering hidden patterns in data","Helping someone overcome a difficult personal or academic hurdle","Leading a team to successfully execute an ambitious plan"]},
+   {format:c=>`${c.prefix} if you could shadow any professional for an entire week, who would you pick?`,type:"scenario",options:["A lead software architect or AI engineer developing new platforms","A creative director or product designer shaping innovative products","A research scientist or data analyst discovering new breakthroughs","A clinical psychologist, doctor, or community advocate helping people","A startup founder or executive making high-impact decisions"]},
+   {format:c=>`I would gladly spend hours refining a project even if no one grades or inspects it (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when you encounter a new hobby or topic, what part do you want to explore first?`,type:"single",options:["The fundamental rules, technical documentation, and underlying mechanics","The visual aesthetics, creative possibilities, and expressive style","The practical applications and real-world utility","The community, culture, and stories of the people involved","The history, theory, and foundational concepts"]},
+   {format:c=>`${c.prefix} which type of project would you voluntarily initiate without being prompted?`,type:"scenario",options:["Automating a repetitive task or building an interactive web tool","Creating a digital illustration, video essay, or musical piece","Conducting an investigation or analyzing statistics on a topic I love","Hosting a discussion group, workshop, or community initiative","Drafting a business plan or strategy for an idea I believe in"]},
+   {format:c=>`I am energized by solving intricate technical or logical challenges (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what kind of question makes you want to research the answer immediately?`,type:"single",options:["Why a certain piece of code, machine, or software broke","How a compelling visual effect, movie scene, or design was produced","Why people behave or make decisions in specific predictable ways","What physical laws or natural phenomena explain an observed event","How a successful company grew and structured its revenue model"]},
+   {format:c=>`Which types of tools or equipment do you most enjoy working with (${c.suffix})?`,type:"multi",options:["Code editors, terminal commands & developer IDEs","Design software (Figma, Photoshop, Blender, Illustrator)","Spreadsheets, data visualization & statistics packages","Video editing suites, audio DAWs & digital cameras","Laboratory gear, microscopes & field measurement tools","Whiteboards, planning boards & collaboration tools","Physical toolkits, breadboards & microcontrollers","Legal briefs, research journals & policy archives"]},
+   {format:c=>`Rank these interest domains in order of personal appeal (${c.suffix}), from 1 (Most appealing) to 5 (Least):`,type:"rank",options:["Technology, Computing & Software Systems","Art, Design & Visual Storytelling","Natural Sciences, Medicine & Healthcare","Humanities, Psychology & Social Sciences","Business, Finance & Strategic Leadership"]},
+   {format:c=>`${c.prefix} when an activity becomes difficult, what usually motivates you to push through?`,type:"single",options:["The satisfaction of troubleshooting until the logic finally clicks","The vision of a polished, beautiful end product I can be proud of","The desire to master an essential skill and gain deep understanding","Knowing that finishing this will directly assist or inspire others","The competitive excitement of overcoming a tough obstacle"]},
+   {format:c=>`I enjoy testing theories by trying out real hands-on experiments (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what activity gives you the strongest feeling of genuine fulfillment rather than obligation?`,type:"scenario",options:["Developing a working solution that saves time or solves a problem","Bringing a novel creative idea to life in a visual or auditory format","Uncovering a clear explanation for a confusing topic through research","Connecting with someone one-on-one and making them feel supported","Pitching an idea and rallying others around a common mission"]},
+   {format:c=>`${c.prefix} which field could you imagine immersing yourself in for years without getting bored?`,type:"single",options:["Software Engineering, Cyber Systems & Artificial Intelligence","Digital Design, Architecture & Creative Media","Healthcare, Neuroscience & Biomedical Sciences","Education, Counseling & Social Development","Economics, Venture Creation & International Trade"]},
+   {format:c=>`I prefer working on open-ended creative concepts rather than following strict step-by-step guidelines (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} describe in your own words one topic or activity you find endlessly fascinating and why:`,type:"open",placeholder:"Write about any field, project, or curiosity that captures your imagination..."},
+   {format:c=>`${c.prefix} if you had to spend an entire month exploring one topic without grades or exams, what would it be?`,type:"scenario",options:["Designing and coding a custom web app or indie game","Creating a portfolio of digital illustrations or 3D animations","Analyzing real-world datasets to uncover social or economic trends","Volunteering at a clinic or community outreach organization","Building a physical electronic prototype or mechanical gadget"]}
+  ],
+  subjects:[
+   {format:c=>`${c.prefix} which subject area feels most rewarding to you when you understand a tough concept?`,type:"single",options:["Computer Science, Programming, and Logic","Mathematics, Statistics, and Quantitative Reasoning","Physical and Biological Sciences (Physics, Chemistry, Biology)","Literature, Philosophy, and Creative Writing","Social Studies, History, and Human Geography"]},
+   {format:c=>`I enjoy seeing how abstract formulas and theories connect to real-world applications (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which combination of disciplines would you be most excited to study together (${c.suffix})?`,type:"multi",options:["Computer Science + Mathematics","Design & Arts + Psychology","Biology + Data Science (Bioinformatics)","Economics + Political Science","Physics + Mechanical Engineering","Literature + Media Communications","Chemistry + Environmental Science","Business Administration + Technology"]},
+   {format:c=>`${c.prefix} if you were designing your own custom elective course, what would be its core subject?`,type:"scenario",options:["Artificial Intelligence & Modern Web Development","Human-Centered Product & Interaction Design","Epidemiology & Global Healthcare Innovations","Behavioral Economics & Entrepreneurial Strategy","Ethics, Law & International Diplomacy"]},
+   {format:c=>`Rank these academic activities based on your enjoyment (${c.suffix}), from 1 (Most enjoyable) to 5 (Least):`,type:"rank",options:["Solving complex math and algorithm problem sets","Writing an analytical essay comparing different viewpoints","Conducting hands-on science experiments in a laboratory","Creating multimedia presentations and visual infographics","Participating in classroom debates and mock trials"]},
+   {format:c=>`I find quantitative subjects (like math and physics) more engaging than purely memorization-based classes (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when reading a textbook or article, what part catches your attention most?`,type:"single",options:["Diagrams explaining systems, circuit paths, or code workflows","Visual design, typography, and illustrative figures","Case studies detailing real people and historical events","Graphs, statistical charts, and empirical study results","Theoretical debates and ethical dilemmas"]},
+   {format:c=>`${c.prefix} which subject do you find yourself researching questions about outside of school hours?`,type:"scenario",options:["Tech developments, gadgets, and software architecture","Artistic techniques, animation pipelines, or cinematography","Medical discoveries, mental health, or neuroscience","Economic trends, stock markets, and startup funding","Environmental conservation, climate science, and biodiversity"]},
+   {format:c=>`I enjoy subjects where problems have clear, objective, verifiable answers over subjective interpretation (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} which subject would you feel most confident teaching or explaining to a junior student?`,type:"single",options:["Mathematics, Algebra, or Logic","Science (Biology, Chemistry, or Physics)","Language, Literature, and Creative Expression","Information Technology and Computer Basics","History, Social Studies, and Civics"]},
+   {format:c=>`Which topics from modern science and technology fascinate you most (${c.suffix})?`,type:"multi",options:["Machine learning models & neural networks","Space exploration & astrophysical phenomena","Genetic engineering & CRISPR biotechnology","Clean energy & sustainable infrastructure","Cybersecurity & ethical hacking","Human cognitive neuroscience","Robotic automation & autonomous vehicles","Quantum computing & theoretical physics"]},
+   {format:c=>`Rank these study methods based on what works best for you (${c.suffix}), from 1 (Most effective) to 5 (Least):`,type:"rank",options:["Building practical mini-projects to apply the concepts","Breaking theories down into concise summary notes and diagrams","Discussing and debating questions in study groups","Practicing through challenging problem sets and drills","Watching in-depth video lectures and case studies"]},
+   {format:c=>`I am willing to struggle through difficult subject matter if the underlying topic is genuinely exciting (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} which type of assignment do you consistently put extra effort into beyond the basic requirements?`,type:"scenario",options:["Writing and optimizing clean code or building an interactive demo","Polishing visual designs, slides, or creative layouts","Conducting exhaustive research and finding obscure primary sources","Organizing team contributions and preparing an engaging presentation","Modeling and calculating precise mathematical solutions"]},
+   {format:c=>`${c.prefix} if grades were removed completely, which subject would you still eagerly study?`,type:"single",options:["Computer Science and Programming","Creative Arts, Design, and Media","Psychology, Sociology, and Philosophy","Natural Sciences and Medical Research","Business, Finance, and Economics"]},
+   {format:c=>`I find human behavior, culture, and communication more interesting than mechanical or computational systems (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} which field of applied research would you want to contribute to?`,type:"scenario",options:["Developing accessible healthcare technologies and medical diagnostics","Engineering scalable software tools and secure digital networks","Designing sustainable cities, green energy, and environmental protections","Creating educational media and creative tools for students","Formulating public economic policies to reduce community disparities"]},
+   {format:c=>`I prefer deep focus on one specialized academic topic rather than spreading my attention across diverse fields (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} tell us about a school subject or topic you initially found confusing but grew to love once it clicked:`,type:"open",placeholder:"Share your journey with a subject that became rewarding over time..."},
+   {format:c=>`${c.prefix} when choosing your high school or college electives, what is your primary decision criteria?`,type:"single",options:["Direct practical skills that prepare me for high-demand tech roles","Creative freedom to build an artistic or design portfolio","A rigorous scientific foundation for healthcare or research paths","Leadership and communication skills for business and management","Deep exploration of history, law, and human society"]}
+  ],
+  problem:[
+   {format:c=>`${c.prefix} when an unexpected bug or error breaks your work, what is your immediate reaction?`,type:"scenario",options:["Isolate the problem systematically and test potential fixes one by one","Search online documentation and forums for how others solved it","Brainstorm alternative creative workarounds to bypass the roadblock","Consult a peer or mentor to get a fresh perspective on the issue","Step back, review the overarching architecture, and rebuild if needed"]},
+   {format:c=>`I enjoy unraveling complicated logic puzzles and finding the most efficient solution (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which types of problems do you feel most natural solving (${c.suffix})?`,type:"multi",options:["Technical bugs in software code or scripts","Aesthetic/visual imbalances in a design layout","Interpersonal conflicts and team miscommunications","Mathematical and statistical data discrepancies","Logistical bottlenecks and scheduling inefficiencies","Mechanical or hardware malfunctions in physical devices","Ambiguous strategic decisions with incomplete information","Complex research questions with conflicting source claims"]},
+   {format:c=>`${c.prefix} how do you handle a problem where the instructions are vague or incomplete?`,type:"single",options:["Treat the ambiguity as an opportunity to define my own creative approach","Break the problem into testable assumptions and experiment with mini-prototypes","Ask clarifying questions to identify the core constraints and objectives","Research analogous examples to see standard best practices","Build a simple baseline first and iterate based on feedback"]},
+   {format:c=>`Rank these problem-solving stages based on which feels most satisfying (${c.suffix}), from 1 (Most) to 5 (Least):`,type:"rank",options:["Diagnosing the root cause beneath the visible symptoms","Brainstorming unconventional, out-of-the-box solution ideas","Building and testing the working implementation","Optimizing the solution for speed, elegance, and reliability","Explaining the solution clearly so others can reproduce it"]},
+   {format:c=>`I prefer relying on verified empirical evidence and data over intuition when making tough decisions (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when two promising solutions exist for the same challenge, how do you decide between them?`,type:"scenario",options:["Evaluate measurable metrics like efficiency, accuracy, and scalability","Choose the one that provides the best user experience and aesthetic elegance","Pick the solution that is simplest to implement and maintain over time","Consult with stakeholders to see which aligns best with team priorities","Build a quick A/B test to let real-world performance decide"]},
+   {format:c=>`${c.prefix} what makes you feel confident that a solution you built is truly finished?`,type:"single",options:["It passed all rigorous edge cases and stress tests without failing","It looks clean, intuitive, and enjoyable for people to interact with","The underlying codebase/logic is well-documented and clean","The team or client tested it and confirmed it solves their core need","It outperforms previous benchmarks by a significant margin"]},
+   {format:c=>`I am comfortable making progress on a problem even when there is no single 'correct' answer (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} if a system you built works but you do not know why, what do you do?`,type:"single",options:["Investigate until I fully understand the exact mechanism that made it work","Document the successful configuration and move on to next deliverables","Refactor the components until the logic is completely transparent","Test edge cases to verify it won't unexpectedly fail later","Discuss it with a colleague to get their take on the unexpected outcome"]},
+   {format:c=>`Which problem-solving methodologies do you naturally gravitate toward (${c.suffix})?`,type:"multi",options:["Root cause analysis & first-principles thinking","Rapid prototyping & design-thinking iterations","Statistical regression & quantitative modeling","Empathy mapping & user journey analysis","Flowcharting systems & dependency mapping","Collaborative brainstorming & agile sprints","Risk assessment & worst-case scenario planning","Algorithmic optimization & computational complexity"]},
+   {format:c=>`Rank these types of challenges in order of which you'd tackle with the most enthusiasm (${c.suffix}), from 1 to 5:`,type:"rank",options:["Fixing a high-stakes technical outage or complex system bug","Redesigning an unintuitive product into a seamless experience","Analyzing messy, unorganized data to uncover actionable trends","Mediating a team disagreement to achieve consensus and momentum","Developing a go-to-market strategy for an unproven new concept"]},
+   {format:c=>`I enjoy troubleshooting mechanical or digital gadgets when they stop working properly (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when a project plan completely falls apart, what is your approach?`,type:"scenario",options:["Quickly re-prioritize essential requirements and chart a realistic recovery path","Gather the group to boost morale and distribute adjusted responsibilities","Identify what assumption failed and adapt the strategy accordingly","Look for creative shortcuts that deliver the core value with less effort","Work through the night to build a functional prototype that recovers ground"]},
+   {format:c=>`${c.prefix} which problem scale excites you most?`,type:"single",options:["Micro-level optimization: making individual lines of code or components blazingly fast","Product-level architecture: designing how multiple features interact smoothly","Human-level dynamics: improving how individuals and teams communicate","Ecosystem-level impact: addressing global challenges like health, climate, or education","Market-level dynamics: building businesses that outmaneuver industry competitors"]},
+   {format:c=>`I find satisfaction in automating manual, repetitive tasks through scripts or tools (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what is your favorite part of solving a complicated mystery or puzzle?`,type:"single",options:["The moment of insight when separate clues connect into a clear pattern","The methodical process of eliminating impossible hypotheses","Sharing the final explanation with others who were confused","Applying the discovery to build something tangible","Knowing that I persevered through initial confusion"]},
+   {format:c=>`I tend to question established rules and ask 'why does it have to be done this way?' (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} describe a tough problem you enjoyed solving recently and how you approached it:`,type:"open",placeholder:"Describe the challenge, your thought process, and what you learned..."},
+   {format:c=>`${c.prefix} when presented with a massive dataset, what is your first instinct?`,type:"scenario",options:["Write queries or code to clean the data and compute summary metrics","Plot visual charts to spot outliers, correlations, and visual clusters","Formulate specific testable hypotheses before diving in","Search for human stories and meaningful real-world context behind the numbers","Synthesize the key takeaways into an executive slide deck"]}
+  ],
+  creativity:[
+   {format:c=>`${c.prefix} when starting a creative project, where do your ideas usually originate?`,type:"single",options:["Analyzing existing products and remixing their best functional features","Drawing inspiration from visual arts, nature, architecture, and cinematography","Brainstorming solutions to real daily frustrations that people experience","Doodling, free-writing, and letting spontaneous imagination take over","Studying historical precedents and philosophical themes"]},
+   {format:c=>`I find creative constraints (like limited budgets or strict rules) make projects more exciting (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which creative mediums feel most natural for you to express yourself (${c.suffix})?`,type:"multi",options:["User interface design, Figma wireframes & website aesthetics","Digital illustration, 2D/3D concept art & graphic design","Interactive programming, game mechanics & procedural logic","Creative writing, scriptwriting & worldbuilding","Video editing, motion graphics & cinematography","Music production, sound design & podcast audio","Interior decorating, spatial design & physical architecture","Branding, marketing slogans & visual identities"]},
+   {format:c=>`${c.prefix} when you notice a product or app with poor visual design, how do you react?`,type:"scenario",options:["I mentally redesign the layout, colors, and typography to make it cleaner","I focus on fixing the confusing user flow and broken interaction steps","I wonder how it passed user testing and how the team prioritized it","I inspect the underlying code to see what technical compromises occurred","I ignore the visuals as long as the core functionality gets the job done"]},
+   {format:c=>`Rank what makes a creative design truly great (${c.suffix}), from 1 (Most important) to 5 (Least):`,type:"rank",options:["Flawless usability that makes complex tasks feel effortless","Breathtaking visual beauty and distinct emotional atmosphere","Unprecedented originality and boundary-pushing innovation","Clarity in communicating its core message without confusion","Technical elegance and lightweight performance"]},
+   {format:c=>`I enjoy spending time polishing visual details like spacing, fonts, and color palettes (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when someone gives constructive critique on your creative work, what is your approach?`,type:"single",options:["Separate my ego from the work, analyze the feedback, and iterate rapidly","Ask clarifying questions to understand what emotions or confusion they felt","Compare their feedback against my original creative vision before deciding","Look for creative compromises that satisfy the feedback while keeping novelty","Test the revised design against multiple other users to see if feedback holds"]},
+   {format:c=>`${c.prefix} what part of the creative production process brings you the greatest joy?`,type:"scenario",options:["The initial blue-sky brainstorming phase where anything is possible","The hands-on craft of building, styling, and watching it take shape","The final polish phase where fine details elevate it to professional quality","The release moment when audience members react and interact with it","The retrospective review discovering how much skill I gained along the way"]},
+   {format:c=>`I believe every technical product should have world-class aesthetic design (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} if you were tasked with explaining a complex concept without a lecture, what would you create?`,type:"single",options:["An interactive web simulation or playable mini-game","An animated visual infographic or comic strip","A compelling video essay with dynamic editing and clear narration","A hands-on physical model or workshop activity","A structured case-study booklet with real-world examples"]},
+   {format:c=>`Which types of creative projects would you proudly display in your personal portfolio (${c.suffix})?`,type:"multi",options:["A fully responsive mobile application or web portfolio","A brand identity package with custom logos and visual guidelines","A playable 2D/3D video game level or interactive experience","A published research essay or investigative journalism article","A short film, documentary, or motion graphics reel","An architectural blueprint or interior redesign concept","A hardware prototype or automated mechanical device","A series of high-impact advertising or social media campaigns"]},
+   {format:c=>`Rank these creative roles based on which suits your strengths best (${c.suffix}), from 1 to 5:`,type:"rank",options:["UI/UX Designer — designing intuitive digital experiences","Art Director — establishing the visual tone and stylistic vision","Creative Technologist — bridging custom code with interactive art","Content Strategist — crafting compelling stories and brand narratives","Product Architect — balancing technical feasibility with aesthetic elegance"]},
+   {format:c=>`I often come up with unconventional ideas that combine two completely unrelated fields (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when facing a blank canvas or empty document, what helps you get started?`,type:"scenario",options:["Creating moodboards and gathering visual inspiration from top creators","Outlining the functional requirements and structure first","Diving straight into rough sketching without judging early attempts","Discussing ideas aloud with a friend to clarify concepts","Conducting research into target audience preferences"]},
+   {format:c=>`${c.prefix} which aesthetic style resonates most with you?`,type:"single",options:["Sleek minimalism, dark mode glassmorphism, and clean modern typography","Vibrant, expressive, high-energy palettes with dynamic motion","Warm, organic, earthy textures with human-crafted touches","Futuristic cyberpunk, retro-neon, and high-tech interfaces","Classic, structured, editorial layouts with timeless elegance"]},
+   {format:c=>`I would rather create an original work from scratch than iterate on someone else's template (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how important is expressing your personal identity in your work?`,type:"single",options:["Essential — my work must reflect my unique artistic voice and vision","Very important — but always balanced with user utility and client goals","Moderate — I focus more on solving the user's problem than personal expression","Secondary — I prioritize technical excellence and objective performance","Situational — it depends entirely on whether the project is art or a utility"]},
+   {format:c=>`I find designing interfaces and interactive experiences more exciting than pure graphic illustration (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} describe a creative piece, product, or design that inspired you recently and why:`,type:"open",placeholder:"Write about what made the piece special, its craft, and emotional impact..."},
+   {format:c=>`${c.prefix} if you had unlimited creative budget and a team of 5, what would you direct them to build?`,type:"scenario",options:["An innovative educational app that makes learning feel like an adventure game","An animated short film with groundbreaking visual style and soundtrack","A community platform connecting students with real-world mentors","An interactive physical installation blending projection mapping and sound","A breakthrough consumer product that redefines an everyday habit"]}
+  ],
+  communication:[
+   {format:c=>`${c.prefix} when working in a group, which role do you naturally step into?`,type:"scenario",options:["The Architect/Builder: focusing on technical execution and building deliverables","The Visionary/Designer: shaping the aesthetic presentation and creative concept","The Organizer/Leader: structuring timelines, roles, and keeping everyone aligned","The Researcher/Analyst: gathering facts, verifying data, and quality-checking arguments","The Mediator/Communicator: ensuring everyone's voice is heard and resolving friction"]},
+   {format:c=>`I feel energized when explaining complex concepts in simple, intuitive terms (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which communication settings make you feel most effective (${c.suffix})?`,type:"multi",options:["One-on-one deep conversations & mentoring","Presenting on stage to large audiences","Written documentation, tutorials & articles","Collaborative brainstorms in small agile teams","Live debates, negotiations & courtroom mock trials","Podcasts, live streams & video storytelling","Visual communication through charts & diagrams","Community moderation & active forum discussions"]},
+   {format:c=>`${c.prefix} how do you react when two team members have a fierce disagreement?`,type:"scenario",options:["Listen to both sides neutrally, identify common ground, and help negotiate a compromise","Look at the objective facts and data to determine which approach has higher merit","Propose building small tests for both ideas to see which performs better","Remind everyone of the overarching goal and time constraints to keep momentum","Focus on my assigned tasks and let the team leads resolve the dispute"]},
+   {format:c=>`Rank what matters most when delivering an important presentation (${c.suffix}), from 1 to 5:`,type:"rank",options:["Captivating the audience with compelling storytelling and charisma","Presenting rock-solid evidence, methodology, and verifiable data","Designing beautiful, clean slides that simplify complicated diagrams","Providing clear, actionable next steps for the audience to execute","Engaging the room through interactive Q&A and dialogue"]},
+   {format:c=>`I am comfortable taking the lead when a project lacks direction (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when someone on your team is falling behind on their tasks, what do you do?`,type:"single",options:["Reach out privately with empathy to ask what is blocking them and offer help","Help break their task into smaller, manageable sub-steps they can complete easily","Re-allocate non-critical parts of their workload to keep the team on schedule","Pair up with them for a focused working session to tackle it together","Discuss the bottleneck transparently during the next team sync"]},
+   {format:c=>`${c.prefix} what gives you the strongest feeling of satisfaction in collaborative work?`,type:"scenario",options:["Watching a diverse group of people unite their strengths to ship something remarkable","Knowing that my technical or creative contribution was vital to our success","Mentoring a teammate and watching them grow in confidence and skill","Receiving public recognition and praise for the team's achievement","Creating a supportive, fun team environment where everyone enjoyed the process"]},
+   {format:c=>`I prefer communicating important updates through clear written messages over unexpected phone calls (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how do you prepare for presenting a project to an audience of non-experts?`,type:"single",options:["Replace jargon with everyday analogies and visual diagrams","Focus entirely on the real-world benefits and 'why it matters' to them","Rehearse my pacing, tone of voice, and body language multiple times","Prepare engaging interactive demos so they can experience the concept live","Anticipate common questions and prepare clear slide appendices"]},
+   {format:c=>`Which interpersonal skills are you most interested in mastering (${c.suffix})?`,type:"multi",options:["Persuasive public speaking & pitch storytelling","Empathetic active listening & psychological counseling","Strategic negotiation & consensus building","Team leadership & inspirational delegation","Technical writing & API documentation","Cross-cultural communication & diplomatic protocol","Crisis communication & public relations","User interviewing & qualitative research"]},
+   {format:c=>`Rank these audience types in order of where you'd feel most confident speaking (${c.suffix}), from 1 to 5:`,type:"rank",options:["A room of fellow technical peers and engineers","A group of creative artists, designers, and storytellers","A panel of potential investors and business judges","A classroom of younger students eager to learn","A diverse public community gathering"]},
+   {format:c=>`I enjoy networking and connecting with people from different fields and backgrounds (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when receiving feedback from users or customers, what is your primary focus?`,type:"scenario",options:["Look beyond what they say to understand their underlying emotional needs and struggles","Categorize the feedback into clear bug reports, feature requests, and usability fixes","Measure the statistical frequency of each complaint to prioritize the roadmap","Brainstorm creative solutions that exceed what the users originally requested","Reply personally to make them feel heard and appreciated"]},
+   {format:c=>`${c.prefix} which communication style best matches your natural personality?`,type:"single",options:["Thoughtful, analytical, and structured with precise details","Warm, empathetic, encouraging, and people-centered","Direct, decisive, energetic, and action-oriented","Creative, witty, expressive, and story-driven","Calm, observant, diplomatic, and focused on listening"]},
+   {format:c=>`I find one-on-one deep conversations more rewarding than large networking events (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how do you handle explaining a concept when the other person looks completely confused?`,type:"single",options:["Pause immediately, ask where I lost them, and try a completely different analogy","Draw a quick diagram or flowchart on paper or a whiteboard","Break it down to the simplest first-principles example possible","Ask them to explain their current understanding so I can spot the gap","Show a live demonstration rather than continuing verbal explanation"]},
+   {format:c=>`I am comfortable advocating for minority viewpoints when a group is rushing into consensus (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} share an experience where good communication made a huge difference in a project:`,type:"open",placeholder:"Describe what happened, how you communicated, and the outcome..."},
+   {format:c=>`${c.prefix} if you were assigned to lead a team of 4 peers for a semester project, what is step one?`,type:"scenario",options:["Hold an informal kickoff meeting to understand each member's individual passions and goals","Set up clear project tools (Kanban board, shared repo/docs, group chat)","Define the project milestones, success criteria, and hard deadlines","Facilitate a fun brainstorming session to align on the creative concept","Assign initial research tasks based on each person's core strengths"]}
+  ],
+  workstyle:[
+   {format:c=>`${c.prefix} which daily working schedule would let you do your absolute best work?`,type:"single",options:["Long blocks of uninterrupted deep focus with minimal meetings","A dynamic blend of independent sprints and lively team collaboration sessions","A structured 9-to-5 routine with predictable tasks and clear deadlines","Flexible, autonomous hours where I control when and where I produce deliverables","Fast-paced, high-intensity project rotations with frequent new challenges"]},
+   {format:c=>`I thrive in quiet, solitary environments where I can concentrate without distraction (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which environment characteristics are most critical for your productivity (${c.suffix})?`,type:"multi",options:["Dual-monitor desk setup with fast internet and high-spec hardware","Quiet library or private office with zero auditory interruptions","Vibrant creative studio with whiteboards, art supplies & music","Collaborative co-working space with energetic teammates nearby","Outdoor/field environment with physical mobility and fresh air","Clear task management boards (Trello, Notion, Jira) with checkable goals","Total autonomy to decide methods and technical tools","Access to direct mentorship and instant feedback loops"]},
+   {format:c=>`${c.prefix} when juggling multiple competing assignments, how do you manage your time?`,type:"scenario",options:["Prioritize by urgency and impact using a structured matrix or task list","Tackle the hardest, most complex problem first while my energy is highest","Knock out quick, easy tasks first to build momentum and clear mental space","Dedicate full themed days to specific subjects to minimize context switching","Work dynamically based on which project sparks my immediate inspiration"]},
+   {format:c=>`Rank these workplace cultures based on where you'd feel most motivated (${c.suffix}), from 1 to 5:`,type:"rank",options:["A high-growth tech startup moving blazingly fast with high autonomy","A prestigious research institution dedicated to scientific rigor and discovery","A close-knit creative agency crafting high-profile visual campaigns","A purpose-driven non-profit or hospital prioritizing human care and social good","An established global enterprise offering stability, structure, and clear career ladders"]},
+   {format:c=>`I prefer working on one project at a time until it is complete over multitasking across three (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how do you feel when project requirements change suddenly in the middle of development?`,type:"single",options:["Excited — pivots often lead to much better ideas and innovative solutions","Adaptable — I quickly evaluate what work can be preserved and refactor the rest","Calm — as long as deadlines and expectations are adjusted accordingly","Frustrated at first, but I systematically reorganize the tasks and move forward","Cautious — I want to understand why the shift occurred before changing course"]},
+   {format:c=>`${c.prefix} what degree of guidance from managers or teachers do you prefer?`,type:"scenario",options:["High autonomy: give me the end goal and constraints, and let me figure out how to achieve it","Collaborative check-ins: regular milestone reviews and brainstorming feedback","Clear structure: detailed guidelines, examples, and step-by-step rubrics","Mentorship-focused: hands-on coaching where I learn by observing experienced leaders","Objective metrics: judge me purely on the final results and deliverables"]},
+   {format:c=>`I enjoy working under tight deadlines with high adrenaline (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when you hit a mental block while working, what is your go-to reset strategy?`,type:"single",options:["Take a walk, exercise, or step away from screens completely","Switch to an easier sub-task or reorganize my notes and workspace","Talk through the problem out loud with a friend or rubber duck","Browse inspirational work or documentation to see fresh perspectives","Power through by trying different experimental approaches until one works"]},
+   {format:c=>`Which work habits describe you best (${c.suffix})?`,type:"multi",options:["Early planner: completing work days before the deadline","Night owl: doing peak creative/coding work late in the evening","Deep focuser: easily spending 4+ hours absorbed in single tasks","Iterative builder: shipping quick drafts and refining repeatedly","Perfectionist: refining every micro-detail before showing anyone","Team synchronizer: keeping communications and notes crystal clear","Experimental explorer: trying 5 different tools before settling on one","Pragmatic finisher: prioritizing efficiency and essential requirements"]},
+   {format:c=>`Rank these daily tasks in order of which you'd find most enjoyable (${c.suffix}), from 1 to 5:`,type:"rank",options:["Writing code, configuring tools, and debugging technical workflows","Designing visual interfaces, graphics, and presentation decks","Analyzing data sheets, statistics, and writing research reports","Brainstorming product strategy and collaborating in live workshops","Conducting user interviews and testing prototypes with real people"]},
+   {format:c=>`I prefer remote/digital flexibility over having to work in a physical office every single day (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how do you maintain motivation when a project includes repetitive, tedious tasks?`,type:"scenario",options:["Write a script, macro, or shortcut to automate the repetition","Put on focus music or podcasts and power through in timed Pomodoro sprints","Gamify the task by tracking my speed and accuracy metrics","Remind myself of the larger purpose and importance of the final outcome","Break the monotony by alternating between tedious tasks and creative work"]},
+   {format:c=>`${c.prefix} what balance between routine stability and unpredictable variety suits you best?`,type:"single",options:["80% variety / 20% routine: constant new problems, new technologies, and shifting projects","50% variety / 50% routine: a steady operational core with exciting creative challenges","80% routine / 20% variety: predictable expectations and mastered workflows with occasional updates","Project-dependent: periods of intense chaotic exploration followed by structured execution","100% autonomous: let me determine the balance depending on what I am building"]},
+   {format:c=>`I find satisfaction in keeping my digital workspace, files, and notes meticulously organized (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when starting a brand new project, what is your natural starting step?`,type:"single",options:["Build a minimal working prototype as fast as possible to test feasibility","Create a comprehensive plan, timeline, and specification document","Gather references, moodboards, and analyze existing competitors","Assemble the team and align on roles, responsibilities, and communication tools","Formulate core questions and conduct research into user needs"]},
+   {format:c=>`I am comfortable taking calculated risks when exploring unconventional solutions (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} describe your ideal dream workspace setup and daily rhythm:`,type:"open",placeholder:"Describe your ideal desk, tools, schedule, and environment..."},
+   {format:c=>`${c.prefix} which work output would make you feel most proud at the end of a sprint?`,type:"scenario",options:["A live, deployed software application that users can click and test","A comprehensive visual brand identity and design system","A published research paper with clean methodology and data charts","A thriving community event or workshop with energized participants","A validated business model with paying customers and positive unit economics"]}
+  ],
+  motivation:[
+   {format:c=>`${c.prefix} what drives your desire to excel in your studies and projects?`,type:"single",options:["The inner satisfaction of mastering challenging, complex skills","The excitement of bringing original, creative ideas into the world","The desire to build practical tools that solve real societal problems","Achieving financial independence and building a secure, comfortable life","Earning recognition and becoming a respected leader in my field"]},
+   {format:c=>`I am motivated more by internal curiosity than by grades, praise, or trophies (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which outcomes would give you the deepest sense of lasting purpose (${c.suffix})?`,type:"multi",options:["Building software or technology used by millions daily","Creating timeless art, literature, music, or films that inspire generations","Discovering new scientific insights that advance human medicine or physics","Mentoring and empowering disadvantaged students to achieve their dreams","Founding an ethical, sustainable business that creates rewarding jobs","Protecting endangered ecosystems and combating climate change","Reforming public policy and defending civil rights through law","Designing safe, beautiful, accessible infrastructure and cities"]},
+   {format:c=>`${c.prefix} if salary and social prestige were 100% equal across all careers, what would you choose?`,type:"scenario",options:["Software Architect / AI Systems Developer","UX/Product Designer / Digital Artist","Medical Doctor / Biomedical Researcher","University Professor / High School Educator","Social Entrepreneur / Community Organizer"]},
+   {format:c=>`Rank these career rewards based on what matters most to you (${c.suffix}), from 1 (Top priority) to 5:`,type:"rank",options:["High intellectual stimulation and continuous learning","Creative autonomy and freedom over my work","Direct positive impact on human lives and communities","High financial compensation and wealth building","Prestige, influence, and industry leadership"]},
+   {format:c=>`I would rather work on a difficult, meaningful project than an easy job that pays well (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what makes you lose motivation most rapidly on a project?`,type:"single",options:["Excessive bureaucracy, micromanagement, and lack of creative freedom","Repetitive, brainless work that does not teach me anything new","Toxic team culture, lack of appreciation, and unfair credit distribution","Unclear goals where nobody knows what success looks like","Working on something that feels meaningless or harmful to society"]},
+   {format:c=>`${c.prefix} when you hit a major failure or rejection, what keeps you going?`,type:"scenario",options:["Analyzing what went wrong objectively and treating it as valuable data for the next attempt","My stubborn belief in the long-term vision and my ability to improve","Support and encouragement from trusted mentors, family, or friends","The realization that all great builders and creators failed repeatedly before succeeding","Taking a short break to reset my mind, then attacking the problem from a fresh angle"]},
+   {format:c=>`I find healthy competition with talented peers pushes me to reach higher potential (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} which type of praise feels most genuinely validating to you?`,type:"single",options:["Praise for the technical elegance, ingenuity, or efficiency of my solution","Praise for the originality, beauty, and emotional impact of my creative design","Gratitude from someone whose life was genuinely made easier by what I built","Commendation for my work ethic, reliability, and leadership under pressure","Measurable metrics showing high performance and real-world adoption"]},
+   {format:c=>`Which legacy would you feel most proud to leave behind in your future career (${c.suffix})?`,type:"multi",options:["A groundbreaking open-source software library or technological innovation","A portfolio of iconic creative works, designs, or stories","A legacy of patients, students, or mentees whose lives I transformed","A thriving enterprise or foundation built on ethical principles","A scientific discovery or patent that expanded human knowledge","A safer, more equitable community with stronger social protections","A published body of intellectual books, research, or philosophies","A successful family and a balanced life rich in personal relationships"]},
+   {format:c=>`Rank these daily motivations in order of which fuels you most (${c.suffix}), from 1 to 5:`,type:"rank",options:["Curiosity to learn how something works and build mastery","Passion to express creativity and bring new ideas to life","Desire to help people and make a positive social contribution","Ambition to achieve independence, security, and success","Excitement of collaborating with brilliant teammates"]},
+   {format:c=>`I feel deeply fulfilled when I can see the direct results of my effort in the real world (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what gives you confidence when embarking on an ambitious multi-month project?`,type:"scenario",options:["Having a clear roadmap broken down into manageable weekly milestones","Knowing I have the grit to research and self-teach whatever skills are needed","Having an enthusiastic team or mentor who believes in the vision","Testing small proof-of-concepts early to validate core assumptions","Focusing on the transformative impact the finished project will have"]},
+   {format:c=>`${c.prefix} what does 'success' mean to you at age 30?`,type:"single",options:["Doing stimulating work I love with high autonomy, flexibility, and continuous learning","Being recognized as an exceptional creative or technical leader in my industry","Financial freedom, home ownership, and providing generously for my loved ones","Making measurable contributions to healthcare, education, or social equality","A balanced, fulfilling life with exciting adventures, great health, and close friends"]},
+   {format:c=>`I am energized by having full ownership and accountability over my deliverables (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what kind of reward motivates you most to finish an arduous task?`,type:"single",options:["The joy of finally seeing the completed project working flawlessly","Taking time off to relax, celebrate, and explore new personal hobbies","Receiving positive feedback and appreciation from users and colleagues","A financial bonus, grade improvement, or tangible career advancement","Immediately moving on to the next exciting, bigger challenge"]},
+   {format:c=>`I am willing to invest years of disciplined practice to become truly world-class at a craft (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what is your biggest personal 'why' that drives your ambitions?`,type:"open",placeholder:"Write about what drives you to succeed and what keeps you focused..."},
+   {format:c=>`${c.prefix} if you had one year to work on any project with all living expenses covered, what would it be?`,type:"scenario",options:["Build and launch a venture-backed tech product or AI application","Write and produce a full-length graphic novel, indie game, or film","Conduct independent scientific research and publish findings","Establish a non-profit organization offering community educational services","Travel the world researching comparative cultures and writing a documentary"]}
+  ],
+  learning:[
+   {format:c=>`${c.prefix} when learning a brand new software tool or programming language, what is your first step?`,type:"single",options:["Jump straight into building a mini-project and learn by breaking things","Follow a structured video course or step-by-step tutorial series","Read the official documentation, syntax reference, and architectural overview","Dissect open-source code examples and see how experienced builders wrote it","Ask a friend or mentor to give me a 15-minute high-level walkthrough"]},
+   {format:c=>`I learn far better through hands-on practice than by listening to long theoretical lectures (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which learning resources do you find most engaging and effective (${c.suffix})?`,type:"multi",options:["Interactive coding playgrounds & sandbox environments","Comprehensive technical documentation & API guides","In-depth video tutorials & animated visual explainers","Structured textbooks with problem sets and solution manuals","Project-based hackathons & design challenges","One-on-one mentorship & code reviews with experts","Audio podcasts & interviews with industry pioneers","Study groups with collaborative problem-solving"]},
+   {format:c=>`${c.prefix} how do you know when you have truly mastered a difficult concept?`,type:"scenario",options:["When I can explain it simply to someone with zero background and they understand it","When I can build a complex project from scratch without looking at tutorials","When I can debug and fix unexpected errors related to the concept effortlessly","When I can score top marks on a challenging, unannounced assessment","When I can critique different approaches and articulate subtle trade-offs"]},
+   {format:c=>`Rank these learning environments based on where you thrive most (${c.suffix}), from 1 to 5:`,type:"rank",options:["Self-paced online exploration with full freedom to experiment","A collaborative studio or lab working alongside passionate peers","A rigorous academic classroom with an inspiring professor","An internship or apprenticeship working on real production deliverables","A fast-paced competition, hackathon, or intensive bootcamp"]},
+   {format:c=>`I actively seek out critical feedback on my work because it accelerates my improvement (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what do you do when a textbook explanation or lecture makes zero sense?`,type:"single",options:["Search for 3 different video creators explaining the exact same topic from different angles","Ask AI or a mentor to break down the confusing sentence using simple real-world metaphors","Build a minimal practical test to see what the concept actually does in action","Re-read the foundational prerequisites to find what prior knowledge I am missing","Discuss it with classmates to see if they understand it and compare notes"]},
+   {format:c=>`${c.prefix} how comfortable are you learning a completely unfamiliar topic without formal teacher guidance?`,type:"scenario",options:["Very comfortable — I love the independence of curating my own learning curriculum","Comfortable — as long as high-quality documentation, roadmaps, and community forums exist","Moderate — I can self-learn basics, but I value mentor check-ins for advanced topics","Cautious — I prefer having a structured syllabus to make sure I don't develop blind spots","Structured — I learn best when an expert guides the progression step by step"]},
+   {format:c=>`I enjoy learning the deep historical and mathematical foundations behind modern tools (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what is your strategy when preparing for a high-stakes exam or presentation?`,type:"single",options:["Active recall and practice testing under simulated exam conditions","Creating concise visual cheat sheets, flowcharts, and concept maps","Teaching the curriculum to a classmate or study partner","Reviewing past exam papers and analyzing common question patterns","Re-writing summary notes and memorizing core definitions"]},
+   {format:c=>`Which skill acquisition goals excite you most for the next two years (${c.suffix})?`,type:"multi",options:["Mastering full-stack web and mobile application engineering","Learning machine learning algorithms and data engineering","Developing professional UI/UX design and 3D modeling skills","Mastering financial modeling, accounting, and business strategy","Gaining clinical laboratory and biomedical research techniques","Sharpening public speaking, debate, and persuasive writing","Learning electronic circuits, microcontrollers, and robotics","Fluency in a foreign language and international diplomacy"]},
+   {format:c=>`Rank these intellectual traits in order of which you value most in yourself (${c.suffix}), from 1 to 5:`,type:"rank",options:["Relentless curiosity and passion for lifelong self-learning","Logical rigor, analytical precision, and attention to detail","Creative lateral thinking and boundless imagination","Emotional intelligence, empathy, and social perception","Grit, resilience, and discipline through difficult challenges"]},
+   {format:c=>`I find trial-and-error debugging teaches me more than reading about the correct solution beforehand (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what kind of teacher or mentor has had the greatest positive impact on you?`,type:"scenario",options:["The passionate visionary who made the subject come alive with contagious enthusiasm","The rigorous practitioner who held me to high standards and gave detailed feedback","The patient mentor who listened without judgment and nurtured my self-confidence","The pragmatic coach who focused on real-world practical skills and portfolio building","The intellectual philosopher who challenged my assumptions and taught me how to think"]},
+   {format:c=>`${c.prefix} how do you stay updated on rapid advancements in technology and science?`,type:"single",options:["Reading curated newsletters, tech blogs, and research preprints","Following top engineers, designers, and researchers on social media and Discord","Listening to tech podcasts and attending virtual webinars and conferences","Experimenting with newly released developer tools, APIs, and libraries","Relying on university courses and formal academic literature"]},
+   {format:c=>`I prefer broad generalist knowledge across many fields over narrow specialist expertise in one (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when you make a major mistake on a project, how do you handle it?`,type:"single",options:["Document the failure as a post-mortem to ensure I never repeat that specific error","Fix it immediately, apologize transparently to any affected teammates, and move on","Analyze whether our processes or architecture made the mistake easy to occur","Take it as a humbling reminder to double-check edge cases in the future","Turn the mistake into a funny learning story to share with peers"]},
+   {format:c=>`I would love to participate in research that pushes the boundaries of current human knowledge (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} describe a skill you taught yourself completely from scratch and how you did it:`,type:"open",placeholder:"Describe the skill, the tools you used, and what hurdles you overcame..."},
+   {format:c=>`${c.prefix} if you could download instant fluency in any single capability, what would you choose?`,type:"scenario",options:["Advanced computational engineering and system architecture","Visual design, typography, and interactive animation mastery","Mathematical modeling, statistical inference, and algorithmic theory","Effortless persuasion, negotiation, and charismatic leadership","Biomedical clinical diagnosis and surgical precision"]}
+  ],
+  pressure:[
+   {format:c=>`${c.prefix} when family members strongly urge you to pursue a specific high-status career, how do you feel?`,type:"scenario",options:["I appreciate their good intentions, but I am determined to follow my authentic interests","I research the career thoroughly to see if its daily reality matches my strengths","I feel anxious and pressured, but I am looking for respectful ways to communicate my true passions","I look for hybrid careers that satisfy their practical concerns while honoring my creativity","I prioritize their guidance because family security and expectations matter deeply to me"]},
+   {format:c=>`I feel confident that my current career interests come from my genuine curiosity rather than peer pressure (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which external pressures do you find most challenging when thinking about your future (${c.suffix})?`,type:"multi",options:["Family expectations to enter traditional fields (medicine, law, engineering, accounting)","Social media trends glorifying overnight wealth and startup founders","Peer competition and fear of falling behind classmates' career milestones","High tuition costs and fear of graduating with heavy student debt","Societal pressure to pick a 'prestigious' job title that sounds impressive at dinner parties","Fear of choosing the 'wrong' field and wasting years on a degree I regret","Rapid AI advancements creating anxiety about which jobs will remain safe","Lack of clear, unbiased information on what daily work actually looks like"]},
+   {format:c=>`${c.prefix} if a prestigious career paid well but its daily tasks bored you, what would you do?`,type:"single",options:["I would not choose it — spending 40+ hours weekly on unfulfilling work is not worth any status","I would test it through an internship to see if the reality is better than I expected","I might do it for a few years to build financial stability before pivoting to my true passion","I would look for adjacent roles within that industry that involve more creative or technical problem solving","I would choose it if it provided the financial freedom to pursue hobbies on the weekend"]},
+   {format:c=>`Rank these factors based on how much they influence your career thinking (${c.suffix}), from 1 (Most) to 5:`,type:"rank",options:["Personal curiosity and intrinsic enjoyment of the daily work","Financial stability, salary potential, and job market demand","Family advice, expectations, and cultural values","Peer comparisons, social prestige, and respect from colleagues","Desire to make a meaningful positive impact on the world"]},
+   {format:c=>`I am comfortable telling people 'I don't know my exact career title yet — I am exploring pathways' (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when friends flock toward a trendy new career path, how does that affect your thinking?`,type:"single",options:["I evaluate it objectively on its own merits, independent of whether it is popular or not","It makes me curious to research why it is popular and what skills it actually requires","It creates mild FOMO (fear of missing out), but I remind myself of my unique strengths","I naturally tend to look in the opposite direction for uncrowded, underrated niches","I enjoy exploring it alongside my friends as a shared group experience"]},
+   {format:c=>`${c.prefix} how do you separate other people's expectations from what you truly want?`,type:"scenario",options:["By running real-world experiments (projects, internships) to test how I actually feel doing the work","By journaling and reflecting on what activities I do when no one is watching or grading me","By talking to working professionals about the unvarnished realities of their careers","By discussing my thoughts with an impartial counselor or mentor","By building a clear decision matrix comparing pros, cons, and alignment with my values"]},
+   {format:c=>`I worry that choosing a creative or unconventional path might be financially risky (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when adults give you career advice, what evidence do you look for before trusting it?`,type:"single",options:["Whether their advice is based on modern industry realities or outdated 20-year-old assumptions","Whether they ask about my individual strengths or just preach what worked for them","Whether their own daily life reflects the balance and fulfillment I desire","Whether their recommendations are backed by reputable employment and economic data","I value their wisdom as one helpful perspective among many data points"]},
+   {format:c=>`Which strategies help you manage future career anxiety (${c.suffix})?`,type:"multi",options:["Focusing on building versatile, high-leverage skills (coding, writing, math, design)","Running small 30-day projects to test career hypotheses with zero risk","Remembering that most people change career directions multiple times successfully","Building a supportive network of peers exploring alongside me","Limiting consumption of toxic social media hustle culture","Developing financial literacy and understanding realistic living costs","Focusing on the immediate next educational step rather than the next 40 years","Seeking guidance from teachers and career mentors"]},
+   {format:c=>`Rank these potential worries about the future from 1 (Biggest concern) to 5 (Least):`,type:"rank",options:["Ending up in a monotonous job that drains my passion and energy","Not earning enough income to live comfortably and support my family","Disappointing my parents or mentors who invested in my education","Failing to make a meaningful difference in the world","Becoming obsolete due to rapid technological and AI changes"]},
+   {format:c=>`I believe it is better to test multiple career hypotheses through mini-projects before committing (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} if you were offered an impressive-sounding job that conflicted with your core ethics, what would you do?`,type:"scenario",options:["Decline it without hesitation — ethical integrity comes before any salary or prestige","Ask critical questions during interviews to see if I could advocate for reform from within","Weigh the trade-offs carefully, but lean toward finding an alternative ethical company","Consult trusted mentors to get their perspective on the ethical nuance","Look for other opportunities that align both with my financial goals and moral principles"]},
+   {format:c=>`${c.prefix} how do you feel when classmates boast about internships or test scores?`,type:"single",options:["Happy for their success while staying focused on running my own personal marathon","Motivated to work harder, but on my own terms and chosen direction","A brief sting of comparison, which I quickly reframe by focusing on my unique journey","Curious about what they learned and what application strategies worked for them","Unbothered — academic metrics are only one small predictor of lifelong fulfillment"]},
+   {format:c=>`I sometimes hesitate to share my true dream career because I fear judgment from others (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what information is most missing from typical high school career guidance?`,type:"single",options:["Realistic day-in-the-life walkthroughs of modern tech, design, and science roles","Honest discussions about salary trade-offs, work-life balance, and stress levels","Practical guidance on building portfolios and projects instead of just taking tests","Exploration of modern emerging careers created by AI, climate tech, and digital media","Tools to discover our genuine intrinsic motivations rather than rigid aptitude scores"]},
+   {format:c=>`I believe having adaptable problem-solving skills is more valuable than mastering one narrow job title (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} write candidly about any pressure or expectation you feel regarding your future career:`,type:"open",placeholder:"Write about family expectations, peer comparisons, or personal concerns..."},
+   {format:c=>`${c.prefix} what gives you the greatest peace of mind when thinking about the future?`,type:"scenario",options:["Knowing that strong foundational skills in math, code, communication, and design never go out of style","Having a supportive family and community that loves me for who I am, not my job title","Trusting my own adaptability and resilience to learn whatever the future demands","Taking proactive, small daily steps on projects rather than worrying about decades ahead","Realizing that life is an ongoing journey of discovery with multiple exciting chapters"]}
+  ],
+  values:[
+   {format:c=>`${c.prefix} when imagining your ideal adult life, what matters most beyond your job title?`,type:"single",options:["Ample time for family, friends, hobbies, and personal creative passions","Continuous intellectual growth, travel, and experiencing new cultures","Financial security and freedom from debt and economic stress","Active involvement in community development, mentoring, and social advocacy","Physical health, fitness, and living in a beautiful, inspiring environment"]},
+   {format:c=>`I believe work should be a source of personal meaning, not just a paycheck (${c.suffix}).`,type:"scale"},
+   {format:c=>`Which core ethical values guide your decisions most strongly (${c.suffix})?`,type:"multi",options:["Truth, scientific integrity & objective evidence","Empathy, kindness & active compassion for others","Fairness, social justice & systemic equality","Creativity, originality & self-expression","Discipline, excellence & relentless craftsmanship","Environmental sustainability & ecological stewardship","Loyalty, community solidarity & family devotion","Freedom, personal autonomy & independent thought"]},
+   {format:c=>`${c.prefix} what kind of societal challenge would you most want your career work to address?`,type:"scenario",options:["Building intelligent, accessible technology that elevates human potential","Combating climate change and engineering sustainable clean energy systems","Eradicating diseases and expanding mental healthcare access worldwide","Reforming education to empower students of all backgrounds to thrive","Reducing economic poverty through ethical business and sustainable jobs"]},
+   {format:c=>`Rank these non-monetary career benefits based on your preference (${c.suffix}), from 1 to 5:`,type:"rank",options:["Flexible working hours and remote work freedom","Generous paid leave and strong work-life balance policies","High budget for continuous learning, courses, and conferences","Brilliant, kind, and inspiring colleagues to collaborate with daily","Clear opportunities for rapid promotion and increased responsibility"]},
+   {format:c=>`I would gladly choose a path with slightly lower income if it offered much higher day-to-day happiness (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} how important is geographic flexibility (ability to travel or live anywhere) to you?`,type:"single",options:["Essential — I want a global career that allows me to work remotely from anywhere in the world","Very important — I want opportunities to relocate to major global innovation hubs","Moderate — I value travel, but I want a steady, rooted home base with my community","Secondary — I am happy living anywhere as long as the work and team are exceptional","Local focus — I want to stay close to my hometown and invest in my local community"]},
+   {format:c=>`${c.prefix} when making tough trade-offs between two opportunities, what is your anchor principle?`,type:"scenario",options:["Which opportunity offers the steep learning curve and fastest skill growth","Which opportunity aligns most genuinely with my ethical convictions and purpose","Which opportunity provides the strongest foundation of financial stability and security","Which opportunity gives me the creative freedom to express my authentic ideas","Which opportunity allows me to build the most meaningful relationships"]},
+   {format:c=>`I believe building strong human relationships is more important than achieving corporate titles (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} which type of organization would you feel most proud to work for?`,type:"single",options:["An innovative technology lab pioneering breakthroughs for human benefit","A design studio or media house renowned for breathtaking artistic storytelling","A healthcare network or research hospital dedicated to healing and saving lives","A non-profit foundation or policy institute defending civil rights and the planet","An employee-owned, socially responsible business with transparent governance"]},
+   {format:c=>`Which environmental and social practices do you expect from your future employer (${c.suffix})?`,type:"multi",options:["Zero carbon footprint & active climate sustainability initiatives","Transparent pay equity and fair employee compensation","Strong mental health support, counseling, and wellness benefits","Dedication to diversity, equity, and inclusive leadership","Ethical use of AI and respect for user data privacy","Open-source contributions and knowledge sharing with the public","Community volunteering days and charitable donation matching","Honest marketing without deceptive patterns or manipulative algorithms"]},
+   {format:c=>`Rank these long-term aspirations in order of personal importance (${c.suffix}), from 1 to 5:`,type:"rank",options:["Achieving mastery in a specialized craft and being known for excellence","Building lifelong financial freedom and security for my loved ones","Making a measurable positive impact on society or the environment","Living an adventurous, creative life rich in art, travel, and stories","Cultivating deep, loving relationships with family, friends, and community"]},
+   {format:c=>`I am committed to lifelong learning regardless of how far I advance in my career (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what kind of balance between risk and stability feels right to you?`,type:"scenario",options:["High risk / High reward: happy to join early startups or launch ventures with uncertainty","Balanced approach: building a stable core career while pursuing bold creative side projects","Calculated risk: taking bold steps only after thorough research and validation","Stability-first: prioritizing steady, resilient industries that withstand economic downturns","Dynamic: taking big risks in my 20s and transitioning toward stability later in life"]},
+   {format:c=>`${c.prefix} what do you want your future career to always leave room for?`,type:"single",options:["Personal creative side projects, hobbies, and spontaneous exploration","Deep quality time with family, children, and lifelong friendships","Health, athletics, outdoor adventures, and mental wellness","Community volunteering, political advocacy, and civic participation","Unstructured downtime, reading, reflection, and continuous self-discovery"]},
+   {format:c=>`I believe transparency and honesty should never be compromised for short-term profit (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} when looking back on your life at age 80, what will matter most?`,type:"single",options:["That I lived authentically, pursued my genuine curiosities, and never sold out my passions","That I loved deeply, was a loyal friend and family member, and brought joy to others","That I created lasting works of beauty, technology, or knowledge that outlived me","That I fought bravely to leave the world cleaner, fairer, and kinder than I found it","That I persevered through adversity, grew in wisdom, and lived with integrity"]},
+   {format:c=>`I am excited by the opportunity to mentor the next generation of students when I become experienced (${c.suffix}).`,type:"scale"},
+   {format:c=>`${c.prefix} what is one core principle or value you refuse to compromise on in your career?`,type:"open",placeholder:"Write about the non-negotiable standard you hold for your work..."},
+   {format:c=>`${c.prefix} if you could deliver one piece of advice to your future self 10 years from now, what would it be?`,type:"scenario",options:["Stay curious, keep learning, and never let routine extinguish your creative spark","Remember that people and relationships matter far more than corporate achievements","Take bold risks on ideas you believe in — failure is just data on the path to greatness","Protect your health and peace of mind; no job is worth burnout and chronic stress","Stay humble, listen generously, and use your success to lift others up"]}
+  ]
+ };
+}
 
 function makeQuestionBank(){
- const bank=[];let id=1;
+ const bank=[];let id=1;const stems=getCategoryStems();
  for(const cfg of categoryConfig){
-   const seeds=seedByCategory[cfg.id];
-   seeds.forEach((seed,si)=>{
-     contexts.forEach((ctx,ci)=>{
-       const type=cfg.types[(si+ci)%cfg.types.length];
-       let q={id:`Q${String(id).padStart(4,"0")}`,category:cfg.id,categoryLabel:cfg.label,weight:cfg.weight,type,prompt:`${seed} ${ctx}.`,sourceWeight:cfg.weight};
-       if(type==="single"||type==="scenario") q.options=type==="scenario"?answerSets.scenario:answerSets.single;
-       if(type==="multi") q.options=answerSets.multi;
-       if(type==="scale") q.scaleLabels=["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
-       if(type==="rank") q.options=["Solving a difficult problem","Creating something original","Explaining an idea","Investigating evidence","Leading a group"];
-       bank.push(q);id++;
-     });
+  const categoryStems=stems[cfg.id]||[];
+  categoryStems.forEach((stem,si)=>{
+   contexts.forEach((ctx,ci)=>{
+    const prompt=stem.format(ctx);
+    let q={id:`Q${String(id).padStart(4,"0")}`,category:cfg.id,categoryLabel:cfg.label,weight:cfg.weight,type:stem.type,prompt:prompt,sourceWeight:cfg.weight};
+    if(stem.type==="scale") q.scaleLabels=["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
+    else if(stem.type==="open") q.placeholder=stem.placeholder||"Write honestly. A few sentences are enough.";
+    else if(stem.options) q.options=stem.options;
+    bank.push(q);id++;
    });
+  });
  }
  return bank;
 }
-const QUESTION_BANK=makeQuestionBank(); // exactly 1,000 generated deep prompts
+const QUESTION_BANK=makeQuestionBank(); // exactly 1,000 carefully curated deep prompts
 const TOTAL_BANK=QUESTION_BANK.length;
 
 function weightedSession(){
@@ -287,12 +287,23 @@ function weightedSession(){
  return shuffle(selected);
 }
 function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
-function newSession(){state.session={ids:weightedSession().map(q=>q.id),started:Date.now()};state.answers={};state.qIndex=0;saveState()}
-function saveState(){localStorage.setItem(STORE.user,JSON.stringify(state.user));localStorage.setItem(STORE.answers,JSON.stringify(state.answers));localStorage.setItem(STORE.saved,JSON.stringify(state.saved));localStorage.setItem(STORE.session,JSON.stringify(state.session))}
+function newSession(){
+ state.session={ids:weightedSession().map(q=>q.id),started:Date.now()};
+ state.answers={};state.qIndex=0;saveState();
+}
+function saveState(){
+ localStorage.setItem(STORE.user,JSON.stringify(state.user));
+ localStorage.setItem(STORE.answers,JSON.stringify(state.answers));
+ localStorage.setItem(STORE.saved,JSON.stringify(state.saved));
+ localStorage.setItem(STORE.session,JSON.stringify(state.session));
+ localStorage.setItem(STORE.accounts,JSON.stringify(state.accounts));
+ localStorage.setItem(STORE.history,JSON.stringify(state.history));
+ localStorage.setItem(STORE.savedNotes,JSON.stringify(state.savedNotes));
+}
 function sessionQuestions(){return state.session?.ids?.map(id=>QUESTION_BANK.find(q=>q.id===id)).filter(Boolean)||[]}
 function ensureSession(){if(!state.session||state.session.ids?.length!==20)newSession()}
 
-function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2400)}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2600)}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function showPage(id){$$(".page").forEach(x=>x.classList.remove("active"));$("#"+id)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});$("#mobileNav").classList.remove("open")}
 function openModal(id){$("#"+id).classList.remove("hidden")}
@@ -310,28 +321,172 @@ $$("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
 $("#privacyBtn").onclick=$("#privacyFoot").onclick=()=>openModal("privacyModal");
 
 function requireLogin(){if(!state.user){openModal("authModal");switchAuth("login");toast("Log in or create an account to continue.");return false}showPage("dashboard");return true}
-function goTab(name){if(!state.user)return;$$(".side").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));$$(".tab").forEach(x=>x.classList.toggle("active",x.id==="tab-"+name));if(name==="questionnaire")renderQuestion();if(name==="analysis")renderAnalysis();if(name==="pathways")renderPathways();if(name==="roadmaps")renderRoadmap();if(name==="saved")renderSaved();if(name==="compare")renderCompare();if(name==="profile")loadProfile();if(name==="overview")renderOverview()}
+function goTab(name){
+ if(!state.user)return;
+ $$(".side").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
+ $$(".tab").forEach(x=>x.classList.toggle("active",x.id==="tab-"+name));
+ if(name==="questionnaire")renderQuestion();
+ if(name==="analysis")renderAnalysis();
+ if(name==="pathways")renderPathways();
+ if(name==="compare")renderCompare();
+ if(name==="education")renderEducation();
+ if(name==="roadmaps")renderRoadmap();
+ if(name==="saved")renderSaved();
+ if(name==="history")renderHistory();
+ if(name==="profile")loadProfile();
+ if(name==="overview")renderOverview();
+}
 $$("[data-tab]").forEach(b=>b.onclick=()=>{if(requireLogin())goTab(b.dataset.tab)});
 
-$("#signupForm").onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());state.user={...d,role:"student",createdAt:Date.now()};state.answers={};newSession();saveState();closeModal("authModal");updateUI();showPage("dashboard");goTab("overview");requestAnimationFrame(()=>{document.getElementById("journeyBoard")?.scrollIntoView({behavior:"smooth",block:"start"});document.getElementById("journeyQuestionnaire")?.classList.add("current")});toast("Account created — your Your Path journey starts here!")};
-$("#loginForm").onsubmit=e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());if(d.email==="admin@yourpath.demo"&&d.password==="admin123"){state.user={name:"Admin",email:d.email,role:"admin",grade:"College"}}else{state.user={name:d.email.split("@")[0],email:d.email,role:"student",grade:state.user?.grade||"Grade 10"}}ensureSession();saveState();closeModal("authModal");updateUI();showPage("dashboard");goTab("overview");toast("Logged in.")};
-$("#logout").onclick=()=>{state.user=null;saveState();showPage("home");toast("Logged out.")};
+function showAuthLoader(title, subtitle, onComplete){
+ const loader=$("#authLoader");
+ const titleEl=$("#loaderTitle");
+ const subEl=$("#loaderSub");
+ const bar=$("#loaderBar");
+ if(!loader){
+   if(onComplete) onComplete();
+   return;
+ }
+ if(titleEl) titleEl.textContent=title;
+ if(subEl) subEl.textContent=subtitle;
+ if(bar){
+   bar.style.transition="none";
+   bar.style.width="0%";
+   requestAnimationFrame(()=>{
+     requestAnimationFrame(()=>{
+       bar.style.transition="width 1.15s cubic-bezier(0.2, 0.85, 0.25, 1)";
+       bar.style.width="100%";
+     });
+   });
+ }
+ loader.classList.remove("hidden");
+ setTimeout(()=>{
+   loader.classList.add("hidden");
+   if(onComplete) onComplete();
+ }, 1200);
+}
+
+$("#signupForm").onsubmit=e=>{
+ e.preventDefault();
+ const d=Object.fromEntries(new FormData(e.target).entries());
+ if(!d.password || d.password.length < 6){
+   toast("Please choose a password with at least 6 characters.");
+   return;
+ }
+ if(state.accounts && state.accounts[d.email]){
+   toast("An account with this email already exists. Please log in.");
+   switchAuth("login");
+   return;
+ }
+ const newUser={
+   name:d.name,
+   email:d.email,
+   password:d.password,
+   phone:d.phone||"",
+   country:d.country||"Philippines (+63)",
+   grade:d.grade||"Grade 10",
+   age:d.age||"",
+   school:d.school||"",
+   targetCountry:d.targetCountry||"Domestic / Home Country",
+   budget:d.budget||"Full scholarship needed",
+   goals:d.goals||"",
+   role:"student",
+   createdAt:Date.now()
+ };
+ state.accounts=state.accounts||{};
+ state.accounts[d.email]=newUser;
+ state.user=newUser;
+ state.answers={};
+ newSession();
+ saveState();
+ closeModal("authModal");
+
+ showAuthLoader("Setting up your account...", "Initializing your 1,000-question exploration bank & dashboard...", ()=>{
+   updateUI();
+   showPage("dashboard");
+   goTab("overview");
+   requestAnimationFrame(()=>{
+     document.getElementById("journeyBoard")?.scrollIntoView({behavior:"smooth",block:"start"});
+     document.getElementById("journeyQuestionnaire")?.classList.add("current");
+   });
+   toast(`Account created for ${newUser.name}! Welcome to Your Path.`);
+ });
+};
+
+$("#loginForm").onsubmit=e=>{
+ e.preventDefault();
+ const d=Object.fromEntries(new FormData(e.target).entries());
+ if(d.email==="admin@yourpath.demo"&&d.password==="admin123"){
+   state.user={name:"Admin",email:d.email,role:"admin",grade:"College"};
+ } else if(state.accounts && state.accounts[d.email]){
+   if(state.accounts[d.email].password===d.password){
+     state.user=state.accounts[d.email];
+   } else {
+     toast("Incorrect password for this account. Please try again.");
+     return;
+   }
+ } else {
+   if(state.user && state.user.email===d.email && (!state.user.password || state.user.password===d.password)){
+     state.user.password=d.password;
+     state.accounts=state.accounts||{};
+     state.accounts[d.email]=state.user;
+   } else {
+     toast("Account not found. Please click 'Sign up' to create an account.");
+     return;
+   }
+ }
+ ensureSession();
+ saveState();
+ closeModal("authModal");
+
+ showAuthLoader("Logging in...", "Loading your student profile and saved pathways...", ()=>{
+   updateUI();
+   showPage("dashboard");
+   goTab("overview");
+   toast(`Welcome back, ${state.user.name||"there"}!`);
+ });
+};
+
+const handleLogout=()=>{state.user=null;saveState();updateUI();showPage("home");toast("Logged out.")};
+$("#logout").onclick=handleLogout;
+const topLogout=$("#topLogout");
+if(topLogout) topLogout.onclick=handleLogout;
 
 function updateUI(){
+ const loggedIn=Boolean(state.user);
+ const loginBtn=$("#loginBtn");
+ const signupBtn=$("#signupBtn");
+ const userMenu=$("#userMenu");
+ const userGreeting=$("#userGreeting");
+ if(loginBtn) loginBtn.style.display=loggedIn?"none":"";
+ if(signupBtn) signupBtn.style.display=loggedIn?"none":"";
+ if(userMenu) userMenu.style.display=loggedIn?"flex":"none";
+ if(userGreeting) userGreeting.textContent=loggedIn?`Hi, ${state.user?.name||"Student"}`:"";
+
+ const startingMenu=$("#startingMenu");
+ const activeBanner=$("#activeSessionBanner");
+ const activeGreeting=$("#activeSessionGreeting");
+ if(startingMenu) startingMenu.classList.toggle("hidden", loggedIn);
+ if(activeBanner) activeBanner.classList.toggle("hidden", !loggedIn);
+ if(activeGreeting) activeGreeting.textContent=`Welcome back, ${state.user?.name||"Student"}! ✦`;
+
  $("#welcome").textContent=`Welcome back, ${state.user?.name||"there"}! 👋`;
  $("#savedCount").textContent=state.saved.length;
- const answered=Object.keys(state.answers).length;$("#completion").textContent=`${Math.round(answered/20*100)}%`;
+ const historyCount=$("#historyCount");
+ if(historyCount) historyCount.textContent=(state.history||[]).length;
+ const answered=Object.keys(state.answers).length;
+ $("#completion").textContent=`${Math.round(answered/20*100)}%`;
  $(".side.admin").style.display=state.user?.role==="admin"?"block":"none";
  renderOverview();renderPublic();
  renderInterestMap();
  renderJourney();
 }
+
 function renderJourney(){
  const user=state.user||{};
  const qs=sessionQuestions();
  const answered=qs.filter(q=>state.answers[q.id]!=null&&state.answers[q.id]!==""&&!(Array.isArray(state.answers[q.id])&&state.answers[q.id].length===0)).length;
  const complete=answered===20;
- const pct=Math.round(answered/20*100);
  const profile=document.getElementById("journeyProfileText");
  const qTitle=document.getElementById("journeyQTitle");
  const qText=document.getElementById("journeyQText");
@@ -349,13 +504,13 @@ function renderJourney(){
  const jq=document.getElementById("journeyQuestionnaire");
  if(complete) jq?.classList.add("done"); else jq?.classList.add("current");
  if(complete){["journeyAnalysis","journeyPathways"].forEach(id=>document.getElementById(id)?.classList.add("current"));}
- // The first three journey stages become complete as the student progresses.
- if(complete){document.getElementById("journeyQuestionnaire")?.classList.add("done");}
 }
 
 function renderOverview(){
- const p=pathways.slice(0,4);$("#topPaths").innerHTML=p.map(x=>`<div class="path-mini"><span class="path-icon">${x.icon}</span><span><b>${x.name}</b><small>${x.tag}</small></span></div>`).join("");
+ const p=pathways.slice(0,4);
+ $("#topPaths").innerHTML=p.map(x=>`<div class="path-mini"><span class="path-icon">${x.icon}</span><span><b>${x.name}</b><small>${x.tag}</small></span><button class="link-inline" style="font-size:11px" onclick="viewPathwayEd('${escapeHtml(x.name)}')">Ed Guide →</button></div>`).join("");
 }
+
 function renderInterestMap(){
  const fill=$("#radarFill"), status=$("#interestStatus"), bars=$("#interestBars");
  if(!fill||!status||!bars)return;
@@ -368,29 +523,39 @@ function renderInterestMap(){
    bars.innerHTML="<div class=\"muted\">Finish all 20 questions to reveal your interest profile.</div>";
    return;
  }
- // This is an explainable prototype signal map, not a scientific personality score.
  const axes=["Analytical","Creative","People","Learning","Curiosity"];
  const scores=Object.fromEntries(axes.map(a=>[a,1]));
  const axisByCategory={
    interests:{Curiosity:3,Creative:1}, subjects:{Learning:2,Analytical:1}, problem:{Analytical:4,Curiosity:1},
    creativity:{Creative:5}, communication:{People:4,Creative:1}, leadership:{People:5}, motivation:{Learning:2,People:1},
-   learning:{Learning:5,Curiosity:2}, pressure:{People:1,Curiosity:1}, values:{Curiosity:2,Learning:1}
+   workstyle:{Analytical:2,Learning:2}, learning:{Learning:5,Curiosity:2}, pressure:{People:1,Curiosity:1}, values:{Curiosity:2,Learning:1}
  };
  const addText=(text)=>{
    const t=String(text||"").toLowerCase();
-   const hits={analytical:["math","data","logic","solve","analysis","code","program","system","evidence","research","pattern","debug","science"],creative:["design","create","art","music","story","write","video","build","invent","creative","visual"],people:["people","help","teach","team","lead","communicate","community","listen","friend","customer"],learning:["learn","study","understand","read","course","practice","skill","knowledge","curious","explore"],curiosity:["why","how","discover","investigate","experiment","question","research","explore","new","curious"]};
-   for(const [axis,words] of Object.entries(hits)){const n=words.reduce((a,w)=>a+(t.includes(w)?1:0),0);scores[axis]+=Math.min(n,3);}
+   const hits={
+     analytical:["math","data","logic","solve","analysis","code","program","system","evidence","research","pattern","debug","science","finance","statistics"],
+     creative:["design","create","art","music","story","write","video","build","invent","creative","visual","animation","game"],
+     people:["people","help","teach","team","lead","communicate","community","listen","friend","customer","counsel","psychology","social"],
+     learning:["learn","study","understand","read","course","practice","skill","knowledge","curious","explore","reading","theory"],
+     curiosity:["why","how","discover","investigate","experiment","question","research","explore","new","curious","nature","future"]
+   };
+   for(const [axis,words] of Object.entries(hits)){
+     const n=words.reduce((a,w)=>a+(t.includes(w)?1:0),0);
+     scores[axis]+=Math.min(n,3);
+   }
  };
  answeredQs.forEach(q=>{
    const base=axisByCategory[q.category]||{};
    Object.entries(base).forEach(([axis,val])=>scores[axis]+=val);
    const val=state.answers[q.id];
    addText(Array.isArray(val)?val.join(" "):val);
-   if(q.type==="scale" && Number(val)){const n=Number(val);scores.Learning+=n*.25;scores.Curiosity+=n*.25;}
+   if(q.type==="scale" && Number(val)){
+     const n=Number(val);
+     scores.Learning+=n*.25;scores.Curiosity+=n*.25;
+   }
  });
  const max=Math.max(...Object.values(scores));
  const normalized=Object.fromEntries(axes.map(a=>[a,Math.max(28,Math.round(scores[a]/max*100))]));
- // The visual uses five radial points in the same order as the labels.
  const points=[normalized.Analytical,normalized.Creative,normalized.People,normalized.Learning,normalized.Curiosity];
  const cx=50,cy=50,r=45;
  const coords=points.map((v,i)=>{const angle=(-90+i*72)*Math.PI/180;const rr=r*(v/100);return `${(cx+Math.cos(angle)*rr).toFixed(1)}% ${(cy+Math.sin(angle)*rr).toFixed(1)}%`;});
@@ -399,26 +564,509 @@ function renderInterestMap(){
  status.textContent="Updated from your 20 answers";
  bars.innerHTML=axes.map((a,i)=>`<div class="interest-bar"><span>${a}</span><div class="interest-track"><i style="width:${normalized[a]}%"></i></div><b>${normalized[a]}</b></div>`).join("");
 }
+
 const pathways=[
-{name:"Data Science & Analytics",icon:"◈",tag:"Analytical + curious",reason:"A useful direction to test if you enjoy patterns, evidence, statistics and turning questions into structured analysis.",skills:"Statistics, Python, SQL, communication",edu:"Math/science + CS, statistics or data-focused degree",work:"Focused analysis + collaboration",challenge:"Abstract math, messy data and long debugging cycles",alt:"Economics, BI, research, quantitative analysis"},
-{name:"Psychology & Behaviour",icon:"◉",tag:"People + research",reason:"Worth exploring if you are curious about people, behaviour, communication and evidence-based questions.",skills:"Research methods, writing, statistics, listening",edu:"Psychology/social science + specialist study where required",work:"People-facing + research",challenge:"Some specialist roles require further study",alt:"UX research, HR, education, behavioural science"},
-{name:"UX / Product Design",icon:"◇",tag:"Creative + problem solving",reason:"Worth testing if you like understanding users, creating ideas and improving how products work.",skills:"Design, prototyping, research, communication",edu:"Design, HCI, CS or portfolio-based routes",work:"Highly collaborative",challenge:"Iteration, critique and portfolio building",alt:"Product management, UX research, visual design"},
-{name:"Environmental Science",icon:"♧",tag:"Science + impact",reason:"Fits a curiosity about natural systems, evidence and practical environmental problems.",skills:"Research, data, field methods, communication",edu:"Science + environmental/geoscience routes",work:"Field + lab + collaboration",challenge:"Some roles involve fieldwork and location constraints",alt:"Geoscience, conservation, sustainability"},
-{name:"Software Engineering",icon:"</>",tag:"Logical + builder",reason:"A direction to investigate if you enjoy constructing systems, debugging and learning technical tools.",skills:"Programming, algorithms, teamwork, systems thinking",edu:"CS/software/engineering or strong portfolio route",work:"Focused building + team collaboration",challenge:"Continuous learning and debugging",alt:"Cybersecurity, cloud, QA, developer tools"},
-{name:"Cybersecurity",icon:"⌁",tag:"Systems + investigation",reason:"Explore this if protecting systems, investigating failures and understanding networks sounds engaging.",skills:"Networking, Linux, security concepts, scripting",edu:"CS/IT/cybersecurity + labs/certifications",work:"Independent investigation + team response",challenge:"Constant learning and careful documentation",alt:"Network engineering, digital forensics, cloud security"},
-{name:"Engineering & Computational Science",icon:"△",tag:"Math + making",reason:"A direction for students drawn to physics, systems, models and building practical solutions.",skills:"Math, modelling, programming, technical communication",edu:"Math/science + engineering or computational degree",work:"Technical team + project work",challenge:"Can be mathematically demanding",alt:"Robotics, simulation, systems engineering"},
-{name:"Business & Entrepreneurship",icon:"↗",tag:"Initiative + people",reason:"Worth testing if you enjoy building ideas, decision-making, communication and measurable outcomes.",skills:"Communication, finance, market research, leadership",edu:"Business/economics or mixed routes",work:"Collaboration + uncertainty",challenge:"Outcomes and income can be less predictable",alt:"Marketing, operations, product, finance"},
-{name:"Architecture & Spatial Design",icon:"⌂",tag:"Creative + technical",reason:"Worth exploring if you enjoy designing physical environments, spatial logic and the mix of art and engineering.",skills:"Design, CAD, spatial thinking, communication",edu:"Bachelor of Architecture or related design degrees",work:"Collaborative studio + site visits",challenge:"Long project timelines and balancing regulations with creativity",alt:"Urban Planning, Interior Design, Landscape Architecture"},
-{name:"Biotechnology & Life Sciences",icon:"⌬",tag:"Science + discovery",reason:"A direction to investigate if you are curious about the intersection of biology, technology and solving global health or food challenges.",skills:"Lab methods, research, data analysis, chemistry",edu:"Biology, Biochemistry or Biotech degrees",work:"Laboratory + research teams",challenge:"Requires high precision and long-term research cycles",alt:"Genetics, Pharmacology, Environmental Science"},
-{name:"Digital Marketing & Strategy",icon:"📈",tag:"Creative + analytical",reason:"Explore this if you like understanding audience behavior, creating content and using data to drive growth.",skills:"Communication, data analytics, branding, psychology",edu:"Business, Communication or specialized marketing routes",work:"Fast-paced + collaborative",challenge:"Rapidly changing trends and platforms",alt:"Public Relations, Advertising, Content Strategy"},
-{name:"Artificial Intelligence & ML",icon:"🤖",tag:"Math + innovation",reason:"A high-growth direction for those who enjoy advanced logic, mathematics and teaching machines to solve problems.",skills:"Mathematics, Python, algorithms, data ethics",edu:"CS, Math or AI-specialized degrees",work:"Deep focus + technical collaboration",challenge:"Complex mathematics and fast-evolving technology",alt:"Software Engineering, Robotics, Data Science"},
-{name:"International Relations & Global Policy",icon:"🌐",tag:"People + values",reason:"Worth testing if you are curious about global systems, culture, advocacy and how countries interact.",skills:"Research, languages, writing, cross-cultural communication",edu:"Political Science, IR or History degrees",work:"Research + negotiation + advocacy",challenge:"Complex global issues with no single correct answer",alt:"Law, Sociology, Diplomacy"},
-{name:"Robotics & Mechatronics",icon:"⚙",tag:"Technical + builder",reason:"Fits a curiosity for how hardware and software work together to move and interact with the world.",skills:"Electronics, mechanics, programming, math",edu:"Robotics, Mechanical or Electrical Engineering",work:"Hands-on building + testing",challenge:"Troubleshooting complex physical and digital systems",alt:"Electrical Engineering, Manufacturing, Automation"},
-{name:"Game Design & Development",icon:"🎮",tag:"Creative + logical",reason:"A direction for those who love creating interactive experiences, storytelling and the technical mechanics of play.",skills:"Programming, design, storytelling, player psychology",edu:"CS, Game Design or Digital Media degrees",work:"Iterative + highly collaborative",challenge:"Long production cycles and intense debugging",alt:"Software Engineering, Animation, UX Design"},
-{name:"Finance & Quantitative Economics",icon:"💰",tag:"Analytical + strategic",reason:"Worth exploring if you enjoy patterns in markets, decision-making under uncertainty and using math to manage value.",skills:"Statistics, financial modeling, economics, risk assessment",edu:"Economics, Finance or Mathematics degrees",work:"Data-driven + fast-paced",challenge:"High responsibility and market volatility",alt:"Accounting, Actuarial Science, Data Analytics"}
+{
+ name:"Data Science & Analytics",
+ icon:"◈",
+ tag:"Analytical + curious",
+ reason:"Strong alignment if you enjoy uncovering patterns in messy data, quantitative reasoning, and turning questions into structured analysis.",
+ skills:"Statistics, Python/R, SQL, Data Visualization, Problem Solving",
+ edu:"BS Computer Science, BS Data Science, BS Statistics, BS Applied Math",
+ work:"Focused analytical problem solving + stakeholder collaboration",
+ challenge:"Handling noisy real-world data, abstract math, and prolonged debugging cycles",
+ alt:"Quantitative Economics, Business Intelligence, Machine Learning",
+ experiment:"Download a free dataset on Kaggle (e.g. World Happiness or sports stats) and summarize 3 key insights in Google Sheets or Python.",
+ educationGuide:{
+   degrees:"BS Computer Science, BS Data Science, BS Statistics, BS Applied Mathematics",
+   universities:{
+     ph:"University of the Philippines Diliman (BS Stat / CS), De La Salle University (BS Data Science), Ateneo de Manila (BS MIS / CS), UST",
+     us:"UC Berkeley, MIT, Carnegie Mellon University, Stanford, University of Washington",
+     uk:"University College London (UCL), University of Edinburgh, Imperial College London, Warwick",
+     global:"National University of Singapore (NUS), University of Toronto (Canada), IIT Bombay (India), ETH Zurich"
+   },
+   admission:"Strong STEM background (Calculus, Probability, Algebra), solid GPA (85%+ / 3.2+), logical problem-solving aptitude.",
+   tests:"Philippines: UPCAT, DCAT, ACET, USTET; International: SAT/ACT (Math 700+), IELTS (6.5+) / TOEFL (90+).",
+   scholarships:"DOST-SEI Merit & RA 7687 Priority STEM, CHED CoE Grants, University Academic Excellence Scholarships.",
+   timeline:"Grade 11: Master math fundamentals & basic Python; Grade 12 (Aug–Dec): University entrance tests; (Jan–Mar): Scholarship filings; (Apr–Jun): Enrollment decisions.",
+   routes:[
+     {title:"4-Year University Degree",desc:"Rigorous foundation in mathematics, algorithm design, statistics, and campus recruitment pipelines."},
+     {title:"Polytechnic / Associate Diploma",desc:"Applied 2-year diploma in Database Management or Information Systems with lower tuition costs."},
+     {title:"Intensive Data Bootcamps",desc:"12-24 week career transition bootcamps focused on SQL, Tableau, and Python project portfolios."},
+     {title:"Self-Taught & Kaggle Portfolio",desc:"Free open resources (CS50, Kaggle micro-courses), published GitHub analysis repositories, and community competitions."}
+   ]
+ }
+},
+{
+ name:"Psychology & Behaviour",
+ icon:"◉",
+ tag:"People + research",
+ reason:"Fits students drawn to understanding human motivations, empathy-driven problem solving, and evidence-based behavioral research.",
+ skills:"Research Methods, Data Analysis, Empathy, Active Listening, Scientific Writing",
+ edu:"BS/BA Psychology, BS Behavioral Science, BS Cognitive Science",
+ work:"People-facing consultation + structured research and case analysis",
+ challenge:"Specialist clinical and consulting roles require graduate degrees or board licensing",
+ alt:"UX Research, Human Resources, Education, Behavioral Economics",
+ experiment:"Keep an observational study log for 5 days tracking how physical lighting and study music affect your focus level.",
+ educationGuide:{
+   degrees:"BS Psychology, BA Psychology, BS Behavioral Sciences, BS Cognitive Science",
+   universities:{
+     ph:"UP Diliman, University of Santo Tomas (Center of Excellence), DLSU Manila, Ateneo de Manila",
+     us:"Stanford, Harvard, UCLA, Yale, University of Michigan Ann Arbor",
+     uk:"Oxford, Cambridge, UCL, King's College London, Edinburgh",
+     global:"University of Melbourne (Australia), McGill University (Canada), NUS (Singapore)"
+   },
+   admission:"HUMSS, STEM, or General Academic Strand; reading comprehension, statistics foundation, strong interpersonal interest.",
+   tests:"UPCAT, ACET, DCAT, USTET; International: SAT/ACT, AP Psychology, IELTS/TOEFL.",
+   scholarships:"CHED Priority Programs, DOST-SEI (for BS Psych STEM tracks), University Institutional Aid.",
+   timeline:"Grade 11: Volunteer in peer counseling or community projects; Grade 12 Fall: University admissions; Spring: Scholarship evaluations.",
+   routes:[
+     {title:"4-Year University Degree",desc:"Comprehensive training in experimental psychology, abnormal psychology, and psychometrics."},
+     {title:"Applied Social Services Diploma",desc:"Practical 2-year community guidance and counseling support diplomas."},
+     {title:"UX Research Specialization",desc:"Transition into digital product research by applying psychological testing methods to software interfaces."},
+     {title:"Peer Support & Community Track",desc:"Hands-on NGO advocacy, mental wellness coaching, and community organizing apprenticeships."}
+   ]
+ }
+},
+{
+ name:"UX / Product Design",
+ icon:"◇",
+ tag:"Creative + problem solving",
+ reason:"Ideal if you enjoy understanding user frustrations, sketching solutions, and designing intuitive digital and physical experiences.",
+ skills:"Figma, User Research, Wireframing, Interaction Design, Visual Hierarchy",
+ edu:"BS Human-Computer Interaction, BS Information Design, BFA Digital Media, BS CS",
+ work:"Highly collaborative design critiques + iterative prototyping with engineering teams",
+ challenge:"Handling continuous feedback, subjective aesthetic debates, and rapid design changes",
+ alt:"Product Management, UX Research, Brand Strategy, Industrial Design",
+ experiment:"Choose an app you use daily. Redesign 2 screens in Figma or pencil sketch to make its most confusing feature simpler.",
+ educationGuide:{
+   degrees:"BS Human-Computer Interaction (HCI), BS Information Design, BFA Multimedia Arts",
+   universities:{
+     ph:"Ateneo de Manila (BS Information Design), De La Salle-CSB (Multimedia Arts / Interaction), UP Diliman (Fine Arts / CS)",
+     us:"Carnegie Mellon (HCI), University of Washington (HCDE), Stanford d.school, Georgia Tech",
+     uk:"Royal College of Art, Loughborough University, Brunel University, UCL",
+     global:"TU Delft (Netherlands), Aalto University (Finland), NTU (Singapore)"
+   },
+   admission:"Creative portfolio, digital literacy, demonstrated empathy for user problems, design aptitude.",
+   tests:"University creative aptitude exam & portfolio evaluation; general college entrance exams.",
+   scholarships:"Design Talent Scholarships, Adobe Creative Grants, University Creative Merit Awards.",
+   timeline:"Grade 11: Build 2-3 case studies in Figma; Grade 12 (Fall): Submit portfolio & university applications; (Spring): Studio interviews.",
+   routes:[
+     {title:"4-Year Design / HCI Degree",desc:"In-depth grounding in design theory, ergonomics, cognitive ergonomics, and design systems."},
+     {title:"Digital Media Vocational Diploma",desc:"2-year intensive technical training in UI assets, motion graphics, and front-end layout."},
+     {title:"UX Career Bootcamp",desc:"12-16 week portfolio-focused program building live client case studies."},
+     {title:"Self-Taught Portfolio Track",desc:"Free Figma tutorials, daily UI challenges, open-source redesigns, and junior freelance gigs."}
+   ]
+ }
+},
+{
+ name:"Environmental Science",
+ icon:"♧",
+ tag:"Science + impact",
+ reason:"Natural fit if you are passionate about ecological systems, climate resilience, biodiversity, and outdoor/laboratory investigations.",
+ skills:"Geospatial Mapping (GIS), Field Sampling, Environmental Chemistry, Policy Analysis",
+ edu:"BS Environmental Science, BS Marine Biology, BS Forestry, BS Geoscience",
+ work:"Fieldwork + laboratory data analysis + policy advocacy",
+ challenge:"Balancing field research constraints with funding, weather conditions, and policy inertia",
+ alt:"Conservation Biology, Renewable Energy, Agricultural Science, Sustainability Consulting",
+ experiment:"Conduct a 7-day audit of household waste and draft an actionable reduction plan with estimated kilogram metrics.",
+ educationGuide:{
+   degrees:"BS Environmental Science, BS Marine Biology, BS Forestry, BS Geoscience",
+   universities:{
+     ph:"UP Los Baños (Top Forestry & Environmental Science), UP Diliman, Ateneo (BS ES), Silliman University",
+     us:"UC Berkeley, Stanford (Doerr School), UC Davis, University of Colorado Boulder",
+     uk:"Imperial College London, Oxford, University of Edinburgh, East Anglia",
+     global:"Wageningen University (Netherlands), UBC (Canada), Australian National University"
+   },
+   admission:"STEM Strand; strong high school Biology, Chemistry, and Earth Science foundation.",
+   tests:"UPCAT, DOST-SEI Examination, SAT Subject Tests / AP Environmental Science.",
+   scholarships:"DOST-SEI Priority STEM (RA 7687), Global Environment Facility Grants, WWF Youth Fellowships.",
+   timeline:"Grade 11: Science fair investigation projects; Grade 12 (Fall): DOST exam & college admissions; (Spring): Scholarship confirmations.",
+   routes:[
+     {title:"4-Year Science Degree",desc:"Deep scientific preparation for environmental impact assessments, research labs, and policy careers."},
+     {title:"Environmental Tech Diploma",desc:"Vocational certification in water quality testing, forest monitoring, and GIS technician work."},
+     {title:"Field Conservation Track",desc:"Apprenticeships and direct field station experience with marine protected areas and wildlife reserves."},
+     {title:"Sustainability Auditing Track",desc:"Corporate ESG and sustainability reporting certifications (GRI / Carbon Accounting)."}
+   ]
+ }
+},
+{
+ name:"Software Engineering",
+ icon:"</>",
+ tag:"Logical + builder",
+ reason:"A high-impact direction if you enjoy constructing software systems, technical problem solving, debugging, and continuous learning.",
+ skills:"Programming (JS/Python/Java), Data Structures, Git, API Design, System Architecture",
+ edu:"BS Computer Science, BS Software Engineering, BS Computer Engineering",
+ work:"Focused coding sessions + agile team sprints and architecture discussions",
+ challenge:"Rapid technological shifts, intricate debugging sessions, and high cognitive load",
+ alt:"Cybersecurity, Cloud Architecture, DevOps, Game Development",
+ experiment:"Build and publish a personal portfolio website or interactive calculator using HTML/CSS/JS on GitHub Pages.",
+ educationGuide:{
+   degrees:"BS Computer Science, BS Software Engineering, BS Computer Engineering, BS IT",
+   universities:{
+     ph:"UP Diliman, De La Salle University, Mapúa University, Ateneo de Manila, UST",
+     us:"MIT, Stanford, Carnegie Mellon University, UC Berkeley, UIUC",
+     uk:"Cambridge, Oxford, Imperial College London, University of Manchester",
+     global:"NUS (Singapore), University of Waterloo (Canada), ETH Zurich, Tsinghua"
+   },
+   admission:"STEM track; high grade in Mathematics, logical reasoning, and algorithmic enthusiasm.",
+   tests:"UPCAT, DCAT, ACET; SAT (Math 750+), AP Computer Science A, IELTS/TOEFL.",
+   scholarships:"DOST-SEI Merit Scholarship, Google Student Fellowships, Mapúa Tech Excellence Grants.",
+   timeline:"Grade 11: Build personal GitHub repositories; Grade 12 (Fall): University entrance tests & DOST filing; (Spring): Tech scholarships.",
+   routes:[
+     {title:"4-Year BS Computer Science",desc:"Complete algorithmic foundations, operating systems, compiler theory, and on-campus career fairs."},
+     {title:"2-Year Associate / TESDA NC III",desc:"Technical programming and database maintenance certificate with fast workforce readiness."},
+     {title:"Full-Stack Web Bootcamp",desc:"16-week intensive software development bootcamp focusing on modern React/Node stacks."},
+     {title:"Open-Source & Apprenticeship",desc:"Direct contributions to open-source software, freeCodeCamp, and junior developer apprenticeships."}
+   ]
+ }
+},
+{
+ name:"Cybersecurity",
+ icon:"⌁",
+ tag:"Systems + investigation",
+ reason:"Explore this if you are energized by protecting digital assets, investigating attack vectors, networks, and puzzle-like vulnerabilities.",
+ skills:"Network Protocols, Linux, Penetration Testing, Threat Intelligence, Cryptography",
+ edu:"BS Cybersecurity, BS Information Security, BS Computer Science (Security)",
+ work:"Independent vulnerability analysis + high-stakes incident response",
+ challenge:"Adversaries constantly adapt; requires meticulous documentation and high stress tolerance",
+ alt:"Cloud Security, Network Administration, Digital Forensics, Systems Engineering",
+ experiment:"Complete the first 3 challenge levels of the Bandit Linux security wargame on OverTheWire.org.",
+ educationGuide:{
+   degrees:"BS Cybersecurity, BS Information Security, BS Computer Science",
+   universities:{
+     ph:"Mapúa University, FEU Tech, DLSU Manila, CIIT College of Arts and Technology",
+     us:"Purdue University, Carnegie Mellon, Georgia Tech, University of Maryland",
+     uk:"Royal Holloway University of London, Warwick, King's College London",
+     global:"Edith Cowan (Australia), University of Toronto, SUTD (Singapore)"
+   },
+   admission:"STEM/ICT background, basic networking familiarity, high ethical standard, computer literacy.",
+   tests:"College admissions exams; preparatory knowledge for CompTIA Security+.",
+   scholarships:"DOST Priority Tech Grants, (ISC)² Cybersecurity Undergraduate Aid, SANS CyberTalent.",
+   timeline:"Grade 11: Complete introductory TryHackMe rooms; Grade 12 (Fall): University exams; (Spring): Lab scholarships.",
+   routes:[
+     {title:"4-Year Degree in Cybersecurity",desc:"Theoretical and practical defense, digital forensics, security governance, and cryptography."},
+     {title:"Cisco / CompTIA Certifications",desc:"Vendor certifications (Security+, CCNA, CEH) combined with practical lab demonstrations."},
+     {title:"Cyber Defense Academy",desc:"6-month hands-on red team / blue team cyber warfare training ranges."},
+     {title:"CTF & Bug Bounty Mastery",desc:"Self-directed participation in Capture-The-Flag contests and responsible bug bounty submissions."}
+   ]
+ }
+},
+{
+ name:"Engineering & Computational Science",
+ icon:"△",
+ tag:"Math + making",
+ reason:"Geared for students drawn to physics, mathematical modeling, simulation, and creating real-world physical or computational systems.",
+ skills:"Calculus, Physics Modeling, CAD/Simulation, MATLAB/Python, Technical Design",
+ edu:"BS Mechanical / Electrical / Civil Engineering, BS Computational Physics",
+ work:"Technical multidisciplinary teams + laboratory prototyping + project execution",
+ challenge:"Mathematically demanding coursework and strict regulatory safety standards",
+ alt:"Robotics Engineering, Aerospace Science, Materials Engineering",
+ experiment:"Model a 3D structural truss or bridge in free Tinkercad and calculate its theoretical weight capacity.",
+ educationGuide:{
+   degrees:"BS Mechanical Engineering, BS Electrical Engineering, BS Computational Science",
+   universities:{
+     ph:"UP Diliman (College of Engineering), Mapúa University, DLSU Manila, UST, Batangas State University",
+     us:"MIT, Stanford, Caltech, Georgia Tech, University of Michigan",
+     uk:"Imperial College London, Cambridge, Bristol, Manchester",
+     global:"TU Munich (Germany), KAIST (South Korea), NTU (Singapore), University of Tokyo"
+   },
+   admission:"STEM Strand (Physics, Pre-Calculus, Calculus, Chemistry), high academic standing.",
+   tests:"UPCAT, Mapúa MPASS, DOST-SEI Examination; SAT Math, JEE / AP Physics.",
+   scholarships:"DOST-SEI Engineering Scholarship, Megaworld Foundation Grants, Aboitiz Future Leaders.",
+   timeline:"Grade 11: Join math/physics competitions; Grade 12 (Fall): DOST & college applications; (Spring): Engineering lab confirmations.",
+   routes:[
+     {title:"4-5 Year Licensed Engineering Degree",desc:"Accredited curriculum leading to professional board licensure and high-level structural design."},
+     {title:"Polytechnic Engineering Tech Diploma",desc:"Hands-on electro-mechanical fabrication and industrial plant maintenance."},
+     {title:"CAD & Simulation Micro-Credentials",desc:"Specialized SolidWorks, AutoCAD, and FEA simulation certifications."},
+     {title:"Makerspace Hardware Apprenticeship",desc:"Direct hands-on machining, CNC milling, and rapid hardware prototype development."}
+   ]
+ }
+},
+{
+ name:"Business & Entrepreneurship",
+ icon:"↗",
+ tag:"Initiative + people",
+ reason:"Ideal if you enjoy launching ideas, commercial strategy, leading initiatives, negotiations, and measurable business outcomes.",
+ skills:"Leadership, Financial Modeling, Market Research, Communication, Strategic Planning",
+ edu:"BS Business Administration, BS Entrepreneurship, BS Management Engineering",
+ work:"Fast-paced stakeholder collaboration + risk management under uncertainty",
+ challenge:"Navigating commercial uncertainty, market competition, and operational risks",
+ alt:"Management Consulting, Product Strategy, Venture Capital, Corporate Finance",
+ experiment:"Draft a 1-page Lean Business Canvas for a business that solves a real daily hassle for students in your area.",
+ educationGuide:{
+   degrees:"BS Business Administration, BS Entrepreneurship, BS Management Engineering, BS Finance",
+   universities:{
+     ph:"Ateneo de Manila (BS ME / MGT), UP Diliman (BS BAA), DLSU (RVR College of Business), AIM",
+     us:"Wharton (University of Pennsylvania), Stanford GSB, Harvard, NYU Stern, UC Berkeley Haas",
+     uk:"London School of Economics (LSE), Oxford Said, London Business School, Warwick",
+     global:"INSEAD, NUS Business School, Rotman (Toronto), Bocconi (Italy)"
+   },
+   admission:"ABM or STEM strand; leadership track record, strong verbal and quantitative reasoning.",
+   tests:"UPCAT, ACET, DCAT; SAT/ACT, GMAT/GRE (postgraduate).",
+   scholarships:"Ayala Young Leaders Program, Gokongwei Brothers Foundation, University Leadership Grants.",
+   timeline:"Grade 11: Launch a student enterprise or club; Grade 12 (Fall): Business school applications; (Spring): Scholarship interviews.",
+   routes:[
+     {title:"4-Year Business Degree",desc:"Broad foundation in corporate finance, marketing management, operations, and organizational leadership."},
+     {title:"Entrepreneurial Accelerator Track",desc:"Direct enrollment in venture creation incubators with seed funding and mentorship."},
+     {title:"Applied Business Administration Diploma",desc:"2-year vocational diploma in retail operations, trade finance, and accounting support."},
+     {title:"Direct Commerce Apprenticeship",desc:"Hands-on sales, digital store management, and real-world commercial trading experience."}
+   ]
+ }
+},
+{
+ name:"Architecture & Spatial Design",
+ icon:"⌂",
+ tag:"Creative + technical",
+ reason:"Designed for minds that love spatial thinking, physical environments, structural aesthetics, and blending art with engineering logic.",
+ skills:"Architectural Drafting, CAD/BIM (Revit), Spatial Logic, 3D Visualization, Model Making",
+ edu:"Bachelor of Architecture (BArch - 5 yrs), BS Interior Design, BS Urban Planning",
+ work:"Collaborative design studio + client presentations + construction site visits",
+ challenge:"Demanding studio hours, long project cycles, and stringent safety building codes",
+ alt:"Urban Planning, Interior Architecture, Landscape Architecture, Environmental Design",
+ experiment:"Sketch an isometric floor plan of a 20-sqm eco-friendly study space incorporating natural sunlight and cross-ventilation.",
+ educationGuide:{
+   degrees:"Bachelor of Architecture (BArch), BS Interior Architecture, BS Urban & Regional Planning",
+   universities:{
+     ph:"UST (College of Architecture), UP Diliman, DLSU-CSB, Mapúa University, Far Eastern University",
+     us:"Cornell University, Harvard GSD, MIT, Cooper Union, SCI-Arc",
+     uk:"The Bartlett (UCL), Architectural Association (AA), Cambridge, Sheffield",
+     global:"Politecnico di Milano (Italy), NUS (Singapore), TU Delft, University of Sydney"
+   },
+   admission:"Spatial aptitude, drawing ability, STEM or HUMSS background, creative portfolio.",
+   tests:"University Architecture Aptitude Exam & Drawing Test; national college exams.",
+   scholarships:"United Architects of the Philippines (UAP) Scholarships, NCCA Grants, Creative Talent Grants.",
+   timeline:"Grade 11: Build architectural sketchbook; Grade 12 (Fall): Drawing aptitude tests; (Spring): Studio reviews.",
+   routes:[
+     {title:"5-Year Professional B.Arch (Licensure)",desc:"Required degree pathway for professional board licensure and registered architect practice."},
+     {title:"Drafting & BIM Technical Diploma (TESDA)",desc:"2-year certification in Revit, AutoCAD drafting, and construction documentation."},
+     {title:"Architectural Visualization Studio Track",desc:"Focused training in 3D photorealistic rendering (3ds Max, Blender, Unreal Engine)."},
+     {title:"Urban Planning & Design Track",desc:"Specialization in master planning, transport systems, and municipal spatial policy."}
+   ]
+ }
+},
+{
+ name:"Biotechnology & Life Sciences",
+ icon:"⌬",
+ tag:"Science + discovery",
+ reason:"Explore this if you are fascinated by genetics, laboratory discovery, biomedical innovation, and solving global health or agricultural challenges.",
+ skills:"Molecular Biology, Lab Rigor, Biochemistry, Data Analysis, Scientific Protocol",
+ edu:"BS Molecular Biology & Biotechnology (MBB), BS Biology, BS Biochemistry",
+ work:"Precision laboratory research + collaborative multidisciplinary science teams",
+ challenge:"High experimental precision required; research discoveries have long validation cycles",
+ alt:"Pharmacology, Biomedical Engineering, Genetics, Healthcare Research",
+ experiment:"Extract visible strands of DNA from a strawberry using water, household dish soap, salt, and rubbing alcohol.",
+ educationGuide:{
+   degrees:"BS Molecular Biology & Biotechnology (MBB), BS Biology, BS Biochemistry",
+   universities:{
+     ph:"UP Diliman (NIMBB), UP Los Baños, UST, Ateneo de Manila (BS Health Sciences / Bio)",
+     us:"Johns Hopkins University, Harvard, UC San Diego, MIT, UC Berkeley",
+     uk:"Oxford, Cambridge, Imperial College London, King's College London",
+     global:"Karolinska Institute (Sweden), NUS, University of Melbourne, McGill University"
+   },
+   admission:"STEM Strand; high mastery in Biology, Organic Chemistry, and laboratory safety.",
+   tests:"UPCAT, DOST-SEI Examination, SAT Subject Tests / AP Biology.",
+   scholarships:"DOST-SEI MBB Priority Grants, PCHRD Health Research Awards, International Science Grants.",
+   timeline:"Grade 11: Conduct Science Investigative Project (SIP); Grade 12 (Fall): DOST exam; (Spring): Lab interviews.",
+   routes:[
+     {title:"4-Year BS MBB / Biology Degree",desc:"Rigorous laboratory research preparation for biotech careers, pharmaceuticals, or medical school."},
+     {title:"Medical Laboratory Technician Diploma",desc:"Vocational licensure track for hospital diagnostics and clinical sample testing."},
+     {title:"Bio-informatics Data Specialization",desc:"Combines biological dataset analysis with Python and computational genomics."},
+     {title:"Clinical Trial Coordinator Track",desc:"Apprenticeship in pharmaceutical trial management and bioethics compliance."}
+   ]
+ }
+},
+{
+ name:"Digital Marketing & Strategy",
+ icon:"📈",
+ tag:"Creative + analytical",
+ reason:"A high-energy direction if you love analyzing audience behavior, content storytelling, growth marketing, and digital campaigns.",
+ skills:"Content Strategy, Google Analytics, Social Media Architecture, Copywriting, SEO",
+ edu:"BS Marketing Management, BS Communications, BS Advertising Management",
+ work:"Fast-paced creative brainstorming + performance data analysis",
+ challenge:"Fast-changing platform algorithms, tight deadlines, and constant campaign iteration",
+ alt:"Public Relations, Brand Consulting, Digital Media Production, Growth Operations",
+ experiment:"Create a 3-part social media content strategy for an imaginary local artisan brand with audience personas and engagement metrics.",
+ educationGuide:{
+   degrees:"BS Marketing Management, BS Advertising, BA Communication, BS Digital Media",
+   universities:{
+     ph:"DLSU Manila, Ateneo de Manila, UST, De La Salle-CSB, San Beda University",
+     us:"Northwestern (Medill), NYU Stern, USC Annenberg, UT Austin",
+     uk:"London School of Economics, King's College London, Leeds, Manchester",
+     global:"University of Melbourne, Erasmus University Rotterdam, SMU (Singapore)"
+   },
+   admission:"ABM or HUMSS strand; strong written English, psychological curiosity, analytical mindset.",
+   tests:"College entrance exams; Google Analytics / HubSpot certification readiness.",
+   scholarships:"Marketing Association of the Philippines Grants, Advertising Foundation Awards.",
+   timeline:"Grade 11: Manage social media for a student organization; Grade 12 (Fall): Admissions; (Spring): Portfolio submissions.",
+   routes:[
+     {title:"4-Year Marketing Degree",desc:"Comprehensive study of consumer behavior, global marketing, branding, and corporate communications."},
+     {title:"Digital Marketing Institute (DMI) Diploma",desc:"Industry-certified credential in paid search, conversion rate optimization, and CRM."},
+     {title:"HubSpot & Google Certified Track",desc:"Micro-credentials combined with real campaign budget management."},
+     {title:"Freelance Agency Apprenticeship",desc:"Direct client work in copy, media buying, and social growth marketing."}
+   ]
+ }
+},
+{
+ name:"Artificial Intelligence & ML",
+ icon:"🤖",
+ tag:"Math + innovation",
+ reason:"A cutting-edge path for those drawn to machine learning, neural networks, advanced mathematical logic, and automated intelligence.",
+ skills:"Python, Linear Algebra, PyTorch/TensorFlow, Probability, Machine Learning Algorithms",
+ edu:"BS Computer Science (AI Track), BS Data Engineering, BS Mathematics",
+ work:"Deep research focus + technical engineering collaboration",
+ challenge:"Heavy theoretical mathematics and rapidly shifting state-of-the-art architectures",
+ alt:"Robotics Engineering, Computational Linguistics, Data Science, Software Engineering",
+ experiment:"Train a custom image classifier using Google Teachable Machine and evaluate its accuracy across 10 novel test images.",
+ educationGuide:{
+   degrees:"BS Computer Science (AI Track), BS Data Engineering, BS Mathematics & Computing",
+   universities:{
+     ph:"UP Diliman, DLSU Manila, Ateneo de Manila",
+     us:"Carnegie Mellon (BS in AI), Stanford, MIT, UC Berkeley, University of Washington",
+     uk:"Oxford, Cambridge, UCL, Imperial College London",
+     global:"University of Toronto (Vector Institute), ETH Zurich, NTU, KAIST"
+   },
+   admission:"STEM Strand (Calculus, Linear Algebra, Python, Statistics), high analytical aptitude.",
+   tests:"UPCAT, DOST Merit Exam, SAT (Math 780+), AP Calculus BC.",
+   scholarships:"DOST AI Priority Grants, DeepMind AI Scholarships, Google Research Fellowships.",
+   timeline:"Grade 11: Study Python & Linear Algebra; Grade 12 (Fall): University AI programs; (Spring): Research lab interviews.",
+   routes:[
+     {title:"4-Year BS in AI / Computer Science",desc:"Advanced neural architectures, reinforcement learning, computer vision, and academic research."},
+     {title:"Deep Learning Specialization Track",desc:"Industry certifications (DeepLearning.AI, Fast.ai) with open-source HuggingFace models."},
+     {title:"AI Data Operations Diploma",desc:"2-year certification in model evaluation, data labeling pipelines, and ML engineering ops."},
+     {title:"Open-Source AI Model Contributor",desc:"Fine-tuning open weights, creating dataset benchmarks, and writing technical AI papers."}
+   ]
+ }
+},
+{
+ name:"International Relations & Global Policy",
+ icon:"🌐",
+ tag:"People + values",
+ reason:"Explore this if you care about diplomacy, geopolitical policy, global trade, social advocacy, and cross-cultural communication.",
+ skills:"Policy Analysis, Cross-Cultural Negotiation, Persuasive Writing, Research, Languages",
+ edu:"BA International Studies, BA Political Science, BA Diplomacy & Foreign Affairs",
+ work:"Policy drafting + diplomatic debate + international stakeholder coordination",
+ challenge:"Nuanced diplomatic conflicts with slow institutional timelines and high ambiguity",
+ alt:"International Law, Human Rights Advocacy, Foreign Service, NGO Leadership",
+ experiment:"Draft a 1-page policy brief outlining the trade-offs of a global renewable energy treaty for emerging economies.",
+ educationGuide:{
+   degrees:"BA International Studies, BA Political Science, BA Diplomacy & Foreign Affairs",
+   universities:{
+     ph:"UP Diliman (Political Science), Ateneo de Manila (POS), DLSU Manila (International Studies), Miriam College",
+     us:"Georgetown University (Walsh SFS), Harvard (Kennedy School), Columbia (SIPA), Princeton",
+     uk:"London School of Economics (LSE), Oxford (PPE), King's College London, Cambridge",
+     global:"Sciences Po (France), Geneva Graduate Institute (Switzerland), NUS LKYSPP"
+   },
+   admission:"HUMSS strand; outstanding writing, historical awareness, debate or MUN experience.",
+   tests:"College entrance exams; essay-writing and verbal aptitude evaluations.",
+   scholarships:"Foreign Service Institute Awards, Chevening Scholarships, Erasmus Mundus, Rotary Peace Fellowships.",
+   timeline:"Grade 11: Compete in Model UN (MUN) conferences; Grade 12 (Fall): Essay-intensive college apps; (Spring): Policy interviews.",
+   routes:[
+     {title:"4-Year University Degree in IR / PolSci",desc:"Comprehensive geopolitical history, international law, treaty analysis, and foreign diplomacy."},
+     {title:"Foreign Service Exam Track",desc:"Specialized diplomatic preparation for civil service and embassy career appointments."},
+     {title:"Global NGO Fieldwork Route",desc:"Grassroots advocacy and field operations in international development agencies."},
+     {title:"Policy Think Tank Junior Analyst",desc:"Apprenticeships analyzing trade flows, defense policy, and legislative proposals."}
+   ]
+ }
+},
+{
+ name:"Robotics & Mechatronics",
+ icon:"⚙",
+ tag:"Technical + builder",
+ reason:"Perfect for students who love merging mechanical hardware, electronic circuitry, sensors, and embedded software into moving machines.",
+ skills:"Circuit Design, Arduino/C++, SolidWorks, Kinematics, Motor Control",
+ edu:"BS Mechatronics Engineering, BS Robotics Engineering, BS Electronics Engineering",
+ work:"Hands-on laboratory testing + hardware soldering + firmware programming",
+ challenge:"Debugging both physical hardware faults and embedded code simultaneously",
+ alt:"Automotive Engineering, Aerospace Systems, Biomedical Robotics, Industrial Automation",
+ experiment:"Simulate an Arduino microcontroller with an ultrasonic sensor and LED indicator in free Tinkercad Circuits.",
+ educationGuide:{
+   degrees:"BS Mechatronics Engineering, BS Robotics Engineering, BS Electronics Engineering (ECE)",
+   universities:{
+     ph:"DLSU Manila (Mechatronics Engineering), Mapúa University, Batangas State University, UP Diliman",
+     us:"Carnegie Mellon, MIT, Georgia Tech, Worcester Polytechnic Institute (WPI)",
+     uk:"Imperial College London, University of Bristol, Sheffield, Southampton",
+     global:"TU Munich, ETH Zurich, Tokyo Institute of Technology, SUTD"
+   },
+   admission:"STEM Strand (Physics, Calculus, Electronics curiosity), hands-on technical dexterity.",
+   tests:"UPCAT, DOST-SEI Examination, SAT Math, Physics Olympiad.",
+   scholarships:"DOST Mechatronics Priority Scholarship, First Philippine Holdings Science Grants.",
+   timeline:"Grade 11: Build hardware robotics projects; Grade 12 (Fall): Engineering applications; (Spring): Hardware project demos.",
+   routes:[
+     {title:"4-5 Year Licensed Mechatronics Degree",desc:"Complete hardware-software integration leading to professional engineering licensure."},
+     {title:"Industrial Automation TESDA NC II/III",desc:"Technical vocational certification in PLC programming and industrial robotic arms."},
+     {title:"Robotics Competition Track (VEX / FIRST)",desc:"Hands-on high-level competitive robotics design and embedded firmware development."},
+     {title:"Makerspace Hardware Apprenticeship",desc:"Direct prototyping of custom PCB electronics and ROS-powered autonomous mobile robots."}
+   ]
+ }
+},
+{
+ name:"Game Design & Development",
+ icon:"🎮",
+ tag:"Creative + logical",
+ reason:"A thrilling intersection of interactive storytelling, gameplay mechanics, visual art, player psychology, and creative programming.",
+ skills:"Game Engines (Unity/Unreal/Godot), C#/C++, Level Design, Game Mechanics, 3D Art",
+ edu:"BS Game Development, BS Interactive Entertainment, BFA Game Design",
+ work:"Iterative playtesting + cross-functional studio sprints with artists and coders",
+ challenge:"Intense production debugging, balancing gameplay mechanics, and creative constraints",
+ alt:"Virtual Reality Development, Interactive Animation, UX Design, Creative Coding",
+ experiment:"Design a 1-page rulebook for a playable tabletop card game or build a 1-level 2D platformer in Godot Engine or Scratch.",
+ educationGuide:{
+   degrees:"BS Game Development, BS Interactive Entertainment, BFA Game Design, BS CS",
+   universities:{
+     ph:"De La Salle-CSB (BS-ISGD), CIIT College of Arts and Technology, FEU Tech, iACADEMY",
+     us:"USC (Games), NYU Game Center, DigiPen Institute of Technology, University of Utah",
+     uk:"Abertay University, Teesside University, Brunel University, Staffordshire",
+     global:"Vancouver Film School (Canada), Supinfogame (France), Tokyo Polytechnic"
+   },
+   admission:"Creative portfolio, gaming aptitude, programming interest, narrative storytelling.",
+   tests:"Game pitch & portfolio review; university logical aptitude evaluations.",
+   scholarships:"Game Developers Association of the Philippines (GDAP) Grants, Epic Games MegaGrants.",
+   timeline:"Grade 11: Join 48-hour Game Jams (itch.io); Grade 12 (Fall): Portfolio submissions; (Spring): Studio reviews.",
+   routes:[
+     {title:"4-Year Degree in Game Development",desc:"Deep training in physics engines, multiplayer networking, 3D shaders, and studio pipeline."},
+     {title:"3D Asset & Animation Vocational Diploma",desc:"2-year intensive technical modeling, rigging, and character animation certificate."},
+     {title:"Indie Game Release & Game Jam Track",desc:"Publishing playable game prototypes on itch.io and Steam to build a demonstrated track record."},
+     {title:"Unity / Unreal Certified Developer Track",desc:"Official engine certifications combined with gameplay programming portfolios."}
+   ]
+ }
+},
+{
+ name:"Finance & Quantitative Economics",
+ icon:"💰",
+ tag:"Analytical + strategic",
+ reason:"For students fascinated by financial markets, economic modeling, risk management, and mathematical decisions under uncertainty.",
+ skills:"Financial Modeling, Statistical Analysis, Econometrics, Excel/Python, Risk Assessment",
+ edu:"BS Economics, BS Finance, BS Management of Financial Institutions, BS Actuarial Science",
+ work:"Data-driven market analysis + investment presentations + strategic risk modeling",
+ challenge:"High responsibility, market volatility, and demanding financial cycles",
+ alt:"Actuarial Science, Corporate Banking, FinTech Data Analysis, Economic Consulting",
+ experiment:"Set up a Google Sheet tracking 5 company stocks for two weeks and calculate their percentage return and price variance.",
+ educationGuide:{
+   degrees:"BS Management of Financial Institutions, BS Economics, BS Applied Economics, BS Actuarial Science",
+   universities:{
+     ph:"UP Diliman (School of Economics), De La Salle University, Ateneo de Manila, UST",
+     us:"Wharton (Penn), University of Chicago, NYU Stern, Harvard, Columbia",
+     uk:"London School of Economics (LSE), Cambridge, Oxford, Warwick, UCL",
+     global:"Bocconi University (Italy), University of St. Gallen (Switzerland), NUS, Melbourne"
+   },
+   admission:"ABM or STEM strand; advanced mathematical probability, economic curiosity, analytical rigor.",
+   tests:"UPCAT, DCAT, ACET; SAT Math, AP Micro/Macroeconomics.",
+   scholarships:"Bangko Sentral ng Pilipinas (BSP) Scholarships, CFA Institute Scholarships, Metrobank Foundation Aid.",
+   timeline:"Grade 11: Study financial news and Excel modeling; Grade 12 (Fall): University applications; (Spring): Finance scholarship filings.",
+   routes:[
+     {title:"4-Year Economics / Finance Degree",desc:"Macro/microeconomics theory, quantitative econometrics, corporate valuation, and investment banking."},
+     {title:"Actuarial Science Professional Track",desc:"Specialized mathematics degree preparing for international actuarial board examinations."},
+     {title:"CFA & Financial Modeling Track",desc:"Chartered Financial Analyst foundation modules combined with practical equity research."},
+     {title:"FinTech & Quantitative Data Track",desc:"Combines algorithmic trading mechanics, Python data pipelines, and decentralized finance."}
+   ]
+ }
+}
 ];
 
-function renderPublic(){$("#publicPaths").innerHTML=pathways.map(p=>`<article class="path-card"><span class="tag">${p.tag}</span><h3>${p.icon} ${p.name}</h3><p class="reason">${p.reason}</p><p><b>Skills:</b> ${p.skills}</p><p><b>Related:</b> ${p.alt}</p><button class="small-btn" onclick="requireLogin()">Personalize this</button></article>`).join("")}
+function renderPublic(){
+ $("#publicPaths").innerHTML=pathways.map(p=>`<article class="path-card"><span class="tag">${p.tag}</span><h3>${p.icon} ${p.name}</h3><p class="reason">${p.reason}</p><p><b>Skills:</b> ${p.skills}</p><p><b>Related:</b> ${p.alt}</p><div class="path-actions"><button class="small-btn" onclick="requireLogin()">Explore details</button></div></article>`).join("");
+}
 
 function capture(){
  const q=sessionQuestions()[state.qIndex];if(!q)return;
@@ -428,39 +1076,424 @@ function capture(){
  else state.answers[q.id]=$$("#question input[name=answer]:checked")[0]?.value||"";
  saveState();updateUI();
 }
+
 function renderQuestion(){
  ensureSession();const qs=sessionQuestions(),q=qs[state.qIndex];if(!q)return;
- $("#qCount").textContent=`${state.qIndex+1} / 20`;
- const firstDraw=(q.weight/100).toFixed(2);$("#selectionInfo").innerHTML=`<b>${escapeHtml(q.categoryLabel)}</b><br><br>This question has a configured <strong>${firstDraw}% first-draw chance</strong> because its category weight is ${q.weight}/100 and there are 100 questions in each category.<br><br>The exact chance of appearing in the full 20-question session changes after other questions are selected. This number is a selection mechanic, not a psychological score.`;
+ $("#qCount").textContent=`Question ${state.qIndex+1} of 20`;
+ const pct=Math.round(((state.qIndex+1)/20)*100);
+ const bar=$("#qProgressBar");if(bar) bar.style.width=`${pct}%`;
+ const firstDraw=(q.weight/100).toFixed(2);
+ $("#selectionInfo").innerHTML=`<b>${escapeHtml(q.categoryLabel)}</b><br><br>This question has a configured <strong>${firstDraw}% first-draw chance</strong> because its category weight is ${q.weight}/100 and there are 100 questions in each category.<br><br>The exact chance of appearing in the full 20-question session changes as questions are selected. This is an explainable selection mechanic, not a personality score.`;
  let body="";
  const val=state.answers[q.id];
- if(q.type==="scale")body=`<div class="scale">${q.scaleLabels.map((x,i)=>`<label><input type="radio" name="answer" value="${i+1}" ${String(val)===String(i+1)?"checked":""}>${i+1}<small>${x}</small></label>`).join("")}</div>`;
- else if(q.type==="open")body=`<textarea class="open" id="answerOpen" placeholder="Write honestly. A few sentences are enough.">${escapeHtml(val||"")}</textarea>`;
- else if(q.type==="rank")body=`<div class="rank" id="answerRank">${q.options.map((o,i)=>`<div><span>${escapeHtml(o)}</span><select><option value="">Rank</option>${[1,2,3,4,5].map(n=>`<option ${String(val?.[i])===String(n)?"selected":""}>${n}</option>`).join("")}</select></div>`).join("")}</div>`;
- else body=`<div class="options">${q.options.map(o=>`<label class="option ${Array.isArray(val)?val.includes(o):val===o?"selected":""}"><input type="${q.type==="multi"?"checkbox":"radio"}" name="answer" value="${escapeHtml(o)}" ${Array.isArray(val)?val.includes(o)?"checked":"":val===o?"checked":""}><span>${escapeHtml(o)}</span></label>`).join("")}</div>`;
- $("#question").innerHTML=`<div class="question-card"><div class="question-type">${q.type.toUpperCase()} · ${escapeHtml(q.categoryLabel)}</div><h3>${escapeHtml(q.prompt)}</h3>${body}<p class="muted">There is no socially correct answer. Choose what describes you, even if it sounds less impressive.</p><div class="question-nav"><button class="btn soft" id="back" ${state.qIndex===0?"disabled":""}>← Back</button><button class="btn primary" id="next">${state.qIndex===19?"Finish analysis":"Next →"}</button></div></div>`;
- $$("#question input").forEach(x=>x.addEventListener("change",()=>{$$(".option").forEach(o=>{const inp=o.querySelector("input");if(inp)o.classList.toggle("selected",inp.checked)})}));
+ if(q.type==="scale"){
+  const labels=q.scaleLabels||["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"];
+  body=`<div class="scale">${labels.map((x,i)=>`<label class="${String(val)===String(i+1)?"selected":""}"><input type="radio" name="answer" value="${i+1}" ${String(val)===String(i+1)?"checked":""}><span>${i+1}</span><small>${escapeHtml(x)}</small></label>`).join("")}</div>`;
+ }
+ else if(q.type==="open"){
+  body=`<textarea class="open" id="answerOpen" placeholder="${escapeHtml(q.placeholder||'Write honestly. A few sentences are enough.')}">${escapeHtml(val||"")}</textarea>`;
+ }
+ else if(q.type==="rank"){
+  body=`<div class="rank" id="answerRank">${(q.options||[]).map((o,i)=>`<div><span>${escapeHtml(o)}</span><select><option value="">Rank</option>${[1,2,3,4,5].map(n=>`<option ${String(val?.[i])===String(n)?"selected":""}>${n}</option>`).join("")}</select></div>`).join("")}</div>`;
+ }
+ else{
+  const isMulti=q.type==="multi";
+  body=`<div class="options">${(q.options||[]).map(o=>`<label class="option ${Array.isArray(val)?val.includes(o):val===o?"selected":""}"><input type="${isMulti?"checkbox":"radio"}" name="answer" value="${escapeHtml(o)}" ${Array.isArray(val)?val.includes(o)?"checked":"":val===o?"checked":""}><span>${escapeHtml(o)}</span></label>`).join("")}</div>`;
+ }
+ const badgeType=q.type==="scale"?"RATING SCALE":q.type==="multi"?"MULTI-SELECT":q.type==="rank"?"PRIORITY RANKING":q.type==="open"?"REFLECTION PROMPT":"SCENARIO CHOICE";
+ $("#question").innerHTML=`<div class="question-card"><div class="question-type-badge"><span class="q-dim-pill">✦ ${escapeHtml(q.categoryLabel)}</span><span class="q-type-pill">${badgeType}</span></div><h3>${escapeHtml(q.prompt)}</h3>${body}<p class="muted hint-note">✦ There is no socially correct answer. Choose what authentically describes you.</p><div class="question-nav"><button class="btn soft" id="back" ${state.qIndex===0?"disabled":""}>← Previous</button><button class="btn primary" id="next">${state.qIndex===19?"Finish & analyze pathways ✦":"Next question →"}</button></div></div>`;
+ $$("#question input").forEach(x=>x.addEventListener("change",()=>{
+  $$(".option").forEach(o=>{const inp=o.querySelector("input");if(inp)o.classList.toggle("selected",inp.checked)});
+  $$(".scale label").forEach(l=>{const inp=l.querySelector("input");if(inp)l.classList.toggle("selected",inp.checked)});
+  capture();
+ }));
  $("#answerOpen")?.addEventListener("input",capture);$$("#answerRank select").forEach(x=>x.addEventListener("change",capture));
- $("#back").onclick=()=>{capture();state.qIndex=Math.max(0,state.qIndex-1);renderQuestion()};
- $("#next").onclick=()=>{capture();if(state.qIndex<19){state.qIndex++;renderQuestion()}else{capture();renderInterestMap();goTab("analysis");toast("20 responses analyzed. Your interest map is now filled from your answers.")}};
+ $("#back").onclick=()=>{capture();state.qIndex=Math.max(0,state.qIndex-1);renderQuestion();$("#question")?.scrollIntoView({behavior:"smooth",block:"nearest"});};
+ $("#next").onclick=()=>{
+   capture();
+   if(state.qIndex<19){
+     state.qIndex++;renderQuestion();$("#question")?.scrollIntoView({behavior:"smooth",block:"nearest"});
+   } else {
+     capture();renderInterestMap();
+     archiveCurrentSession();
+     goTab("analysis");
+     toast("20 responses analyzed! Patterns and uncertainty checks are ready.");
+   }
+ };
 }
+
+function archiveCurrentSession(){
+ const qs=sessionQuestions();
+ const answeredCount=qs.filter(q=>state.answers[q.id]!=null&&state.answers[q.id]!=="").length;
+ if(answeredCount===0)return;
+ state.history=state.history||[];
+ const existingIdx=state.history.findIndex(h=>h.started===state.session?.started);
+ const snapshot={
+   id:Date.now(),
+   started:state.session?.started||Date.now(),
+   date:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"2-digit",minute:"2-digit"}),
+   answered:answeredCount,
+   topPathways:pathways.slice(0,3).map(p=>p.name)
+ };
+ if(existingIdx>=0) state.history[existingIdx]=snapshot;
+ else state.history.unshift(snapshot);
+ saveState();
+}
+
+function retakeQuestionnaire(){
+ archiveCurrentSession();
+ newSession();
+ renderQuestion();
+ updateUI();
+ goTab("questionnaire");
+ toast("New 20-question session drawn from the 1,000-question bank!");
+}
+
 function renderAnalysis(){
  const qs=sessionQuestions(),answered=qs.filter(q=>state.answers[q.id]!=null&&state.answers[q.id]!=="").length;
  const categoryCounts={};qs.forEach(q=>{if(state.answers[q.id]!=null)categoryCounts[q.categoryLabel]=(categoryCounts[q.categoryLabel]||0)+1});
  const chips=Object.keys(categoryCounts).map(x=>`<span class="chip">${x}</span>`).join("");
- $("#analysisIntro").textContent=answered<20?`You have answered ${answered} of 20 selected questions. Complete the session for a fuller analysis.`:"Your responses are now treated as a set of signals. The analysis should be read as hypotheses to test, not a prediction of your future.";
- $("#analysis").innerHTML=`<div class="analysis-grid"><div class="analysis-box"><h3>Dimensions explored</h3><div class="chips2">${chips||"<span class=chip>Not enough data yet</span>"}</div><p class="muted">The 1,000-question bank covers ten dimensions. The 20-question session is only one sample, so retaking later can add information.</p></div><div class="analysis-box"><h3>Possible working style</h3><p><b>Explore:</b> focused work with purposeful collaboration, then compare that hypothesis with your real experiences in projects.</p><p class="muted">Do not treat this as a diagnosis or personality type.</p></div><div class="analysis-box"><h3>External-pressure reflection</h3><div class="notice">If answers about status, salary, family expectations or social trends conflict with your activity preferences, the system should ask follow-up questions rather than decide that pressure is the cause.</div></div><div class="analysis-box"><h3>Contradictions</h3><p>If you say you strongly prefer a career but repeatedly choose activities that conflict with its core work, that should be flagged for reflection. Your Path should never silently convert a contradiction into a “match score.”</p></div><div class="analysis-box full"><h3>Next step</h3><p>Explore several pathways, save the ones worth testing, then use the roadmap to run small real-world experiments.</p><button class="btn primary" onclick="goTab('pathways')">Explore pathways →</button></div></div>`;
+ $("#analysisIntro").textContent=answered<20?`You have answered ${answered} of 20 selected questions. Complete the session for a fuller analysis.`:"Your responses are evaluated as qualitative signals. The analysis below presents hypotheses to test in the real world — never a rigid verdict.";
+ 
+ // Contradictions & Open Uncertainty Detection
+ const scaleAnswers=qs.filter(q=>q.type==="scale").map(q=>Number(state.answers[q.id])||0).filter(Boolean);
+ const neutralCount=scaleAnswers.filter(v=>v===3).length;
+ const isHighlyNeutral=scaleAnswers.length>0 && (neutralCount/scaleAnswers.length >= 0.45);
+ 
+ let uncertaintyHtml="";
+ if(answered<20){
+   uncertaintyHtml=`<div class="notice"><b>✦ Incomplete Data Signal:</b> You have answered ${answered} of 20 questions. The AI treats incomplete sessions with high uncertainty. Answer all 20 questions to unlock clear dimensional hypotheses.</div>`;
+ } else if(isHighlyNeutral){
+   uncertaintyHtml=`<div class="notice"><b>✦ Open Uncertainty Notice:</b> A noticeable portion of your scale responses were marked 'Neutral'. This frequently occurs when exploring unfamiliar fields or when your interests are equally balanced across multiple domains. Rather than forcing a single narrow career prediction, we recommend testing 2–3 contrasting pathways in short real-world projects.</div>`;
+ } else {
+   uncertaintyHtml=`<div class="notice"><b>✦ Open Uncertainty & Contradiction Check:</b> No severe conflicting contradictions were detected in your 20 answers. Your responses reflect consistent interest signals. However, remember that career satisfaction depends on day-to-day work environment, team culture, and continuous experimentation.</div>`;
+ }
+
+ $("#analysis").innerHTML=`<div class="analysis-grid">
+   <div class="analysis-box"><h3>Dimensions explored</h3><div class="chips2">${chips||"<span class=chip>Not enough data yet</span>"}</div><p class="muted" style="margin-top:10px">The 1,000-question bank covers ten dimensions. A 20-question session provides a balanced sample. Retaking the questionnaire later adds new context.</p></div>
+   <div class="analysis-box"><h3>Possible working style hypothesis</h3><p><b>Working Style:</b> Focused problem investigation with purposeful collaboration. You appear to appreciate clear logic and tangible outputs.</p><p class="muted">Treat this as a working hypothesis to validate through actual projects, not a fixed personality label.</p></div>
+   <div class="analysis-box full"><h3>AI Uncertainty & Contradictions Check</h3>${uncertaintyHtml}</div>
+   <div class="analysis-box"><h3>External-pressure reflection</h3><p class="muted">If answers regarding parent expectations, salary prestige, or peer trends pulled strongly against your personal hobbies, that tension is highlighted for your own reflection rather than scored as a mismatch.</p></div>
+   <div class="analysis-box"><h3>Zero Fake Percentages</h3><p>Your Path does not use misleading pseudo-scientific percentages like '97% career match'. Human curiosity is dynamic. We explain the explicit reasoning for each pathway so you can decide what makes sense.</p></div>
+   <div class="analysis-box full"><h3>Next recommended steps</h3><p>Review the recommended pathways below, compare 2–4 side-by-side in the Compare tab, and check the Education & Universities guide for relevant programs.</p><div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" onclick="goTab('pathways')">Explore pathways →</button><button class="btn soft" onclick="goTab('compare')">Compare side-by-side →</button><button class="btn soft" onclick="goTab('education')">Universities & Education →</button></div></div>
+ </div>`;
 }
+
 function renderPathways(){
- $("#pathGrid").innerHTML=pathways.map(p=>`<article class="path-card"><span class="tag">${p.tag}</span><h3>${p.icon} ${p.name}</h3><p class="reason">${p.reason}</p><p><b>Skills:</b> ${p.skills}</p><p><b>Education:</b> ${p.edu}</p><p><b>Work style:</b> ${p.work}</p><p><b>Challenges:</b> ${p.challenge}</p><p><b>Alternatives:</b> ${p.alt}</p><div class="path-actions"><button class="small-btn save" onclick="toggleSave('${p.name}')">♡ ${state.saved.includes(p.name)?"Saved":"Save"}</button><button class="small-btn" onclick="toast('In production, this would open current cited research for this pathway.')">Research</button></div></article>`).join("");
+ $("#pathGrid").innerHTML=pathways.map(p=>`<article class="path-card">
+   <span class="tag">${p.tag}</span>
+   <h3>${p.icon} ${p.name}</h3>
+   <p class="reason">${p.reason}</p>
+   <p><b>Core Skills:</b> ${p.skills}</p>
+   <p><b>Education:</b> ${p.edu}</p>
+   <p><b>Work Style:</b> ${p.work}</p>
+   <p><b>Challenges:</b> ${p.challenge}</p>
+   <p><b>30-Day Test:</b> ${p.experiment}</p>
+   <div class="path-actions">
+     <button class="small-btn save" onclick="toggleSave('${escapeHtml(p.name)}')">${state.saved.includes(p.name)?"✓ Saved":"♡ Save"}</button>
+     <button class="small-btn" onclick="viewPathwayEd('${escapeHtml(p.name)}')">🎓 Education & Unis</button>
+     <button class="small-btn" onclick="quickCompare('${escapeHtml(p.name)}')">⇄ Compare</button>
+   </div>
+ </article>`).join("");
 }
-function toggleSave(name){state.saved=state.saved.includes(name)?state.saved.filter(x=>x!==name):[...state.saved,name];saveState();renderPathways();renderSaved();updateUI();toast(state.saved.includes(name)?"Pathway saved.":"Pathway removed.")}
-function renderSaved(){if(!state.saved.length){$("#saved").innerHTML='<div class="card"><p class="muted">Nothing saved yet. Explore pathways and save a few directions you want to investigate.</p></div>';return}$("#saved").innerHTML=state.saved.map(n=>{const p=pathways.find(x=>x.name===n);return `<div class="card" style="margin-bottom:10px"><b>${p.name}</b><p class="muted">${p.reason}</p><button class="small-btn" onclick="toggleSave('${p.name}')">Remove</button></div>`}).join("")}
-function renderCompare(){const p=pathways.slice(0,4);$("#compare").innerHTML=`<table class="compare"><thead><tr><th>Feature</th>${p.map(x=>`<th>${x.name}</th>`).join("")}</tr></thead><tbody><tr><th>Why it matches</th>${p.map(x=>`<td>${x.reason}</td>`).join("")}</tr><tr><th>Skills</th>${p.map(x=>`<td>${x.skills}</td>`).join("")}</tr><tr><th>Education</th>${p.map(x=>`<td>${x.edu}</td>`).join("")}</tr><tr><th>Work style</th>${p.map(x=>`<td>${x.work}</td>`).join("")}</tr><tr><th>Challenges</th>${p.map(x=>`<td>${x.challenge}</td>`).join("")}</tr></tbody></table>`}
-function renderRoadmap(){const g=state.user?.grade||"Grade 10";$("#roadmapGrade").textContent=`Example action plan for ${g}. A production version should adapt this to country, budget, admissions and the chosen pathway.`;$("#roadmap").innerHTML=`<div class="roadmap-card"><h3>Next 30 days</h3><p class="muted">Explore 2–3 pathways, talk to someone in a relevant field, try one small project and write down what you enjoyed and disliked.</p></div><div class="roadmap-card"><h3>Next 6 months</h3><p class="muted">Build a portfolio project, join a relevant club/competition, strengthen prerequisite subjects and research education routes.</p></div><div class="roadmap-card"><h3>Next 1–2 years</h3><p class="muted">Deepen skills, create stronger evidence of interest, compare degree routes and prepare applications or entrance requirements.</p></div>`}
-function loadProfile(){const f=$("#profile");if(!state.user)return;for(const el of f.elements)if(el.name&&state.user[el.name]!=null)el.value=state.user[el.name]}
-$("#profile").onsubmit=e=>{e.preventDefault();state.user={...state.user,...Object.fromEntries(new FormData(e.target).entries())};saveState();updateUI();toast("Profile saved.")};
-$("#feedback").onsubmit=e=>{e.preventDefault();localStorage.setItem("yp_feedback_v3",JSON.stringify(Object.fromEntries(new FormData(e.target).entries())));e.target.reset();toast("Feedback saved in this demo.")};
+
+function toggleSave(name){
+ state.saved=state.saved.includes(name)?state.saved.filter(x=>x!==name):[...state.saved,name];
+ saveState();renderPathways();renderSaved();updateUI();
+ toast(state.saved.includes(name)?"Pathway saved to your dashboard!":"Pathway removed from saved.");
+}
+
+function viewPathwayEd(name){
+ state.eduPathway=name;
+ goTab("education");
+ renderEducation(name);
+}
+
+function quickCompare(name){
+ if(!state.compareSelected.includes(name)){
+   if(state.compareSelected.length>=4) state.compareSelected.shift();
+   state.compareSelected.push(name);
+ }
+ goTab("compare");
+}
+
+function renderSaved(){
+ if(!state.saved.length){
+   $("#saved").innerHTML='<div class="card"><p class="muted">No pathways saved yet. Explore the recommended pathways and click "♡ Save" to curate the careers you want to investigate.</p><button class="btn primary" style="margin-top:12px" onclick="goTab(\'pathways\')">Explore pathways →</button></div>';
+   return;
+ }
+ $("#saved").innerHTML=`<div class="saved-list">${state.saved.map(n=>{
+   const p=pathways.find(x=>x.name===n)||{name:n,reason:"Custom saved direction",skills:"Research & development",experiment:"Run a small 30-day experiment."};
+   const note=(state.savedNotes&&state.savedNotes[n])||"";
+   return `<div class="card" style="margin-bottom:14px">
+     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+       <h3 style="margin:0">${p.icon||"✦"} ${p.name}</h3>
+       <div style="display:flex;gap:6px">
+         <button class="small-btn" onclick="viewPathwayEd('${escapeHtml(p.name)}')">🎓 Universities</button>
+         <button class="small-btn" onclick="quickCompare('${escapeHtml(p.name)}')">⇄ Compare</button>
+         <button class="small-btn" onclick="toggleSave('${escapeHtml(p.name)}')">Remove</button>
+       </div>
+     </div>
+     <p class="muted" style="margin:8px 0">${p.reason}</p>
+     <div style="margin-top:10px">
+       <label style="font-size:11.5px;font-weight:700;color:#5e50d9;display:block;margin-bottom:4px">Your Research & Experiment Notes:</label>
+       <textarea class="open" style="min-height:65px;font-size:12.5px" placeholder="Jot down people you talked to, questions you have, or experiment notes..." oninput="saveSavedNote('${escapeHtml(p.name)}', this.value)">${escapeHtml(note)}</textarea>
+     </div>
+   </div>`;
+ }).join("")}</div>`;
+}
+
+function saveSavedNote(name, note){
+ state.savedNotes=state.savedNotes||{};
+ state.savedNotes[name]=note;
+ saveState();
+}
+
+function toggleComparePathway(name){
+ if(state.compareSelected.includes(name)){
+   state.compareSelected=state.compareSelected.filter(x=>x!==name);
+ } else {
+   if(state.compareSelected.length>=4){
+     toast("You can compare up to 4 pathways at a time.");
+     return;
+   }
+   state.compareSelected.push(name);
+ }
+ renderCompare();
+}
+
+function renderCompare(){
+ if(!state.compareSelected||state.compareSelected.length===0){
+   state.compareSelected=pathways.slice(0,3).map(p=>p.name);
+ }
+ const selectedPaths=pathways.filter(p=>state.compareSelected.includes(p.name));
+ 
+ const selectorHtml=`<div class="card" style="margin-bottom:18px">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+     <b>Select 2 to 4 pathways to compare:</b>
+     <small class="muted">${selectedPaths.length} / 4 selected</small>
+   </div>
+   <div class="chips2">${pathways.map(p=>{
+     const sel=state.compareSelected.includes(p.name);
+     return `<button type="button" class="chip ${sel?'active':''}" style="cursor:pointer;border:${sel?'1.5px solid #6c5ce7':'1px solid #e3e1ed'};background:${sel?'#efedff':'#fff'};color:${sel?'#5d50d5':'#4d4e63'}" onclick="toggleComparePathway('${escapeHtml(p.name)}')">${sel?'✓ ':''}${p.name}</button>`;
+   }).join("")}</div>
+ </div>`;
+
+ const tableHtml=`<div class="table-wrap">
+   <table class="compare">
+     <thead>
+       <tr>
+         <th style="min-width:140px">Dimension</th>
+         ${selectedPaths.map(p=>`<th style="min-width:210px"><div style="font-size:16px;margin-bottom:4px">${p.icon} ${p.name}</div><span class="tag">${p.tag}</span></th>`).join("")}
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <th>Why it matches</th>
+         ${selectedPaths.map(p=>`<td>${p.reason}</td>`).join("")}
+       </tr>
+       <tr>
+         <th>Core Skills</th>
+         ${selectedPaths.map(p=>`<td><b>${p.skills}</b></td>`).join("")}
+       </tr>
+       <tr>
+         <th>Education & Degrees</th>
+         ${selectedPaths.map(p=>`<td>${p.edu}</td>`).join("")}
+       </tr>
+       <tr>
+         <th>Work Style</th>
+         ${selectedPaths.map(p=>`<td>${p.work}</td>`).join("")}
+       </tr>
+       <tr>
+         <th>Challenges & Trade-offs</th>
+         ${selectedPaths.map(p=>`<td><span style="color:#a04020">${p.challenge}</span></td>`).join("")}
+       </tr>
+       <tr>
+         <th>30-Day Experiment</th>
+         ${selectedPaths.map(p=>`<td><span style="color:#207050">${p.experiment}</span></td>`).join("")}
+       </tr>
+       <tr>
+         <th>Actions</th>
+         ${selectedPaths.map(p=>`<td><button class="small-btn save" onclick="toggleSave('${escapeHtml(p.name)}')">${state.saved.includes(p.name)?"✓ Saved":"♡ Save"}</button> <button class="small-btn" onclick="viewPathwayEd('${escapeHtml(p.name)}')">Universities →</button></td>`).join("")}
+       </tr>
+     </tbody>
+   </table>
+ </div>
+ <div class="notice" style="margin-top:14px"><b>✦ Plain-Language Comparison:</b> We never generate fake scientific match percentages (like '97% match'). Comparison is meant to clarify trade-offs, required skills, and real-world experiments so you can make deliberate choices.</div>`;
+
+ $("#compare").innerHTML=selectorHtml+tableHtml;
+}
+
+function renderEducation(targetName){
+ const pName=targetName||state.eduPathway||pathways[0].name;
+ state.eduPathway=pName;
+ const p=pathways.find(x=>x.name===pName)||pathways[0];
+ const guide=p.educationGuide||{
+   degrees:p.edu,
+   universities:{ph:"UP, DLSU, Ateneo, UST",us:"MIT, Stanford, Berkeley",uk:"Oxford, Cambridge, UCL",global:"NUS, Toronto, Melbourne"},
+   admission:"Solid secondary school foundation in relevant subjects.",
+   tests:"University-specific entrance examinations.",
+   scholarships:"National government and university merit grants.",
+   timeline:"Grade 11: Foundation & exploration; Grade 12: Applications & testing.",
+   routes:[{title:"University Degree",desc:"Standard Bachelor's program."}]
+ };
+
+ $("#educationContainer").innerHTML=`
+   <div class="card" style="margin-bottom:18px">
+     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+       <div><span class="eyebrow">SELECT PATHWAY</span><h2 style="margin:4px 0 0;font-size:22px">${p.icon} ${p.name}</h2></div>
+       <select style="padding:10px 14px;border-radius:10px;border:1.5px solid #d9d5eb;font-weight:700;color:#5d50d5;background:#f8f7fe;cursor:pointer" onchange="renderEducation(this.value)">
+         ${pathways.map(item=>`<option value="${escapeHtml(item.name)}" ${item.name===p.name?"selected":""}>${item.icon} ${item.name}</option>`).join("")}
+       </select>
+     </div>
+     <div class="notice" style="background:#f4f7fe;border-color:#d0ddf9;color:#24447a">
+       <b>✦ Context Principle:</b> No single university is universally 'best'. The optimal choice depends directly on your <b>personal goals, target country, family budget, and academic profile</b>.
+     </div>
+   </div>
+
+   <div class="analysis-grid">
+     <div class="analysis-box">
+       <span class="tag">DEGREES & MAJORS</span>
+       <h3 style="margin-top:10px">Relevant Degrees</h3>
+       <p><b>${guide.degrees}</b></p>
+       <p class="muted">Check specific department specializations and curriculum accreditation before applying.</p>
+     </div>
+
+     <div class="analysis-box">
+       <span class="tag">ADMISSION & STRANDS</span>
+       <h3 style="margin-top:10px">Admission Requirements</h3>
+       <p>${guide.admission}</p>
+     </div>
+
+     <div class="analysis-box full">
+       <span class="tag">GLOBAL & LOCAL PROGRAMS</span>
+       <h3 style="margin-top:10px">Target Universities & Programs</h3>
+       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:10px">
+         <div style="background:#faf9fe;border:1px solid #e7e5f2;border-radius:14px;padding:14px">
+           <b style="color:#6c5ce7">🇵🇭 Philippines</b>
+           <p style="font-size:12.5px;color:#45465e;margin:6px 0 0">${guide.universities.ph}</p>
+         </div>
+         <div style="background:#faf9fe;border:1px solid #e7e5f2;border-radius:14px;padding:14px">
+           <b style="color:#6c5ce7">🇺🇸 United States</b>
+           <p style="font-size:12.5px;color:#45465e;margin:6px 0 0">${guide.universities.us}</p>
+         </div>
+         <div style="background:#faf9fe;border:1px solid #e7e5f2;border-radius:14px;padding:14px">
+           <b style="color:#6c5ce7">🇬🇧 United Kingdom</b>
+           <p style="font-size:12.5px;color:#45465e;margin:6px 0 0">${guide.universities.uk}</p>
+         </div>
+         <div style="background:#faf9fe;border:1px solid #e7e5f2;border-radius:14px;padding:14px">
+           <b style="color:#6c5ce7">🌐 Global (Canada, Asia, Europe)</b>
+           <p style="font-size:12.5px;color:#45465e;margin:6px 0 0">${guide.universities.global}</p>
+         </div>
+       </div>
+     </div>
+
+     <div class="analysis-box">
+       <span class="tag">ENTRANCE EXAMS</span>
+       <h3 style="margin-top:10px">Entrance Tests & Aptitude</h3>
+       <p>${guide.tests}</p>
+     </div>
+
+     <div class="analysis-box">
+       <span class="tag">FINANCIAL AID & GRANTS</span>
+       <h3 style="margin-top:10px">Scholarships & Aid</h3>
+       <p>${guide.scholarships}</p>
+     </div>
+
+     <div class="analysis-box full">
+       <span class="tag">APPLICATION SCHEDULE</span>
+       <h3 style="margin-top:10px">Application Timeline & Milestones</h3>
+       <p>${guide.timeline}</p>
+     </div>
+
+     <div class="analysis-box full">
+       <span class="tag">ALTERNATIVE PATHWAYS</span>
+       <h3 style="margin-top:10px">4 Different Education Routes to Test</h3>
+       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:10px">
+         ${(guide.routes||[]).map(r=>`
+           <div style="background:#fff;border:1.5px solid #e8e6f3;border-radius:14px;padding:14px">
+             <b style="color:#5e50d9;font-size:13.5px;display:block;margin-bottom:4px">◈ ${r.title}</b>
+             <p style="font-size:12px;color:#6b6d82;margin:0;line-height:1.45">${r.desc}</p>
+           </div>
+         `).join("")}
+       </div>
+     </div>
+   </div>
+ `;
+}
+
+function renderHistory(){
+ const list=state.history||[];
+ if(!list.length){
+   $("#historyContainer").innerHTML=`<div class="card"><p class="muted">No previous sessions archived yet. As you retake the questionnaire over time, your completed analyses and interest snapshots will be recorded here so you can revisit how your goals and curiosities evolve.</p><button class="btn primary" style="margin-top:12px" onclick="retakeQuestionnaire()">Start Questionnaire Session →</button></div>`;
+   return;
+ }
+ $("#historyContainer").innerHTML=`
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+     <b>${list.length} Archived Questionnaire Session${list.length>1?'s':''}</b>
+     <button class="btn soft" onclick="retakeQuestionnaire()">+ Take new session</button>
+   </div>
+   <div style="display:grid;gap:14px">
+     ${list.map((h,idx)=>`
+       <div class="card">
+         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+           <div>
+             <span class="tag">SESSION #${list.length - idx}</span>
+             <h3 style="margin:6px 0 2px">${h.date}</h3>
+             <small class="muted">${h.answered} / 20 questions completed</small>
+           </div>
+           <div class="chips2">
+             ${(h.topPathways||[]).map(p=>`<span class="chip" style="font-size:11px">★ ${p}</span>`).join("")}
+           </div>
+         </div>
+       </div>
+     `).join("")}
+   </div>
+ `;
+}
+
+function renderRoadmap(){
+ const g=state.user?.grade||"Grade 10";
+ const c=state.user?.country||"Philippines";
+ const target=state.user?.targetCountry||"Domestic / Home Country";
+ $("#roadmapGrade").textContent=`Personalized action roadmap for ${state.user?.name||"Student"} (${g}, ${c} → Target: ${target}). Adapt this roadmap to your family budget, target deadlines, and experimental learnings.`;
+ $("#roadmap").innerHTML=`
+   <div class="roadmap-card">
+     <div style="display:flex;justify-content:space-between;align-items:center"><h3>Phase 1 · Next 30 Days (Discovery & Small Experiments)</h3><span class="tag">EXPLORE</span></div>
+     <p class="muted">Explore 2–3 recommended pathways in depth. Pick one 30-day experiment from the pathways list, talk to one practitioner or university senior, and record your reactions in your Saved notes.</p>
+   </div>
+   <div class="roadmap-card">
+     <div style="display:flex;justify-content:space-between;align-items:center"><h3>Phase 2 · Next 6 Months (Skill Foundation & Portfolio)</h3><span class="tag">BUILD</span></div>
+     <p class="muted">Deepen prerequisite subjects (e.g. Mathematics, Sciences, or Essay Writing), join relevant school clubs or competitions, build 1 substantial personal project, and attend virtual university open days.</p>
+   </div>
+   <div class="roadmap-card">
+     <div style="display:flex;justify-content:space-between;align-items:center"><h3>Phase 3 · Next 1–2 Years (Admissions & Execution)</h3><span class="tag">APPLY</span></div>
+     <p class="muted">Prepare entrance examination applications (UPCAT/SAT/IELTS), apply for priority scholarships (DOST/CHED/Institutional), compare admission and financial aid offers, and finalize your enrollment route.</p>
+   </div>
+ `;
+}
+
+function loadProfile(){
+ const f=$("#profile");if(!state.user)return;
+ for(const el of f.elements){
+   if(el.name&&state.user[el.name]!=null)el.value=state.user[el.name];
+ }
+}
+
+$("#profile").onsubmit=e=>{
+ e.preventDefault();
+ state.user={...state.user,...Object.fromEntries(new FormData(e.target).entries())};
+ if(state.accounts && state.user.email){
+   state.accounts[state.user.email]={...state.accounts[state.user.email],...state.user};
+ }
+ saveState();updateUI();toast("Student profile & preferences updated.");
+};
+
+$("#feedback").onsubmit=e=>{
+ e.preventDefault();
+ localStorage.setItem("yp_feedback_v3",JSON.stringify(Object.fromEntries(new FormData(e.target).entries())));
+ e.target.reset();toast("Feedback submitted. Thank you for helping improve Your Path!");
+};
 
 $("#accept").onclick=()=>{localStorage.setItem(STORE.cookie,"accepted");$("#cookie").style.display="none";toast("Cookie preference saved.")};
 $("#essential").onclick=()=>{localStorage.setItem(STORE.cookie,"essential");$("#cookie").style.display="none";toast("Essential-only preference saved.")};
@@ -470,6 +1503,12 @@ if(localStorage.getItem(STORE.cookie))$("#cookie").style.display="none";
 ensureSession();updateUI();renderQuestion();
 
 window.newQuestionSession=()=>{newSession();renderQuestion();toast("New 20-question session generated.")};
+window.retakeQuestionnaire=retakeQuestionnaire;
+window.renderEducation=renderEducation;
+window.viewPathwayEd=viewPathwayEd;
+window.toggleComparePathway=toggleComparePathway;
+window.quickCompare=quickCompare;
+window.saveSavedNote=saveSavedNote;
 window.goTab=goTab;window.requireLogin=requireLogin;window.toggleSave=toggleSave;
 
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){$$(".modal-backdrop").forEach(m=>m.classList.add("hidden"))}});
