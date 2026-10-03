@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#6c5ce7">
 <meta name="description" content="Your Path — an explainable career exploration platform built for students. Discover what fits you.">
-<title>Your Path — Built by Madhu</title>
+<title>Your Path.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="page-noise"></div>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <header class="topbar">
-  <a class="brand" href="#home"><span class="brand-mark">YP</span><span><strong>Your Path</strong><small>Discover what fits you.</small></span></a>
+  <a class="brand" href="#home"><span class="brand-mark" aria-label="Your Path"><svg class="brand-svg" viewBox="0 0 28 28" width="22" height="22" fill="none"><circle cx="14" cy="14" r="11" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-dasharray="2 3"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><polygon points="14,6 17.5,12 23.5,14 17.5,16 14,22 10.5,16 4.5,14 10.5,12" fill="#ffffff"/><circle cx="14" cy="14" r="2.2" fill="#6c5ce7"/></svg></span><span><strong>Your Path</strong><small>Discover what fits you.</small></span></a>
   <nav><a href="#home" data-page="home">Home</a><a href="#explore" data-page="explore">Explore Careers</a><a href="#roadmap" data-page="roadmap">Roadmaps</a><a href="#resources" data-page="resources">Resources</a><a href="#blog" data-page="blog">Blog & Safety</a><a href="#about" data-page="about">About</a></nav>
  <div class="top-actions">
   <button class="btn ghost btn-large" id="loginBtn">Log in</button>
@@ -25,7 +26,9 @@
     <button class="btn ghost" id="topLogout">Log out</button>
   </div>
 
-  <button class="hamb" id="hamb" aria-label="Open menu">☰</button>
+  <button class="hamb" id="hamb" aria-label="Open menu">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+  </button>
 </div>
 </header>
 <div class="mobile-nav" id="mobileNav"><a href="#home" data-page="home">Home</a><a href="#explore" data-page="explore">Explore Careers</a><a href="#roadmap" data-page="roadmap">Roadmaps</a><a href="#resources" data-page="resources">Resources</a><a href="#blog" data-page="blog">Blog & Safety</a><a href="#about" data-page="about">About</a></div>
@@ -50,8 +53,14 @@
         <p>You are currently logged in. Your 20-question session, AI analysis, pathways, and roadmaps are ready.</p>
       </div>
       <div class="active-session-actions">
-        <button class="btn primary" onclick="showPage('dashboard');goTab('overview')">Go to Main Dashboard 📊</button>
-        <button class="btn soft" onclick="showPage('dashboard');goTab('questionnaire')">Continue Questionnaire 📝</button>
+        <button class="btn primary" onclick="showPage('dashboard');goTab('overview')">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+          <span>Go to Main Dashboard</span>
+        </button>
+        <button class="btn soft" onclick="showPage('dashboard');goTab('questionnaire')">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>Continue Questionnaire</span>
+        </button>
       </div>
     </div>
   </div>
@@ -65,23 +74,29 @@
     <div class="starting-menu-grid">
       <div class="starting-card">
         <div class="starting-badge">EXISTING STUDENTS</div>
-        <div class="starting-icon">🔐</div>
+        <div class="starting-icon starting-icon-svg-wrap">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
         <h3>Log In to Your Space</h3>
         <p>Continue your 20-question session, review AI patterns, and access your saved pathways, roadmaps, and previous analyses.</p>
-        <button class="btn ghost btn-full" onclick="openModal('authModal');switchAuth('login')" style="border:1.5px solid #dcd8ee">Log In to Account →</button>
+        <button class="btn ghost btn-full" onclick="openLogin()" style="border:1.5px solid #dcd8ee">Log In to Account →</button>
       </div>
 
       <div class="starting-card highlight-card">
         <div class="starting-badge highlight-badge">NEW STUDENTS</div>
-        <div class="starting-icon">🚀</div>
+        <div class="starting-icon starting-icon-svg-wrap">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path></svg>
+        </div>
         <h3>Create Student Account</h3>
         <p>Set up your student profile with a password, unlock the 1,000-question exploration bank, and start fresh.</p>
-        <button class="btn primary btn-full" onclick="openModal('authModal');switchAuth('signup')">Sign Up Free →</button>
+        <button class="btn primary btn-full" onclick="openSignup()">Sign Up Free →</button>
       </div>
 
       <div class="starting-card">
         <div class="starting-badge">GUEST PREVIEW</div>
-        <div class="starting-icon">🧭</div>
+        <div class="starting-icon starting-icon-svg-wrap">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        </div>
         <h3>Explore Career Library</h3>
         <p>Browse all 16 career clusters, university guides, scholarships, entrance tests, and alternative education routes.</p>
         <button class="btn soft btn-full" data-page="explore">Explore Library →</button>
@@ -97,24 +112,127 @@
 
 <section class="page" id="dashboard">
 <div class="dashboard shell">
-<aside class="sidebar"><div class="side-logo"><span class="brand-mark">YP</span><b>Your Path<small>Student space</small></b></div>
-  <button class="side active" data-tab="overview">📊 <span>Dashboard</span></button>
-  <button class="side" data-tab="questionnaire">📝 <span>Questionnaire</span></button>
-  <button class="side" data-tab="analysis">💡 <span>Analysis</span></button>
-  <button class="side" data-tab="pathways">🧭 <span>Pathways</span></button>
-  <button class="side" data-tab="compare">⚖️ <span>Compare</span></button>
-  <button class="side" data-tab="education">🎓 <span>Universities & Ed</span></button>
-  <button class="side" data-tab="roadmaps">🗺️ <span>Roadmaps</span></button>
-  <button class="side" data-tab="saved">❤️ <span>Saved Careers</span></button>
-  <button class="side" data-tab="history">🕒 <span>Previous Analyses</span></button>
-  <button class="side side-motivation" onclick="openMotivationModal()">✨ <span>Motivation</span></button>
-  <button class="side" data-tab="feedback">💬 <span>Feedback</span></button>
-  <button class="side" data-tab="profile">👤 <span>Profile</span></button>
-  <button class="side admin" data-tab="admin">🛡️ <span>Admin</span></button>
-  <button class="side" id="logout">🚪 <span>Log out</span></button>
+<aside class="sidebar">
+  <div class="side-logo">
+    <span class="brand-mark" aria-label="Your Path Logo">
+      <svg class="brand-svg" viewBox="0 0 28 28" width="20" height="20" fill="none">
+        <circle cx="14" cy="14" r="11" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-dasharray="2 3"/>
+        <path d="M14 3v4M14 21v4M3 14h4M21 14h4" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/>
+        <polygon points="14,6 17.5,12 23.5,14 17.5,16 14,22 10.5,16 4.5,14 10.5,12" fill="#ffffff"/>
+        <circle cx="14" cy="14" r="2.2" fill="#6c5ce7"/>
+      </svg>
+    </span>
+    <div class="side-logo-text">
+      <b>Your Path</b>
+      <small>Student space</small>
+    </div>
+  </div>
+
+  <div class="side-group">
+    <div class="side-group-label">WORKSPACE</div>
+    <button class="side active" data-tab="overview">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+      </span>
+      <span class="side-label">Dashboard</span>
+    </button>
+    <button class="side" data-tab="questionnaire">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </span>
+      <span class="side-label">Questionnaire</span>
+    </button>
+    <button class="side" data-tab="analysis">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><circle cx="18" cy="7" r="2"></circle></svg>
+      </span>
+      <span class="side-label">Analysis</span>
+    </button>
+  </div>
+
+  <div class="side-group">
+    <div class="side-group-label">EXPLORATION</div>
+    <button class="side" data-tab="pathways">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+      </span>
+      <span class="side-label">Pathways</span>
+    </button>
+    <button class="side" data-tab="compare">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h18"></path></svg>
+      </span>
+      <span class="side-label">Compare</span>
+    </button>
+    <button class="side" data-tab="education">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+      </span>
+      <span class="side-label">Universities & Ed</span>
+    </button>
+    <button class="side" data-tab="roadmaps">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+      </span>
+      <span class="side-label">Roadmaps</span>
+    </button>
+  </div>
+
+  <div class="side-group">
+    <div class="side-group-label">MY VAULT</div>
+    <button class="side" data-tab="saved">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+      </span>
+      <span class="side-label">Saved Careers</span>
+      <span class="side-badge" id="sideSavedBadge">0</span>
+    </button>
+    <button class="side" data-tab="history">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </span>
+      <span class="side-label">Previous Analyses</span>
+      <span class="side-badge" id="sideHistoryBadge">0</span>
+    </button>
+    <button class="side side-motivation" onclick="openMotivationModal()">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path></svg>
+      </span>
+      <span class="side-label">Motivation</span>
+      <span class="side-badge side-spark-badge">Daily</span>
+    </button>
+  </div>
+
+  <div class="side-group">
+    <div class="side-group-label">ACCOUNT</div>
+    <button class="side" data-tab="profile">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </span>
+      <span class="side-label">Profile</span>
+    </button>
+    <button class="side" data-tab="feedback">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      </span>
+      <span class="side-label">Feedback</span>
+    </button>
+    <button class="side admin" data-tab="admin">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </span>
+      <span class="side-label">Admin</span>
+    </button>
+    <button class="side side-logout" id="logout">
+      <span class="side-icon-box">
+        <svg class="side-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      </span>
+      <span class="side-label">Log out</span>
+    </button>
+  </div>
 </aside>
 <section class="dash-main">
-<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · HONEST DECISION SUPPORT</span><h1 id="welcome">Welcome back! 👋</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote quote-interactive" id="dailyQuoteCard" onclick="openMotivationModal()" title="Click for famous quotes & inspiration"><span class="quote-badge">✨ DAILY MOTIVATION · CLICK TO VIEW</span><blockquote id="headerQuoteText">“The best way to predict your future is to create it.”</blockquote><small id="headerQuoteAuthor">Often attributed to Abraham Lincoln ✦</small></div></div>
+<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · HONEST DECISION SUPPORT</span><h1 id="welcome">Welcome back!</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote quote-interactive" id="dailyQuoteCard" onclick="openMotivationModal()" title="Click for famous quotes & inspiration"><span class="quote-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path></svg>DAILY MOTIVATION · CLICK TO VIEW</span><blockquote id="headerQuoteText">“The best way to predict your future is to create it.”</blockquote><small id="headerQuoteAuthor">Often attributed to Abraham Lincoln ✦</small></div></div>
 <div class="journey-board" id="journeyBoard">
   <div class="journey-title"><span>HOW IT WORKS</span><b>STUDENT JOURNEY</b></div>
   <div class="journey-steps">
@@ -135,10 +253,30 @@
   <div class="stats"><div><b id="completion">0%</b><small>Questionnaire</small></div><div><b>16</b><small>Pathways to explore</small></div><div><b id="savedCount">0</b><small>Saved pathways</small></div><div><b id="historyCount">0</b><small>Completed analyses</small></div></div>
   <div class="dash-grid"><div class="card"><div class="card-title"><h3>Your pathway set</h3><button class="link" data-tab="pathways">View all →</button></div><div id="topPaths"></div></div><div class="card"><div class="interest-head"><h3>Your interest map</h3><span id="interestStatus" class="interest-status">Complete the questionnaire</span></div><div class="radar" id="interestRadar"><div class="radar-grid"></div><div class="radar-fill" id="radarFill"></div><span>Analytical</span><span>Creative</span><span>People</span><span>Learning</span><span>Curiosity</span></div><div class="interest-bars" id="interestBars"></div></div><div class="card"><h3>External pressure check</h3><p class="muted">This is a reflection indicator, not a claim about what you think.</p><div class="pressure"><p><span>Parental expectations</span><b>Medium</b></p><p><span>Peer influence</span><b>Low</b></p><p><span>Status / salary</span><b>Low</b></p></div></div></div>
   <div class="quick">
-    <button onclick="retakeQuestionnaire()">📝 <b>Retake questionnaire<small>Archive current & draw 20 new</small></b></button>
-    <button data-tab="compare">⚖️ <b>Compare pathways<small>Side-by-side analysis</small></b></button>
-    <button data-tab="education">🎓 <b>Universities & Ed<small>Degrees, tests & scholarships</small></b></button>
-    <button data-tab="history">🕒 <b>Previous analyses<small>Track interest evolution</small></b></button>
+    <button onclick="retakeQuestionnaire()">
+      <span class="quick-icon-wrap">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      </span>
+      <b>Retake questionnaire<small>Archive current & draw 20 new</small></b>
+    </button>
+    <button data-tab="compare">
+      <span class="quick-icon-wrap">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h18"></path></svg>
+      </span>
+      <b>Compare pathways<small>Side-by-side analysis</small></b>
+    </button>
+    <button data-tab="education">
+      <span class="quick-icon-wrap">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+      </span>
+      <b>Universities & Ed<small>Degrees, tests & scholarships</small></b>
+    </button>
+    <button data-tab="history">
+      <span class="quick-icon-wrap">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </span>
+      <b>Previous analyses<small>Track interest evolution</small></b>
+    </button>
   </div>
 </div>
 
@@ -279,7 +417,7 @@
     <div class="auth-loader-spinner">
       <div class="auth-loader-ring"></div>
       <div class="auth-loader-ring outer"></div>
-      <span class="brand-mark loader-brand-mark" id="loaderBrandMark">YP</span>
+      <span class="brand-mark loader-brand-mark" id="loaderBrandMark" aria-label="Your Path"><svg class="brand-svg" viewBox="0 0 28 28" width="22" height="22" fill="none"><circle cx="14" cy="14" r="11" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-dasharray="2 3"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><polygon points="14,6 17.5,12 23.5,14 17.5,16 14,22 10.5,16 4.5,14 10.5,12" fill="#ffffff"/><circle cx="14" cy="14" r="2.2" fill="#6c5ce7"/></svg></span>
     </div>
     <span class="loader-badge" id="loaderBadge">AUTHENTICATING</span>
     <h3 id="loaderTitle">Preparing your student space...</h3>
@@ -298,24 +436,30 @@
     </div>
   </div>
 </div>
-<div class="modal-backdrop hidden" id="authModal">
-  <div class="modal auth-modal auth-modal-lg" role="dialog" aria-modal="true" aria-label="Your Path account">
-    <button class="close" data-close="authModal" aria-label="Close">×</button>
-    <div class="auth-brand"><span class="brand-mark auth-brand-mark">YP</span><div><b>Your Path</b><small>Discover what fits you.</small></div></div>
-    <div class="auth-tabs"><button type="button" class="active" data-auth="login" onclick="switchAuth('login')">Log in</button><button type="button" data-auth="signup" onclick="switchAuth('signup')">Sign up</button></div>
+<div class="modal-backdrop hidden" id="loginModal">
+  <div class="modal auth-modal auth-modal-login" role="dialog" aria-modal="true" aria-label="Log in to Your Path">
+    <button class="close" data-close="loginModal" aria-label="Close">×</button>
+    <div class="auth-brand"><span class="brand-mark auth-brand-mark" aria-label="Your Path"><svg class="brand-svg" viewBox="0 0 28 28" width="22" height="22" fill="none"><circle cx="14" cy="14" r="11" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-dasharray="2 3"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><polygon points="14,6 17.5,12 23.5,14 17.5,16 14,22 10.5,16 4.5,14 10.5,12" fill="#ffffff"/><circle cx="14" cy="14" r="2.2" fill="#6c5ce7"/></svg></span><div><b>Your Path</b><small>Discover what fits you.</small></div></div>
 
     <div id="loginBox" class="auth-pane">
       <div class="auth-pane-head"><span class="eyebrow">WELCOME BACK</span><h2>Log in to Your Path.</h2><p>Continue your journey — your answers, pathways and roadmap are waiting for you.</p></div>
       <form class="auth-form auth-form-lg" id="loginForm">
         <label>Email<input name="email" type="email" required placeholder="you@example.com"></label>
         <label>Password<input name="password" type="password" required placeholder="••••••••"></label>
-        <button class="btn primary btn-full btn-xl">Log in</button>
-        <small class="auth-alt">Don't have an account? <button type="button" class="link-inline" onclick="switchAuth('signup')">Sign up free</button></small>
+        <button class="btn primary btn-full btn-xl" type="submit">Log in</button>
+        <small class="auth-alt">Don't have an account? <button type="button" class="link-inline" onclick="openSignup()">Sign up free</button></small>
         <small class="demo-hint">Demo admin login — admin@yourpath.demo / admin123</small>
       </form>
     </div>
+  </div>
+</div>
 
-    <div id="signupBox" class="hidden auth-pane">
+<div class="modal-backdrop hidden" id="signupModal">
+  <div class="modal auth-modal auth-modal-lg" role="dialog" aria-modal="true" aria-label="Create student account">
+    <button class="close" data-close="signupModal" aria-label="Close">×</button>
+    <div class="auth-brand"><span class="brand-mark auth-brand-mark" aria-label="Your Path"><svg class="brand-svg" viewBox="0 0 28 28" width="22" height="22" fill="none"><circle cx="14" cy="14" r="11" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-dasharray="2 3"/><path d="M14 3v4M14 21v4M3 14h4M21 14h4" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/><polygon points="14,6 17.5,12 23.5,14 17.5,16 14,22 10.5,16 4.5,14 10.5,12" fill="#ffffff"/><circle cx="14" cy="14" r="2.2" fill="#6c5ce7"/></svg></span><div><b>Your Path</b><small>Discover what fits you.</small></div></div>
+
+    <div id="signupBox" class="auth-pane">
       <div class="auth-step" id="consentStep">
         <div class="auth-pane-head"><span class="eyebrow">STEP 1 OF 2 · REQUIRED</span><h2>Before you create an account.</h2><p>Your Path is built for students. Read and accept both policies below — you cannot create an account until you do.</p></div>
         <div class="consent-docs">
@@ -345,6 +489,7 @@
         <label class="check consent-check"><input type="checkbox" id="consentPolicies"><span>I have read and agree to the <b>Privacy Policy</b> and the <b>Terms & Conditions</b>.</span></label>
         <label class="check consent-check"><input type="checkbox" id="consentAge"><span>I am 13 or older, or I have a parent or guardian's permission to use Your Path.</span></label>
         <div class="consent-actions"><button type="button" class="btn soft btn-xl" id="consentCancel">Cancel</button><button type="button" class="btn primary btn-xl" id="consentAccept" disabled>I agree — Continue</button></div>
+        <small class="auth-alt" style="display:block;margin-top:12px;text-align:center;">Already have an account? <button type="button" class="link-inline" onclick="openLogin()">Log in</button></small>
         <small class="consent-footnote">Both boxes are required. You can review these policies any time from the Blog & Safety page.</small>
       </div>
 
@@ -362,8 +507,8 @@
           </div>
           <label>School/location (optional)<input name="school" placeholder="Optional"></label>
           <label class="check"><input type="checkbox" required>I understand this demo stores information in this browser and is not production-secure.</label>
-          <button class="btn primary btn-full btn-xl">Create account</button>
-          <small class="auth-alt">Already have an account? <button type="button" class="link-inline" onclick="switchAuth('login')">Log in</button></small>
+          <button class="btn primary btn-full btn-xl" type="submit">Create account</button>
+          <small class="auth-alt">Already have an account? <button type="button" class="link-inline" onclick="openLogin()">Log in</button></small>
         </form>
       </div>
     </div>
@@ -507,7 +652,7 @@
 </div>
 
 <button type="button" class="floating-motivation-btn" id="floatingMotivation" onclick="openMotivationModal()" title="Get inspiration from famous thinkers">
-  <span class="mot-spark">✨</span>
+  <span class="mot-spark"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path></svg></span>
   <span>Daily Motivation</span>
 </button>
 

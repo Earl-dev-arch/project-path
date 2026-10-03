@@ -306,18 +306,38 @@ function ensureSession(){if(!state.session||state.session.ids?.length!==20)newSe
 function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2600)}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function showPage(id){$$(".page").forEach(x=>x.classList.remove("active"));$("#"+id)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});$("#mobileNav").classList.remove("open")}
-function openModal(id){$("#"+id).classList.remove("hidden")}
-function closeModal(id){$("#"+id).classList.add("hidden")}
-function switchAuth(type){
-  const isLogin=(type==="login");
-  $$(".auth-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.auth===type));
-  const loginBox=$("#loginBox");
-  const signupBox=$("#signupBox");
-  if(loginBox) loginBox.classList.toggle("hidden",!isLogin);
-  if(signupBox) signupBox.classList.toggle("hidden",isLogin);
-  if(!isLogin && typeof window.resetConsentGate==="function"){
+function openModal(id){
+  if(id==="authModal"){openLogin();return;}
+  $("#"+id)?.classList.remove("hidden");
+}
+function closeModal(id){
+  if(id==="authModal"){
+    $("#loginModal")?.classList.add("hidden");
+    $("#signupModal")?.classList.add("hidden");
+  }
+  $("#"+id)?.classList.add("hidden");
+}
+function openLogin(){
+  closeModal("signupModal");
+  closeModal("authModal");
+  openModal("loginModal");
+  const emailInput=$("#loginForm input[name='email']");
+  if(emailInput) setTimeout(()=>emailInput.focus(), 50);
+}
+function openSignup(){
+  closeModal("loginModal");
+  closeModal("authModal");
+  if(typeof window.resetConsentGate==="function"){
     window.resetConsentGate();
   }
+  openModal("signupModal");
+}
+window.openLogin=openLogin;
+window.openSignup=openSignup;
+
+function switchAuth(type){
+  if(type==="signup") openSignup();
+  else openLogin();
 }
 window.switchAuth=switchAuth;
 
@@ -326,8 +346,8 @@ $("#hamb").onclick=()=>$("#mobileNav").classList.toggle("open");
 $("#heroStart").onclick=()=>{if(requireLogin()){goTab("questionnaire")}};
 $("#roadmapStart").onclick=()=>{if(requireLogin()){showPage("dashboard");goTab("roadmaps")}};
 $$("[data-scroll]").forEach(b=>b.onclick=()=>document.querySelector(b.dataset.scroll)?.scrollIntoView({behavior:"smooth"}));
-$("#loginBtn").onclick=()=>{openModal("authModal");switchAuth("login")};
-$("#signupBtn").onclick=()=>{openModal("authModal");switchAuth("signup")};
+$("#loginBtn").onclick=()=>openLogin();
+$("#signupBtn").onclick=()=>openSignup();
 $$("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
 $("#privacyBtn").onclick=$("#privacyFoot").onclick=()=>openModal("privacyModal");
 
@@ -339,7 +359,7 @@ $$(".auth-tabs button, [data-auth]").forEach(btn=>{
   };
 });
 
-function requireLogin(){if(!state.user){openModal("authModal");switchAuth("login");toast("Log in or create an account to continue.");return false}showPage("dashboard");return true}
+function requireLogin(){if(!state.user){openLogin();toast("Log in or create an account to continue.");return false}showPage("dashboard");return true}
 function goTab(name){
  if(!state.user)return;
  $$(".side").forEach(x=>x.classList.toggle("active",x.dataset.tab===name));
@@ -500,7 +520,7 @@ $("#signupForm").onsubmit=e=>{
  }
  if(state.accounts && state.accounts[d.email]){
    toast("An account with this email already exists. Please log in.");
-   switchAuth("login");
+   openLogin();
    return;
  }
  const newUser={
@@ -524,6 +544,7 @@ $("#signupForm").onsubmit=e=>{
  state.answers={};
  newSession();
  saveState();
+ closeModal("signupModal");
  closeModal("authModal");
 
  const firstName=newUser.name ? newUser.name.trim().split(" ")[0] : "Student";
@@ -569,6 +590,7 @@ $("#loginForm").onsubmit=e=>{
  }
  ensureSession();
  saveState();
+ closeModal("loginModal");
  closeModal("authModal");
 
  const firstName=state.user && state.user.name ? state.user.name.trim().split(" ")[0] : "there";
@@ -779,13 +801,18 @@ function updateUI(){
  if(activeBanner) activeBanner.classList.toggle("hidden", !loggedIn);
  if(activeGreeting) activeGreeting.textContent=`Welcome back, ${state.user?.name||"Student"}! ✦`;
 
- $("#welcome").textContent=`Welcome back, ${state.user?.name||"there"}! 👋`;
+ $("#welcome").textContent=`Welcome back, ${state.user?.name||"there"}!`;
  $("#savedCount").textContent=state.saved.length;
+ const sideSaved=document.getElementById("sideSavedBadge");
+ if(sideSaved) sideSaved.textContent=state.saved.length;
  const historyCount=$("#historyCount");
  if(historyCount) historyCount.textContent=(state.history||[]).length;
+ const sideHistory=document.getElementById("sideHistoryBadge");
+ if(sideHistory) sideHistory.textContent=(state.history||[]).length;
  const answered=Object.keys(state.answers).length;
  $("#completion").textContent=`${Math.round(answered/20*100)}%`;
- $(".side.admin").style.display=state.user?.role==="admin"?"block":"none";
+ const sideAdmin=$(".side.admin");
+ if(sideAdmin) sideAdmin.style.display=state.user?.role==="admin"?"flex":"none";
  renderOverview();renderPublic();
  renderInterestMap();
  renderJourney();
@@ -1477,7 +1504,7 @@ function archiveCurrentSession(){
  };
  if(existingIdx>=0) state.history[existingIdx]=snapshot;
  else state.history.unshift(snapshot);
- saveState();
+ saveState();updateUI();
 }
 
 function retakeQuestionnaire(){
@@ -1966,9 +1993,9 @@ window.newQuestionSession=()=>{state.aiSession=null;state.aiResult=null;state.ai
 
 // Update signup/login to start an AI-controlled journey.
 const oldSignup= $('#signupForm').onsubmit;
-$('#signupForm').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());state.user={...d,role:'student',createdAt:Date.now()};state.answers={};state.saved=[];saveState();closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');updateAIJourney();await startAISession();toast('Account created — your AI guide is ready.');};
+$('#signupForm').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());state.user={...d,role:'student',createdAt:Date.now()};state.accounts=state.accounts||{};state.accounts[d.email]=state.user;state.answers={};state.saved=[];saveState();closeModal('signupModal');closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');updateAIJourney();await startAISession();toast('Account created — your AI guide is ready.');};
 const oldLogin=$('#loginForm').onsubmit;
-$('#loginForm').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());if(d.email==='admin@yourpath.demo'&&d.password==='admin123'){state.user={name:'Admin',email:d.email,role:'admin',grade:'College'};ensureSession();saveState();closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');toast('Admin logged in.');return;}state.user={name:d.email.split('@')[0],email:d.email,role:'student',grade:state.user?.grade||'Grade 10'};saveState();closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');if(!state.aiSession||!state.aiResult)await startAISession();toast('Logged in — your AI guide is ready.');};
+$('#loginForm').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries());if(d.email==='admin@yourpath.demo'&&d.password==='admin123'){state.user={name:'Admin',email:d.email,role:'admin',grade:'College'};ensureSession();saveState();closeModal('loginModal');closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');toast('Admin logged in.');return;}state.user={name:d.email.split('@')[0],email:d.email,role:'student',grade:state.user?.grade||'Grade 10'};saveState();closeModal('loginModal');closeModal('authModal');updateUI();showPage('dashboard');goTab('overview');if(!state.aiSession||!state.aiResult)await startAISession();toast('Logged in — your AI guide is ready.');};
 
 // Initial AI-aware rendering.
 if(state.aiResult){renderAIResult();renderAIPatways();renderAIRoadmap();renderInterestMapFromAI();setAIStatus('AI analysis loaded','ready');}
@@ -2162,7 +2189,7 @@ function localSignalFromAnswer(q,val){
   const consentStep=document.getElementById('consentStep');
   const signupStep=document.getElementById('signupStep');
   const signupForm=document.getElementById('signupForm');
-  const authDialog=document.querySelector('#authModal .modal');
+  const authDialog=document.querySelector('#signupModal .modal') || document.querySelector('#authModal .modal');
   if(!consentPolicies||!consentAccept||!signupForm)return;
 
   function syncConsentButton(){
@@ -2191,7 +2218,7 @@ function localSignalFromAnswer(q,val){
     firstField&&firstField.focus();
   });
 
-  consentCancel&&consentCancel.addEventListener('click',()=>closeModal('authModal'));
+  consentCancel&&consentCancel.addEventListener('click',()=>closeModal('signupModal'));
 
   window.resetConsentGate=resetConsentGate;
 
@@ -2200,7 +2227,7 @@ function localSignalFromAnswer(q,val){
   signupForm.onsubmit=function(event){
     if(!(consentPolicies.checked&&(!consentAge||consentAge.checked))){
       event.preventDefault();
-      window.switchAuth('signup');
+      window.openSignup();
       toast('Please read and accept the Privacy Policy and Terms & Conditions first.');
       return false;
     }
