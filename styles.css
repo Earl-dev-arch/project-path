@@ -137,9 +137,9 @@ img {
 @keyframes drift2 { 50% { transform: translate3d(-6vw, 7vh, 0) scale(1.08); } }
 @keyframes drift3 { 50% { transform: translate3d(5vw, -6vh, 0) scale(1.12); } }
 
-/* Shell container */
+/* Shell container (fills wide desktop & PC screens gracefully) */
 .shell {
-  width: min(1200px, calc(100% - 36px));
+  width: min(1580px, calc(100% - 48px));
   margin-left: auto;
   margin-right: auto;
 }
@@ -150,8 +150,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 0 max(18px, calc((100% - 1240px) / 2));
+  gap: 20px;
+  padding: 0 max(24px, calc((100% - 1580px) / 2));
   position: sticky;
   top: 0;
   z-index: 50;
@@ -712,11 +712,11 @@ img {
    ============================================================ */
 
 .dashboard {
-  width: min(1440px, calc(100% - 32px));
+  width: min(1680px, calc(100% - 48px));
   margin: 20px auto 60px;
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
   box-sizing: border-box;
 }
 
@@ -767,6 +767,17 @@ img {
   background: #403b67;
   color: #ffffff;
 }
+.side-motivation {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.25), rgba(232, 67, 147, 0.15));
+  border: 1px solid rgba(162, 155, 254, 0.35);
+  color: #ffffff;
+  margin: 4px 0;
+}
+.side-motivation:hover {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.5), rgba(232, 67, 147, 0.35));
+  border-color: #a29bfe;
+  transform: translateX(2px);
+}
 .side.admin {
   display: none;
 }
@@ -777,9 +788,10 @@ img {
 .dash-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
+  align-items: center;
+  gap: 24px;
   margin: 0 0 24px;
+  flex-wrap: wrap;
 }
 .dash-head h1 {
   font-size: clamp(26px, 2.8vw, 36px);
@@ -795,11 +807,48 @@ img {
 .quote {
   background: #ffffff;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 14px 18px;
   font-size: 12px;
-  max-width: 320px;
+  max-width: 380px;
   box-shadow: var(--shadow-sm);
+}
+.quote-interactive {
+  cursor: pointer;
+  background: linear-gradient(135deg, #faf8ff 0%, #ffffff 100%);
+  border: 1.5px solid #dcd7fa;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(108, 92, 231, 0.08);
+}
+.quote-interactive:hover {
+  transform: translateY(-3px);
+  border-color: var(--purple);
+  box-shadow: 0 10px 28px rgba(108, 92, 231, 0.16);
+}
+.quote-badge {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  color: var(--purple-deep);
+  background: #eeeafd;
+  border-radius: 999px;
+  padding: 3px 9px;
+  margin-bottom: 6px;
+}
+.quote-interactive blockquote {
+  margin: 0;
+  font-size: 12.5px;
+  font-style: italic;
+  color: #2b2848;
+  line-height: 1.45;
+  font-weight: 650;
+}
+.quote-interactive small {
+  display: block;
+  color: #7b7d93;
+  margin-top: 6px;
+  font-size: 11px;
 }
 .quote small {
   display: block;
@@ -2659,8 +2708,160 @@ footer {
   to { transform: none; opacity: 1; }
 }
 
-.hidden {
-  display: none !important;
+/* Floating Motivation Trigger */
+.floating-motivation-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 85;
+  background: linear-gradient(135deg, #24233b 0%, #3e3863 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(25, 20, 50, 0.35);
+  transition: all 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.floating-motivation-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 40px rgba(108, 92, 231, 0.45);
+  border-color: #a29bfe;
+}
+.mot-spark {
+  font-size: 16px;
+  animation: loaderPulse 1.6s ease-in-out infinite;
+}
+
+/* Motivation Modal Styling */
+.modal.motivation-modal {
+  width: min(580px, 94vw);
+  border-radius: 28px;
+  padding: 34px 30px;
+  background: linear-gradient(180deg, #ffffff 0%, #faf9fe 100%);
+  border: 1.5px solid rgba(108, 92, 231, 0.2);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(22, 14, 52, 0.35);
+}
+.motivation-glow {
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(108, 92, 231, 0.16) 0%, transparent 70%);
+  pointer-events: none;
+}
+.motivation-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.motivation-badge {
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  color: var(--purple-deep);
+  background: #eeeafd;
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+.motivation-field {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #72748a;
+  background: #f1eff8;
+  border-radius: 999px;
+  padding: 4px 10px;
+  text-transform: uppercase;
+}
+.motivation-body {
+  position: relative;
+  margin-bottom: 24px;
+}
+.motivation-quote-icon {
+  font-family: Georgia, serif;
+  font-size: 56px;
+  line-height: 0.8;
+  color: #d8d3f8;
+  margin-bottom: 8px;
+}
+.motivation-quote-text {
+  font-size: clamp(17px, 2vw, 20px);
+  font-weight: 750;
+  line-height: 1.45;
+  color: #1c183a;
+  margin: 0 0 20px;
+  letter-spacing: -0.015em;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  font-style: italic;
+}
+.motivation-author-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f5f3fc;
+  border: 1px solid #e7e3f8;
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.motivation-avatar {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.12);
+  flex-shrink: 0;
+}
+.motivation-author-info h3 {
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #201c3d;
+}
+.motivation-author-info p {
+  margin: 0;
+  font-size: 12px;
+  color: #707289;
+  font-weight: 600;
+}
+.motivation-takeaway {
+  background: #ffffff;
+  border: 1px dashed #d5cdf4;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #4f5068;
+}
+.motivation-takeaway b {
+  display: block;
+  color: var(--purple);
+  margin-bottom: 4px;
+  font-size: 11.5px;
+}
+.motivation-takeaway p {
+  margin: 0;
+}
+.motivation-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 /* ============================================================

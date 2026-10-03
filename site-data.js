@@ -5,7 +5,6 @@
 window.YourPathData = (function () {
   "use strict";
 
-  /* ---------------------------------------------------------------- clusters */
 
   const clusters = [
     { id: "tech", name: "Technology & computing", icon: "i-cpu",

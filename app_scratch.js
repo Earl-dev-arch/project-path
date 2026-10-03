@@ -591,6 +591,176 @@ $("#logout").onclick=handleLogout;
 const topLogout=$("#topLogout");
 if(topLogout) topLogout.onclick=handleLogout;
 
+const MOTIVATION_QUOTES = [
+  {
+    author: "Albert Einstein",
+    role: "Theoretical Physicist · Nobel Laureate in Physics",
+    avatar: "⚛️",
+    field: "CURIOSITY & DISCOVERY",
+    quote: "Imagination is more important than knowledge. For knowledge is limited, whereas imagination embraces the entire world, stimulating progress, giving birth to evolution.",
+    takeaway: "Never be afraid to ask unorthodox questions. The greatest breakthroughs in science and career begin with playful curiosity rather than rote memorization."
+  },
+  {
+    author: "Marie Curie",
+    role: "Physicist & Chemist · 2x Nobel Prize Winner",
+    avatar: "🔬",
+    field: "PERSEVERANCE & SCIENCE",
+    quote: "Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less.",
+    takeaway: "Career uncertainty and tough exams can feel intimidating, but breaking them down into small, understandable experiments turns fear into confidence."
+  },
+  {
+    author: "Steve Jobs",
+    role: "Co-founder of Apple · Pioneer of Personal Computing",
+    avatar: "💻",
+    field: "PASSION & INNOVATION",
+    quote: "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.",
+    takeaway: "Your Path is designed to help you explore multiple possibilities without forcing an early compromise. Keep testing until you find what genuinely fits you."
+  },
+  {
+    author: "Maya Angelou",
+    role: "Poet, Author & Civil Rights Champion",
+    avatar: "✍️",
+    field: "CREATIVITY & RESILIENCE",
+    quote: "You can't use up creativity. The more you use, the more you have.",
+    takeaway: "Creativity isn't a finite resource. Whether you write code, design experiences, or build communities, daily practice makes your creative instincts sharper."
+  },
+  {
+    author: "Carl Sagan",
+    role: "Astronomer, Planetary Scientist & Author",
+    avatar: "🌌",
+    field: "ASTRONOMY & WONDER",
+    quote: "Somewhere, something incredible is waiting to be known.",
+    takeaway: "The world has thousands of emerging disciplines that didn't exist 10 years ago. Stay curious and build real skills that open doors to the unknown."
+  },
+  {
+    author: "Nelson Mandela",
+    role: "Former President of South Africa & Nobel Peace Laureate",
+    avatar: "🌍",
+    field: "LEADERSHIP & EDUCATION",
+    quote: "Education is the most powerful weapon which you can use to change the world.",
+    takeaway: "Every subject you learn, every project you build, and every skill you practice gives you greater leverage to help your family and community."
+  },
+  {
+    author: "Leonardo da Vinci",
+    role: "Polymath, Artist, Engineer & Inventor",
+    avatar: "🎨",
+    field: "INTERDISCIPLINARY MASTERY",
+    quote: "Learning never exhausts the mind.",
+    takeaway: "You don't have to choose between art and science. The most innovative creators bridge design, technology, and human empathy together."
+  },
+  {
+    author: "Richard Feynman",
+    role: "Theoretical Physicist · Nobel Laureate & Educator",
+    avatar: "⚡",
+    field: "FIRST-PRINCIPLES THINKING",
+    quote: "Study hard what interests you the most in the most undisciplined, irreverent and original manner possible.",
+    takeaway: "True mastery comes from building things with your own hands and understanding why they work, not just memorizing answers for tests."
+  },
+  {
+    author: "Malala Yousafzai",
+    role: "Education Activist & Nobel Peace Prize Laureate",
+    avatar: "📚",
+    field: "PURPOSE & ADVOCACY",
+    quote: "One child, one teacher, one book, one pen can change the world.",
+    takeaway: "Your voice and dedication matter regardless of your starting grade or background. Take pride in your educational journey."
+  },
+  {
+    author: "Katherine Johnson",
+    role: "NASA Mathematician & Space Exploration Pioneer",
+    avatar: "🚀",
+    field: "MATHEMATICS & EXCELLENCE",
+    quote: "Like what you do, and then you will do your best.",
+    takeaway: "Focus on finding the joy in problem solving. When you enjoy the process of learning, high performance follows naturally."
+  },
+  {
+    author: "Alan Turing",
+    role: "Father of Modern Computing & Artificial Intelligence",
+    avatar: "🤖",
+    field: "COMPUTING & LOGIC",
+    quote: "Sometimes it is the people no one can imagine anything of who do the things no one can imagine.",
+    takeaway: "Don't let anyone pigeonhole your potential based on traditional molds. Unconventional thinkers often build the future."
+  },
+  {
+    author: "Jane Goodall",
+    role: "Primatologist, Anthropologist & Conservationist",
+    avatar: "🌿",
+    field: "ENVIRONMENT & IMPACT",
+    quote: "What you do makes a difference, and you have to decide what kind of difference you want to make.",
+    takeaway: "Every career choice carries real impact on people, animals, and the planet. Choose pathways that align with your deepest values."
+  }
+];
+
+let currentQuoteIndex = 0;
+
+function openMotivationModal(idx){
+  if(typeof idx === "number"){
+    currentQuoteIndex = idx % MOTIVATION_QUOTES.length;
+  }
+  renderMotivationModal();
+  openModal("motivationModal");
+}
+window.openMotivationModal = openMotivationModal;
+
+function renderMotivationModal(){
+  const item = MOTIVATION_QUOTES[currentQuoteIndex];
+  if(!item) return;
+  const quoteEl = $("#motQuote");
+  const authorEl = $("#motAuthor");
+  const roleEl = $("#motRole");
+  const avatarEl = $("#motAvatar");
+  const fieldEl = $("#motField");
+  const takeawayEl = $("#motTakeawayText");
+
+  if(quoteEl) quoteEl.textContent = `“${item.quote}”`;
+  if(authorEl) authorEl.textContent = item.author;
+  if(roleEl) roleEl.textContent = item.role;
+  if(avatarEl) avatarEl.textContent = item.avatar;
+  if(fieldEl) fieldEl.textContent = item.field;
+  if(takeawayEl) takeawayEl.textContent = item.takeaway;
+}
+
+function nextMotivationQuote(){
+  currentQuoteIndex = (currentQuoteIndex + 1) % MOTIVATION_QUOTES.length;
+  const quoteEl = $("#motQuote");
+  if(quoteEl){
+    quoteEl.style.opacity = "0";
+    quoteEl.style.transform = "translateY(8px)";
+    setTimeout(()=>{
+      renderMotivationModal();
+      quoteEl.style.opacity = "1";
+      quoteEl.style.transform = "none";
+    }, 150);
+  } else {
+    renderMotivationModal();
+  }
+  renderHeaderQuote();
+}
+window.nextMotivationQuote = nextMotivationQuote;
+
+function copyMotivationQuote(){
+  const item = MOTIVATION_QUOTES[currentQuoteIndex];
+  if(!item) return;
+  const text = `“${item.quote}” — ${item.author} (${item.role})`;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      toast("Quote copied to clipboard! 📋");
+    }).catch(()=>{
+      toast(`Copied quote from ${item.author}`);
+    });
+  } else {
+    toast(`“${item.quote}” — ${item.author}`);
+  }
+}
+window.copyMotivationQuote = copyMotivationQuote;
+
+function renderHeaderQuote(){
+  const item = MOTIVATION_QUOTES[currentQuoteIndex];
+  const qText = $("#headerQuoteText");
+  const qAuth = $("#headerQuoteAuthor");
+  if(qText && item) qText.textContent = `“${item.quote}”`;
+  if(qAuth && item) qAuth.textContent = `${item.author} · ${item.role.split("·")[0].trim()} ✦`;
+}
+
 function updateUI(){
  const loggedIn=Boolean(state.user);
  const loginBtn=$("#loginBtn");
@@ -619,6 +789,7 @@ function updateUI(){
  renderOverview();renderPublic();
  renderInterestMap();
  renderJourney();
+ renderHeaderQuote();
 }
 
 function renderJourney(){

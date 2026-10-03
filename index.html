@@ -107,13 +107,14 @@
   <button class="side" data-tab="roadmaps">🗺️ <span>Roadmaps</span></button>
   <button class="side" data-tab="saved">❤️ <span>Saved Careers</span></button>
   <button class="side" data-tab="history">🕒 <span>Previous Analyses</span></button>
+  <button class="side side-motivation" onclick="openMotivationModal()">✨ <span>Motivation</span></button>
   <button class="side" data-tab="feedback">💬 <span>Feedback</span></button>
   <button class="side" data-tab="profile">👤 <span>Profile</span></button>
   <button class="side admin" data-tab="admin">🛡️ <span>Admin</span></button>
   <button class="side" id="logout">🚪 <span>Log out</span></button>
 </aside>
 <section class="dash-main">
-<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · HONEST DECISION SUPPORT</span><h1 id="welcome">Welcome back! 👋</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote">“The best way to predict your future is to create it.”<small>Often attributed to Abraham Lincoln</small></div></div>
+<div class="dash-head"><div><span class="eyebrow">STUDENT DASHBOARD · HONEST DECISION SUPPORT</span><h1 id="welcome">Welcome back! 👋</h1><p>You're not here to fit in. You're here to figure out your path.</p></div><div class="quote quote-interactive" id="dailyQuoteCard" onclick="openMotivationModal()" title="Click for famous quotes & inspiration"><span class="quote-badge">✨ DAILY MOTIVATION · CLICK TO VIEW</span><blockquote id="headerQuoteText">“The best way to predict your future is to create it.”</blockquote><small id="headerQuoteAuthor">Often attributed to Abraham Lincoln ✦</small></div></div>
 <div class="journey-board" id="journeyBoard">
   <div class="journey-title"><span>HOW IT WORKS</span><b>STUDENT JOURNEY</b></div>
   <div class="journey-steps">
@@ -469,6 +470,46 @@
     <small class="legal-note">Last updated: 2026. This is a prototype agreement and is not legal advice.</small>
   </div>
 </div>
+
+<div class="modal-backdrop hidden" id="motivationModal" role="dialog" aria-modal="true" aria-label="Famous Motivation and Wisdom">
+  <div class="modal motivation-modal">
+    <button class="close" data-close="motivationModal" aria-label="Close">×</button>
+    <div class="motivation-glow"></div>
+    <div class="motivation-head">
+      <span class="motivation-badge">✨ WORDS OF WISDOM</span>
+      <span class="motivation-field" id="motField">INNOVATION & VISION</span>
+    </div>
+
+    <div class="motivation-body">
+      <div class="motivation-quote-icon">“</div>
+      <blockquote class="motivation-quote-text" id="motQuote">The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.</blockquote>
+      
+      <div class="motivation-author-card">
+        <div class="motivation-avatar" id="motAvatar">💡</div>
+        <div class="motivation-author-info">
+          <h3 id="motAuthor">Steve Jobs</h3>
+          <p id="motRole">Co-founder of Apple · Pioneer of Personal Computing</p>
+        </div>
+      </div>
+
+      <div class="motivation-takeaway">
+        <b>✦ Key takeaway for your journey:</b>
+        <p id="motTakeawayText">Don't rush to settle on a single fixed label early. Genuine fulfillment comes from experimenting with ideas until you discover what truly sparks your curiosity.</p>
+      </div>
+    </div>
+
+    <div class="motivation-actions">
+      <button type="button" class="btn primary" onclick="nextMotivationQuote()">🎲 Next Quote →</button>
+      <button type="button" class="btn soft" onclick="copyMotivationQuote()">📋 Copy Quote</button>
+      <button type="button" class="btn ghost" onclick="closeModal('motivationModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="floating-motivation-btn" id="floatingMotivation" onclick="openMotivationModal()" title="Get inspiration from famous thinkers">
+  <span class="mot-spark">✨</span>
+  <span>Daily Motivation</span>
+</button>
 
 <div class="cookie" id="cookie"><div><b>Your Path uses browser storage.</b><p>This prototype uses local storage for login state, questionnaire progress and your cookie preference. Nothing is sent to a server.</p></div><div><button class="btn soft" id="essential">Essential only</button><button class="btn primary" id="accept">Accept</button></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
