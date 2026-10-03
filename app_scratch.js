@@ -308,7 +308,18 @@ function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;",
 function showPage(id){$$(".page").forEach(x=>x.classList.remove("active"));$("#"+id)?.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});$("#mobileNav").classList.remove("open")}
 function openModal(id){$("#"+id).classList.remove("hidden")}
 function closeModal(id){$("#"+id).classList.add("hidden")}
-function switchAuth(type){$$(".auth-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.auth===type));$("#loginBox").classList.toggle("hidden",type!=="login");$("#signupBox").classList.toggle("hidden",type!=="signup")}
+function switchAuth(type){
+  const isLogin=(type==="login");
+  $$(".auth-tabs button").forEach(b=>b.classList.toggle("active",b.dataset.auth===type));
+  const loginBox=$("#loginBox");
+  const signupBox=$("#signupBox");
+  if(loginBox) loginBox.classList.toggle("hidden",!isLogin);
+  if(signupBox) signupBox.classList.toggle("hidden",isLogin);
+  if(!isLogin && typeof window.resetConsentGate==="function"){
+    window.resetConsentGate();
+  }
+}
+window.switchAuth=switchAuth;
 
 $$("[data-page]").forEach(a=>a.onclick=e=>{e.preventDefault();showPage(a.dataset.page)});
 $("#hamb").onclick=()=>$("#mobileNav").classList.toggle("open");
@@ -319,6 +330,14 @@ $("#loginBtn").onclick=()=>{openModal("authModal");switchAuth("login")};
 $("#signupBtn").onclick=()=>{openModal("authModal");switchAuth("signup")};
 $$("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
 $("#privacyBtn").onclick=$("#privacyFoot").onclick=()=>openModal("privacyModal");
+
+$$(".auth-tabs button, [data-auth]").forEach(btn=>{
+  btn.onclick=(e)=>{
+    e.preventDefault();
+    const type=btn.dataset.auth || (btn.textContent.toLowerCase().includes("sign") ? "signup" : "login");
+    switchAuth(type);
+  };
+});
 
 function requireLogin(){if(!state.user){openModal("authModal");switchAuth("login");toast("Log in or create an account to continue.");return false}showPage("dashboard");return true}
 function goTab(name){
@@ -2003,12 +2022,7 @@ function localSignalFromAnswer(q,val){
 
   consentCancel&&consentCancel.addEventListener('click',()=>closeModal('authModal'));
 
-  // Every time the Sign up tab opens, send the student back to the policy step.
-  const originalSwitchAuth=window.switchAuth;
-  window.switchAuth=function(type){
-    if(typeof originalSwitchAuth==='function')originalSwitchAuth(type);
-    if(type==='signup')resetConsentGate();
-  };
+  window.resetConsentGate=resetConsentGate;
 
   // Account creation is impossible without the consent step being completed.
   const originalSubmit=signupForm.onsubmit;
