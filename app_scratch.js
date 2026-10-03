@@ -568,7 +568,7 @@ function renderInterestMap(){
 const pathways=[
 {
  name:"Data Science & Analytics",
- icon:"◈",
+ icon:"📊",
  tag:"Analytical + curious",
  img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
  reason:"Strong alignment if you enjoy uncovering patterns in messy data, quantitative reasoning, and turning questions into structured analysis.",
@@ -600,7 +600,7 @@ const pathways=[
 },
 {
  name:"Psychology & Behaviour",
- icon:"◉",
+ icon:"🧠",
  tag:"People + research",
  img:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
  reason:"Fits students drawn to understanding human motivations, empathy-driven problem solving, and evidence-based behavioral research.",
@@ -632,7 +632,7 @@ const pathways=[
 },
 {
  name:"UX / Product Design",
- icon:"◇",
+ icon:"🎨",
  tag:"Creative + problem solving",
  img:"https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80",
  reason:"Ideal if you enjoy understanding user frustrations, sketching solutions, and designing intuitive digital and physical experiences.",
@@ -664,7 +664,7 @@ const pathways=[
 },
 {
  name:"Environmental Science",
- icon:"♧",
+ icon:"🌿",
  tag:"Science + impact",
  img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
  reason:"Natural fit if you are passionate about ecological systems, climate resilience, biodiversity, and outdoor/laboratory investigations.",
@@ -696,7 +696,7 @@ const pathways=[
 },
 {
  name:"Software Engineering",
- icon:"</>",
+ icon:"💻",
  tag:"Logical + builder",
  img:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80",
  reason:"A high-impact direction if you enjoy constructing software systems, technical problem solving, debugging, and continuous learning.",
@@ -728,7 +728,7 @@ const pathways=[
 },
 {
  name:"Cybersecurity",
- icon:"⌁",
+ icon:"🛡️",
  tag:"Systems + investigation",
  img:"https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
  reason:"Explore this if you are energized by protecting digital assets, investigating attack vectors, networks, and puzzle-like vulnerabilities.",
@@ -760,7 +760,7 @@ const pathways=[
 },
 {
  name:"Engineering & Computational Science",
- icon:"△",
+ icon:"⚙️",
  tag:"Math + making",
  img:"https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80",
  reason:"Geared for students drawn to physics, mathematical modeling, simulation, and creating real-world physical or computational systems.",
@@ -792,7 +792,7 @@ const pathways=[
 },
 {
  name:"Business & Entrepreneurship",
- icon:"↗",
+ icon:"🚀",
  tag:"Initiative + people",
  img:"https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=600&q=80",
  reason:"Ideal if you enjoy launching ideas, commercial strategy, leading initiatives, negotiations, and measurable business outcomes.",
@@ -824,7 +824,7 @@ const pathways=[
 },
 {
  name:"Architecture & Spatial Design",
- icon:"⌂",
+ icon:"🏛️",
  tag:"Creative + technical",
  img:"https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80",
  reason:"Designed for minds that love spatial thinking, physical environments, structural aesthetics, and blending art with engineering logic.",
@@ -856,7 +856,7 @@ const pathways=[
 },
 {
  name:"Biotechnology & Life Sciences",
- icon:"⌬",
+ icon:"🧬",
  tag:"Science + discovery",
  img:"https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80",
  reason:"Explore this if you are fascinated by genetics, laboratory discovery, biomedical innovation, and solving global health or agricultural challenges.",
@@ -984,7 +984,7 @@ const pathways=[
 },
 {
  name:"Robotics & Mechatronics",
- icon:"⚙",
+ icon:"🦾",
  tag:"Technical + builder",
  img:"https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
  reason:"Perfect for students who love merging mechanical hardware, electronic circuitry, sensors, and embedded software into moving machines.",
