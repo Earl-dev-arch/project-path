@@ -39,7 +39,7 @@
       <div class="actions"><button class="btn primary big" id="heroStart">Get Started <b>→</b></button><button class="btn soft big" data-scroll="#how">Learn More About YourPath.</button></div>
       <div class="trust"><span>✦ Explore Your Potential</span><span>✦ Explainable pathways</span><span>✦ Welcome To YourPath.</span></div>
     </div>
-    <div class="hero-art reveal delay-1"><div class="scene"><div class="stars">✦ · ✧ · ✦ ·</div><div class="moon"></div><div class="hill h1"></div><div class="hill h2"></div><div class="traveler"><i></i><b></b><em></em></div></div><div class="float-card c1"><b>20</b><small>questions per session</small></div><div class="float-card c2"><b>1,000</b><small>deep question bank</small></div></div>
+    <div class="hero-art reveal delay-1"><div class="hero-photo-wrap"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85" alt="Students exploring career and education paths" class="hero-photo" loading="eager"><div class="hero-photo-overlay"></div></div></div>
   </div>
 
   <div class="active-session-banner shell hidden" id="activeSessionBanner">
@@ -272,14 +272,26 @@
 <section class="page" id="about"><div class="shell public about"><div><span class="eyebrow">ABOUT YOUR PATH</span><h1>For students, by purpose.</h1><p>Your Path is decision support, not a replacement for teachers, counselors, parents or professional advice.</p><div class="credits"><b>Founder / Concept</b><span>Madhu</span><b>Website Development</b><span>[Builder]</span><b>Career Guidance</b><span>[Name]</span></div></div><div class="privacy-card"><h3>Privacy by design</h3><p>Real deployment should use a secure backend, encrypted storage, access controls, consent flows, retention rules and deletion controls.</p><button class="btn soft" id="privacyBtn">Privacy notice</button></div></div></section>
 </main>
 <footer><div class="shell foot"><span>© 2026 Your Path — Built by Madhu ✦</span><span><button class="footer-link" id="privacyFoot">Privacy</button> · <button class="footer-link" id="termsFoot">Terms</button> · <button class="footer-link" id="cookieSettings">Cookie settings</button></span></div></footer>
-<div class="auth-loader-backdrop hidden" id="authLoader" aria-live="polite">
+<div class="auth-loader-backdrop hidden" id="authLoader" aria-live="polite" role="status">
   <div class="auth-loader-card">
+    <div class="auth-loader-glow"></div>
     <div class="auth-loader-spinner">
       <div class="auth-loader-ring"></div>
-      <span class="brand-mark loader-brand-mark">YP</span>
+      <div class="auth-loader-ring outer"></div>
+      <span class="brand-mark loader-brand-mark" id="loaderBrandMark">YP</span>
     </div>
+    <span class="loader-badge" id="loaderBadge">AUTHENTICATING</span>
     <h3 id="loaderTitle">Preparing your student space...</h3>
     <p id="loaderSub">Setting up your personalized career exploration environment</p>
+    
+    <div class="loader-steps" id="loaderSteps">
+      <!-- Steps populated dynamically by showAuthSequence -->
+    </div>
+
+    <div class="loader-progress-info">
+      <span id="loaderStepText">Starting up...</span>
+      <b id="loaderPercent">0%</b>
+    </div>
     <div class="loader-bar-wrap">
       <div class="loader-bar" id="loaderBar"></div>
     </div>

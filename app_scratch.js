@@ -338,32 +338,138 @@ function goTab(name){
 }
 $$("[data-tab]").forEach(b=>b.onclick=()=>{if(requireLogin())goTab(b.dataset.tab)});
 
-function showAuthLoader(title, subtitle, onComplete){
+function showAuthLoader(configOrTitle, subtitle, onComplete){
  const loader=$("#authLoader");
  const titleEl=$("#loaderTitle");
  const subEl=$("#loaderSub");
+ const badgeEl=$("#loaderBadge");
+ const stepsEl=$("#loaderSteps");
+ const stepTextEl=$("#loaderStepText");
+ const percentEl=$("#loaderPercent");
  const bar=$("#loaderBar");
+
+ let options={};
+ if(typeof configOrTitle==="object"&&configOrTitle!==null){
+   options=configOrTitle;
+ } else {
+   options={
+     title:configOrTitle,
+     subtitle:subtitle,
+     onComplete:onComplete,
+     badge:"AUTHENTICATING",
+     mode:"login"
+   };
+ }
+
+ const mode=options.mode||"login";
+ const title=options.title||(mode==="signup"?"Creating Your Account...":"Welcome Back!");
+ const sub=options.subtitle||(mode==="signup"?"Configuring your exploration workspace...":"Restoring your student workspace & saved pathways...");
+ const badge=options.badge||(mode==="signup"?"STUDENT REGISTRATION":"AUTHENTICATING SESSION");
+ const cb=options.onComplete||(typeof subtitle==="function"?subtitle:onComplete);
+
  if(!loader){
-   if(onComplete) onComplete();
+   if(typeof cb==="function") cb();
    return;
  }
+
  if(titleEl) titleEl.textContent=title;
- if(subEl) subEl.textContent=subtitle;
+ if(subEl) subEl.textContent=sub;
+ if(badgeEl){
+   badgeEl.textContent=badge;
+   badgeEl.style.background="";
+   badgeEl.style.color="";
+   badgeEl.style.borderColor="";
+ }
+
+ const stepsList=mode==="signup"?[
+   {icon:"👤",title:"Creating student profile & credentials",note:"Configuring student workspace..."},
+   {icon:"🧠",title:"Initializing 1,000-question exploration bank",note:"Loading adaptive dimension categories..."},
+   {icon:"🧭",title:"Calibrating 16 career pathways & roadmaps",note:"Preparing contextual education guides..."},
+   {icon:"🚀",title:"Launching personalized student dashboard",note:"Personalized environment ready!"}
+ ]:[
+   {icon:"🔐",title:"Verifying student credentials & session",note:"Authenticating student credentials..."},
+   {icon:"📝",title:"Loading questionnaire progress & AI signals",note:"Restoring pattern analysis engine..."},
+   {icon:"❤️",title:"Syncing 16 career pathways & saved notes",note:"Retrieving pathway notes & roadmaps..."},
+   {icon:"📊",title:"Preparing student dashboard & radar map",note:"All systems synchronized!"}
+ ];
+
+ if(stepsEl){
+   stepsEl.innerHTML=stepsList.map((st,idx)=>`
+     <div class="loader-step-item pending" id="loaderStepItem${idx}">
+       <div class="loader-step-left">
+         <span class="loader-step-icon">${st.icon}</span>
+         <span class="loader-step-title">${st.title}</span>
+       </div>
+       <span class="loader-step-state">○</span>
+     </div>
+   `).join("");
+ }
+
  if(bar){
    bar.style.transition="none";
    bar.style.width="0%";
-   requestAnimationFrame(()=>{
-     requestAnimationFrame(()=>{
-       bar.style.transition="width 1.15s cubic-bezier(0.2, 0.85, 0.25, 1)";
-       bar.style.width="100%";
-     });
-   });
  }
+ if(percentEl) percentEl.textContent="0%";
+ if(stepTextEl) stepTextEl.textContent=stepsList[0].note;
+
  loader.classList.remove("hidden");
+
+ const setStepState=(stepIdx,stateName,percent,note)=>{
+   const item=document.getElementById(`loaderStepItem${stepIdx}`);
+   if(item){
+     item.className=`loader-step-item ${stateName}`;
+     const stateIcon=item.querySelector(".loader-step-state");
+     if(stateIcon){
+       if(stateName==="pending") stateIcon.textContent="○";
+       else if(stateName==="active") stateIcon.textContent="✦";
+       else if(stateName==="done") stateIcon.textContent="✓";
+     }
+   }
+   if(percentEl) percentEl.textContent=`${percent}%`;
+   if(stepTextEl) stepTextEl.textContent=note;
+   if(bar){
+     bar.style.transition="width 0.38s cubic-bezier(0.2, 0.8, 0.2, 1)";
+     bar.style.width=`${percent}%`;
+   }
+ };
+
+ // Progress sequence
+ setStepState(0,"active",18,stepsList[0].note);
+
+ setTimeout(()=>{
+   setStepState(0,"done",32,"Credentials verified ✓");
+   setStepState(1,"active",48,stepsList[1].note);
+ }, 420);
+
+ setTimeout(()=>{
+   setStepState(1,"done",68,"Questionnaire engine loaded ✓");
+   setStepState(2,"active",80,stepsList[2].note);
+ }, 880);
+
+ setTimeout(()=>{
+   setStepState(2,"done",92,"Pathways & roadmaps synced ✓");
+   setStepState(3,"active",98,stepsList[3].note);
+ }, 1320);
+
+ setTimeout(()=>{
+   setStepState(3,"done",100,"All systems ready! Launching...");
+   if(badgeEl){
+     badgeEl.textContent="READY ✦";
+     badgeEl.style.background="#dcfce7";
+     badgeEl.style.color="#15803d";
+     badgeEl.style.borderColor="#bbf7d0";
+   }
+ }, 1700);
+
  setTimeout(()=>{
    loader.classList.add("hidden");
-   if(onComplete) onComplete();
- }, 1200);
+   if(badgeEl){
+     badgeEl.style.background="";
+     badgeEl.style.color="";
+     badgeEl.style.borderColor="";
+   }
+   if(typeof cb==="function") cb();
+ }, 2000);
 }
 
 $("#signupForm").onsubmit=e=>{
@@ -401,15 +507,22 @@ $("#signupForm").onsubmit=e=>{
  saveState();
  closeModal("authModal");
 
- showAuthLoader("Setting up your account...", "Initializing your 1,000-question exploration bank & dashboard...", ()=>{
-   updateUI();
-   showPage("dashboard");
-   goTab("overview");
-   requestAnimationFrame(()=>{
-     document.getElementById("journeyBoard")?.scrollIntoView({behavior:"smooth",block:"start"});
-     document.getElementById("journeyQuestionnaire")?.classList.add("current");
-   });
-   toast(`Account created for ${newUser.name}! Welcome to Your Path.`);
+ const firstName=newUser.name ? newUser.name.trim().split(" ")[0] : "Student";
+ showAuthLoader({
+   mode:"signup",
+   badge:"ACCOUNT REGISTRATION",
+   title:`Welcome to Your Path, ${firstName}! 🚀`,
+   subtitle:"Initializing your 1,000-question exploration bank & personalized space...",
+   onComplete:()=>{
+     updateUI();
+     showPage("dashboard");
+     goTab("overview");
+     requestAnimationFrame(()=>{
+       document.getElementById("journeyBoard")?.scrollIntoView({behavior:"smooth",block:"start"});
+       document.getElementById("journeyQuestionnaire")?.classList.add("current");
+     });
+     toast(`Account created for ${newUser.name}! Welcome to Your Path.`);
+   }
  });
 };
 
@@ -439,11 +552,18 @@ $("#loginForm").onsubmit=e=>{
  saveState();
  closeModal("authModal");
 
- showAuthLoader("Logging in...", "Loading your student profile and saved pathways...", ()=>{
-   updateUI();
-   showPage("dashboard");
-   goTab("overview");
-   toast(`Welcome back, ${state.user.name||"there"}!`);
+ const firstName=state.user && state.user.name ? state.user.name.trim().split(" ")[0] : "there";
+ showAuthLoader({
+   mode:"login",
+   badge:"SESSION AUTHENTICATED",
+   title:`Welcome back, ${firstName}! 👋`,
+   subtitle:"Loading your student profile, questionnaire answers & saved pathways...",
+   onComplete:()=>{
+     updateUI();
+     showPage("dashboard");
+     goTab("overview");
+     toast(`Welcome back, ${state.user.name||"there"}!`);
+   }
  });
 };
 
