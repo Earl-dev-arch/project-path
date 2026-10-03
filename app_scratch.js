@@ -570,6 +570,7 @@ const pathways=[
  name:"Data Science & Analytics",
  icon:"◈",
  tag:"Analytical + curious",
+ img:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
  reason:"Strong alignment if you enjoy uncovering patterns in messy data, quantitative reasoning, and turning questions into structured analysis.",
  skills:"Statistics, Python/R, SQL, Data Visualization, Problem Solving",
  edu:"BS Computer Science, BS Data Science, BS Statistics, BS Applied Math",
@@ -601,6 +602,7 @@ const pathways=[
  name:"Psychology & Behaviour",
  icon:"◉",
  tag:"People + research",
+ img:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
  reason:"Fits students drawn to understanding human motivations, empathy-driven problem solving, and evidence-based behavioral research.",
  skills:"Research Methods, Data Analysis, Empathy, Active Listening, Scientific Writing",
  edu:"BS/BA Psychology, BS Behavioral Science, BS Cognitive Science",
@@ -632,6 +634,7 @@ const pathways=[
  name:"UX / Product Design",
  icon:"◇",
  tag:"Creative + problem solving",
+ img:"https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80",
  reason:"Ideal if you enjoy understanding user frustrations, sketching solutions, and designing intuitive digital and physical experiences.",
  skills:"Figma, User Research, Wireframing, Interaction Design, Visual Hierarchy",
  edu:"BS Human-Computer Interaction, BS Information Design, BFA Digital Media, BS CS",
@@ -663,6 +666,7 @@ const pathways=[
  name:"Environmental Science",
  icon:"♧",
  tag:"Science + impact",
+ img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
  reason:"Natural fit if you are passionate about ecological systems, climate resilience, biodiversity, and outdoor/laboratory investigations.",
  skills:"Geospatial Mapping (GIS), Field Sampling, Environmental Chemistry, Policy Analysis",
  edu:"BS Environmental Science, BS Marine Biology, BS Forestry, BS Geoscience",
@@ -694,6 +698,7 @@ const pathways=[
  name:"Software Engineering",
  icon:"</>",
  tag:"Logical + builder",
+ img:"https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80",
  reason:"A high-impact direction if you enjoy constructing software systems, technical problem solving, debugging, and continuous learning.",
  skills:"Programming (JS/Python/Java), Data Structures, Git, API Design, System Architecture",
  edu:"BS Computer Science, BS Software Engineering, BS Computer Engineering",
@@ -725,6 +730,7 @@ const pathways=[
  name:"Cybersecurity",
  icon:"⌁",
  tag:"Systems + investigation",
+ img:"https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80",
  reason:"Explore this if you are energized by protecting digital assets, investigating attack vectors, networks, and puzzle-like vulnerabilities.",
  skills:"Network Protocols, Linux, Penetration Testing, Threat Intelligence, Cryptography",
  edu:"BS Cybersecurity, BS Information Security, BS Computer Science (Security)",
@@ -756,6 +762,7 @@ const pathways=[
  name:"Engineering & Computational Science",
  icon:"△",
  tag:"Math + making",
+ img:"https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80",
  reason:"Geared for students drawn to physics, mathematical modeling, simulation, and creating real-world physical or computational systems.",
  skills:"Calculus, Physics Modeling, CAD/Simulation, MATLAB/Python, Technical Design",
  edu:"BS Mechanical / Electrical / Civil Engineering, BS Computational Physics",
@@ -787,6 +794,7 @@ const pathways=[
  name:"Business & Entrepreneurship",
  icon:"↗",
  tag:"Initiative + people",
+ img:"https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=600&q=80",
  reason:"Ideal if you enjoy launching ideas, commercial strategy, leading initiatives, negotiations, and measurable business outcomes.",
  skills:"Leadership, Financial Modeling, Market Research, Communication, Strategic Planning",
  edu:"BS Business Administration, BS Entrepreneurship, BS Management Engineering",
@@ -818,6 +826,7 @@ const pathways=[
  name:"Architecture & Spatial Design",
  icon:"⌂",
  tag:"Creative + technical",
+ img:"https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80",
  reason:"Designed for minds that love spatial thinking, physical environments, structural aesthetics, and blending art with engineering logic.",
  skills:"Architectural Drafting, CAD/BIM (Revit), Spatial Logic, 3D Visualization, Model Making",
  edu:"Bachelor of Architecture (BArch - 5 yrs), BS Interior Design, BS Urban Planning",
@@ -849,6 +858,7 @@ const pathways=[
  name:"Biotechnology & Life Sciences",
  icon:"⌬",
  tag:"Science + discovery",
+ img:"https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=600&q=80",
  reason:"Explore this if you are fascinated by genetics, laboratory discovery, biomedical innovation, and solving global health or agricultural challenges.",
  skills:"Molecular Biology, Lab Rigor, Biochemistry, Data Analysis, Scientific Protocol",
  edu:"BS Molecular Biology & Biotechnology (MBB), BS Biology, BS Biochemistry",
@@ -880,6 +890,7 @@ const pathways=[
  name:"Digital Marketing & Strategy",
  icon:"📈",
  tag:"Creative + analytical",
+ img:"https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
  reason:"A high-energy direction if you love analyzing audience behavior, content storytelling, growth marketing, and digital campaigns.",
  skills:"Content Strategy, Google Analytics, Social Media Architecture, Copywriting, SEO",
  edu:"BS Marketing Management, BS Communications, BS Advertising Management",
@@ -911,6 +922,7 @@ const pathways=[
  name:"Artificial Intelligence & ML",
  icon:"🤖",
  tag:"Math + innovation",
+ img:"https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=600&q=80",
  reason:"A cutting-edge path for those drawn to machine learning, neural networks, advanced mathematical logic, and automated intelligence.",
  skills:"Python, Linear Algebra, PyTorch/TensorFlow, Probability, Machine Learning Algorithms",
  edu:"BS Computer Science (AI Track), BS Data Engineering, BS Mathematics",
@@ -942,6 +954,7 @@ const pathways=[
  name:"International Relations & Global Policy",
  icon:"🌐",
  tag:"People + values",
+ img:"https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=600&q=80",
  reason:"Explore this if you care about diplomacy, geopolitical policy, global trade, social advocacy, and cross-cultural communication.",
  skills:"Policy Analysis, Cross-Cultural Negotiation, Persuasive Writing, Research, Languages",
  edu:"BA International Studies, BA Political Science, BA Diplomacy & Foreign Affairs",
@@ -973,6 +986,7 @@ const pathways=[
  name:"Robotics & Mechatronics",
  icon:"⚙",
  tag:"Technical + builder",
+ img:"https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=600&q=80",
  reason:"Perfect for students who love merging mechanical hardware, electronic circuitry, sensors, and embedded software into moving machines.",
  skills:"Circuit Design, Arduino/C++, SolidWorks, Kinematics, Motor Control",
  edu:"BS Mechatronics Engineering, BS Robotics Engineering, BS Electronics Engineering",
@@ -1004,6 +1018,7 @@ const pathways=[
  name:"Game Design & Development",
  icon:"🎮",
  tag:"Creative + logical",
+ img:"https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
  reason:"A thrilling intersection of interactive storytelling, gameplay mechanics, visual art, player psychology, and creative programming.",
  skills:"Game Engines (Unity/Unreal/Godot), C#/C++, Level Design, Game Mechanics, 3D Art",
  edu:"BS Game Development, BS Interactive Entertainment, BFA Game Design",
@@ -1035,6 +1050,7 @@ const pathways=[
  name:"Finance & Quantitative Economics",
  icon:"💰",
  tag:"Analytical + strategic",
+ img:"https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80",
  reason:"For students fascinated by financial markets, economic modeling, risk management, and mathematical decisions under uncertainty.",
  skills:"Financial Modeling, Statistical Analysis, Econometrics, Excel/Python, Risk Assessment",
  edu:"BS Economics, BS Finance, BS Management of Financial Institutions, BS Actuarial Science",
@@ -1065,7 +1081,21 @@ const pathways=[
 ];
 
 function renderPublic(){
- $("#publicPaths").innerHTML=pathways.map(p=>`<article class="path-card"><span class="tag">${p.tag}</span><h3>${p.icon} ${p.name}</h3><p class="reason">${p.reason}</p><p><b>Skills:</b> ${p.skills}</p><p><b>Related:</b> ${p.alt}</p><div class="path-actions"><button class="small-btn" onclick="requireLogin()">Explore details</button></div></article>`).join("");
+ $("#publicPaths").innerHTML=pathways.map(p=>`<article class="path-card">
+   <div class="path-card-media">
+     <img src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" class="path-img" onerror="this.style.display='none'">
+     <span class="tag path-tag-overlay">${p.tag}</span>
+   </div>
+   <div class="path-card-body">
+     <h3>${p.icon} ${p.name}</h3>
+     <p class="reason">${p.reason}</p>
+     <p><b>Skills:</b> ${p.skills}</p>
+     <p><b>Related:</b> ${p.alt}</p>
+   </div>
+   <div class="path-actions">
+     <button class="small-btn primary" onclick="requireLogin()">Explore details →</button>
+   </div>
+ </article>`).join("");
 }
 
 function capture(){
@@ -1181,17 +1211,24 @@ function renderAnalysis(){
 
 function renderPathways(){
  $("#pathGrid").innerHTML=pathways.map(p=>`<article class="path-card">
-   <span class="tag">${p.tag}</span>
-   <h3>${p.icon} ${p.name}</h3>
-   <p class="reason">${p.reason}</p>
-   <p><b>Core Skills:</b> ${p.skills}</p>
-   <p><b>Education:</b> ${p.edu}</p>
-   <p><b>Work Style:</b> ${p.work}</p>
-   <p><b>Challenges:</b> ${p.challenge}</p>
-   <p><b>30-Day Test:</b> ${p.experiment}</p>
+   <div class="path-card-media">
+     <img src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" class="path-img" onerror="this.style.display='none'">
+     <span class="tag path-tag-overlay">${p.tag}</span>
+   </div>
+   <div class="path-card-body">
+     <h3>${p.icon} ${p.name}</h3>
+     <p class="reason">${p.reason}</p>
+     <div class="path-meta-rows">
+       <p><b>Core Skills:</b> ${p.skills}</p>
+       <p><b>Education:</b> ${p.edu}</p>
+       <p><b>Work Style:</b> ${p.work}</p>
+       <p><b style="color:#ba3b20">Challenges:</b> ${p.challenge}</p>
+       <p><b style="color:#22865c">30-Day Test:</b> ${p.experiment}</p>
+     </div>
+   </div>
    <div class="path-actions">
      <button class="small-btn save" onclick="toggleSave('${escapeHtml(p.name)}')">${state.saved.includes(p.name)?"✓ Saved":"♡ Save"}</button>
-     <button class="small-btn" onclick="viewPathwayEd('${escapeHtml(p.name)}')">🎓 Education & Unis</button>
+     <button class="small-btn" onclick="viewPathwayEd('${escapeHtml(p.name)}')">🎓 Unis</button>
      <button class="small-btn" onclick="quickCompare('${escapeHtml(p.name)}')">⇄ Compare</button>
    </div>
  </article>`).join("");
