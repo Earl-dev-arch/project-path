@@ -1,16 +1,13 @@
-# Your Path v2
+YourPath.
 
 A responsive frontend prototype inspired by the supplied UI.
 
-## Major upgrade: 1,000-question engine
-The questionnaire engine creates exactly 1,000 deep prompts at runtime:
-- 10 dimensions
-- 20 deep stems per dimension
-- 5 contexts per stem
-- 20 questions are selected per session
-- Weighted sampling without replacement
-- Every dimension is ensured representation so one session does not accidentally ignore an important area
-- The UI displays the configured first-draw selection probability for each selected question
+- improved the UI across devices
+- responsive design
+- improved login/signup menu
+- expanded career/pathways menu
+- added extra animations
+- implemented tailwindcss
 
 The probability is ONLY a question-selection mechanism. It is not a psychological probability, confidence score, or career-match score.
 
@@ -38,8 +35,3 @@ For a production version:
 - human review for sensitive student-facing guidance
 - aggregate analytics instead of exposing identifiable student data
 
-`question-bank-spec.json` documents the 1,000-question composition and selection probabilities.
-
-
-## Registration → Student Journey
-After a student creates an account, the dashboard opens to a six-stage Student Journey: Register → Deep Questionnaire → AI Analysis → Pathways → Roadmap → Take Action & Track. The first card is populated from the new profile and the current stage is highlighted.

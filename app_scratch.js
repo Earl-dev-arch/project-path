@@ -318,19 +318,20 @@ function closeModal(id){
   $("#"+id)?.classList.add("hidden");
 }
 function openLogin(){
-  closeModal("signupModal");
-  closeModal("authModal");
-  openModal("loginModal");
+  $("#signupModal")?.classList.add("hidden");
+  $("#loginModal")?.classList.remove("hidden");
+
   const emailInput=$("#loginForm input[name='email']");
   if(emailInput) setTimeout(()=>emailInput.focus(), 50);
 }
 function openSignup(){
-  closeModal("loginModal");
-  closeModal("authModal");
+  $("#loginModal")?.classList.add("hidden");
+
   if(typeof window.resetConsentGate==="function"){
     window.resetConsentGate();
   }
-  openModal("signupModal");
+
+  $("#signupModal")?.classList.remove("hidden");
 }
 window.openLogin=openLogin;
 window.openSignup=openSignup;
@@ -1477,17 +1478,32 @@ function renderQuestion(){
  $("#answerOpen")?.addEventListener("input",capture);$$("#answerRank select").forEach(x=>x.addEventListener("change",capture));
  $("#back").onclick=()=>{capture();state.qIndex=Math.max(0,state.qIndex-1);renderQuestion();$("#question")?.scrollIntoView({behavior:"smooth",block:"nearest"});};
  $("#next").onclick=()=>{
+   const currentQ=sessionQuestions()[state.qIndex];
+
+   // Validate ranking questions before allowing the user to continue.
+   if(currentQ?.type==="rank"){
+     const ranks=$$("#answerRank select").map(x=>x.value);
+
+     if(ranks.some(v=>!v)){
+       toast("Please rank every option before continuing.");
+       return;
+     }
+   }
+
    capture();
+
    if(state.qIndex<19){
-     state.qIndex++;renderQuestion();$("#question")?.scrollIntoView({behavior:"smooth",block:"nearest"});
+     state.qIndex++;
+     renderQuestion();
+     $("#question")?.scrollIntoView({behavior:"smooth",block:"nearest"});
    } else {
-     capture();renderInterestMap();
+     capture();
+     renderInterestMap();
      archiveCurrentSession();
      goTab("analysis");
      toast("20 responses analyzed! Patterns and uncertainty checks are ready.");
    }
- };
-}
+};
 
 function archiveCurrentSession(){
  const qs=sessionQuestions();
