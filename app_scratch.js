@@ -1504,7 +1504,7 @@ function archiveCurrentSession(){
  };
  if(existingIdx>=0) state.history[existingIdx]=snapshot;
  else state.history.unshift(snapshot);
- saveState();updateUI();
+ saveState();
 }
 
 function retakeQuestionnaire(){

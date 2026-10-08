@@ -1,7 +1,4 @@
-/* ============================================================================
-   Your Path — public site content
-   Plain data only. Rendering lives in site.js.
-   ========================================================================== */
+
 window.YourPathData = (function () {
   "use strict";
 
